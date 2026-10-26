@@ -827,16 +827,52 @@ html[lang="ar"] .cta__title {
 
 /* Arabic has no capital letters, and letter-spacing breaks joined letters */
 html[lang="ar"] .eyebrow {
-  font-size: 14px;
+  font-size: 15px;
   letter-spacing: 0;
   text-transform: none;
 }
 
-html[lang="ar"] .main-nav a,
-html[lang="ar"] .mobile-menu a,
+/* Arabic text sizes.
+   Arabic letters look smaller than English letters at the same pixel size,
+   so every Arabic text size is 2–3px bigger than its English version.
+   To make all Arabic text bigger or smaller, change the numbers here. */
+html[lang="ar"] .main-nav a {
+  font-size: 17px;
+}
+
+html[lang="ar"] .mobile-menu a {
+  font-size: 18px;
+}
+
 html[lang="ar"] .pill,
-html[lang="ar"] .check-list li {
-  font-size: 15px;
+html[lang="ar"] .check-list li,
+html[lang="ar"] .benefits p {
+  font-size: 16px;
+}
+
+html[lang="ar"] .product__blurb,
+html[lang="ar"] .section-head__text,
+html[lang="ar"] .benefits h3 {
+  font-size: 17px;
+}
+
+html[lang="ar"] .hero__intro,
+html[lang="ar"] .cta__content p {
+  font-size: 18px;
+}
+
+html[lang="ar"] .site-footer p {
+  font-size: 14px;
+}
+
+/* Section text blocks get a little more width so the bigger text
+   doesn't wrap into a narrow column */
+html[lang="ar"] .hero__intro {
+  max-width: 32rem;
+}
+
+html[lang="ar"] .section-head__text {
+  max-width: 28rem;
 }
 
 /* Arabic step names are longer, so the Readiness card is a little wider */
@@ -997,7 +1033,7 @@ html[lang="ar"] .steps {
   }
 
   html[lang="ar"] .tab {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   /* All panels share one spot, so the box keeps the height of the tallest one
