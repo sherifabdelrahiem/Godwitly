@@ -41,7 +41,6 @@
     <!-- Icon library: each <symbol> is drawn later with <svg><use href="#icon-name"></use></svg> -->
     <svg class="icon-sprite" aria-hidden="true" focusable="false">
       <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></symbol>
-      <symbol id="icon-arrow-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></symbol>
       <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
       <symbol id="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
       <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" /></symbol>
@@ -65,6 +64,7 @@
         <a href="#products" data-i18n="nav.products">Products</a>
         <a href="#why-godwitly" data-i18n="nav.why">Why Godwitly</a>
         <a href="#about" data-i18n="nav.about">About</a>
+        <a href="#contact" data-i18n="nav.contact">Contact us</a>
       </nav>
 
       <div class="header-actions">
@@ -94,6 +94,7 @@
           <a href="#products" data-i18n="nav.products">Products</a>
           <a href="#why-godwitly" data-i18n="nav.why">Why Godwitly</a>
           <a href="#about" data-i18n="nav.about">About</a>
+          <a href="#contact" data-i18n="nav.contact">Contact us</a>
         </nav>
       </div>
     </header>
@@ -323,16 +324,74 @@
         </div>
       </section>
 
-      <!-- ===================== 5. CALL TO ACTION ===================== -->
-      <section class="cta" aria-labelledby="cta-heading">
+      <!-- ===================== 5. CONTACT / GET NOTIFIED ===================== -->
+      <!-- The form sends its answers to Supabase (see js/form.js and js/config.js). -->
+      <section id="contact" class="cta" tabindex="-1" aria-labelledby="cta-heading">
         <img src="assets/images/cta-landscape.webp" alt="" class="cta__background" loading="lazy" />
         <div class="cta__content">
           <h2 id="cta-heading" class="cta__title" data-i18n="cta.title">Ready to experience Godwitly?</h2>
           <p data-i18n="cta.text">Discover a smarter way to learn, engage and prepare.</p>
-          <a href="#products" class="pill pill--primary pill--large">
-            <span data-i18n="cta.button">Back to our solutions</span>
-            <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg>
-          </a>
+
+          <form id="notify-form" class="notify-form" novalidate data-i18n-aria-label="form.label" aria-label="Get notified when Godwitly launches">
+            <div class="form-grid">
+              <div class="field">
+                <label for="f-name" data-i18n="form.name">Full name</label>
+                <input id="f-name" name="full_name" type="text" autocomplete="name" maxlength="100" required aria-describedby="f-name-error" />
+                <p class="field__error" id="f-name-error" hidden></p>
+              </div>
+              <div class="field">
+                <label for="f-email" data-i18n="form.email">Email</label>
+                <input id="f-email" name="email" type="email" dir="ltr" autocomplete="email" maxlength="254" required aria-describedby="f-email-error" />
+                <p class="field__error" id="f-email-error" hidden></p>
+              </div>
+              <div class="field">
+                <label for="f-phone" data-i18n="form.phone">Phone number</label>
+                <input id="f-phone" name="phone" type="tel" dir="ltr" autocomplete="tel" maxlength="20" required aria-describedby="f-phone-hint f-phone-error" />
+                <p class="field__hint" id="f-phone-hint"><span data-i18n="form.phoneHint">Include your country code, e.g.</span> <span class="keep-together" dir="ltr">+20 10 1234 5678</span></p>
+                <p class="field__error" id="f-phone-error" hidden></p>
+              </div>
+              <div class="field">
+                <label for="f-job" data-i18n="form.jobTitle">Job title</label>
+                <input id="f-job" name="job_title" type="text" autocomplete="organization-title" maxlength="100" required aria-describedby="f-job-error" />
+                <p class="field__error" id="f-job-error" hidden></p>
+              </div>
+              <div class="field field--full">
+                <label for="f-message" data-i18n="form.message">Message (optional)</label>
+                <textarea id="f-message" name="message" rows="4" maxlength="1000" aria-describedby="f-message-error"></textarea>
+                <p class="field__error" id="f-message-error" hidden></p>
+              </div>
+            </div>
+
+            <!-- Honeypot: hidden from people, but simple spam bots fill it in -->
+            <div class="form-honeypot" aria-hidden="true">
+              <label for="f-website">Website</label>
+              <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div class="field field--check">
+              <input id="f-consent" name="consent" type="checkbox" required aria-describedby="f-consent-error" />
+              <label for="f-consent" data-i18n="form.consent">I agree to be contacted about Godwitly's launch.</label>
+            </div>
+            <p class="field__error field__error--check" id="f-consent-error" hidden></p>
+
+            <button type="submit" class="pill pill--primary pill--large form-submit">
+              <span class="form-submit__label" data-i18n="form.submit">Notify me</span>
+              <svg class="icon flip-in-rtl" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+            </button>
+
+            <!-- Messages for "sending", "check the fields" and "something went wrong" -->
+            <div class="form-status" role="status" aria-live="polite">
+              <p class="form-status__text"></p>
+              <button type="button" class="pill pill--outline form-retry" hidden data-i18n="form.retry">Try again</button>
+            </div>
+          </form>
+
+          <!-- Shown instead of the form after a successful sign-up -->
+          <div class="form-success" tabindex="-1" hidden>
+            <span class="form-success__icon"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg></span>
+            <h3 data-i18n="form.successTitle">Thank you! You're on the list.</h3>
+            <p data-i18n="form.successText">We'll let you know as soon as Godwitly is live.</p>
+          </div>
         </div>
       </section>
     </main>
@@ -348,5 +407,8 @@
     <!-- translations.js must load first: script.js reads the TRANSLATIONS object it defines -->
     <script src="js/translations.js"></script>
     <script src="js/script.js"></script>
+    <!-- The contact form: config.js holds the Supabase address, form.js does the sending -->
+    <script src="js/config.js"></script>
+    <script src="js/form.js"></script>
   </body>
 </html>
