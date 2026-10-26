@@ -62,14 +62,16 @@ function readAnswers() {
 
 function findProblems(answers) {
   const problems = [];
-  const lengthBetween = (text, min, max) => text.length >= min && text.length <= max;
+  // Count characters the way the database does ([...text] counts an emoji as 1, .length as 2).
+  const characters = (text) => [...text].length;
+  const lengthBetween = (text, min, max) => characters(text) >= min && characters(text) <= max;
   const phoneDigits = answers.phone.replace(/[^0-9]/g, "").length;
 
   if (!lengthBetween(answers.full_name, 2, 100)) problems.push("full_name");
   if (answers.email.length > 254 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(answers.email)) problems.push("email");
   if (!/^\+?[0-9 ()-]{7,20}$/.test(answers.phone) || phoneDigits < 7 || phoneDigits > 15) problems.push("phone");
   if (!lengthBetween(answers.job_title, 2, 100)) problems.push("job_title");
-  if (answers.message !== null && answers.message.length > 1000) problems.push("message");
+  if (answers.message !== null && characters(answers.message) > 1000) problems.push("message");
   if (!answers.consent) problems.push("consent");
   return problems;
 }
