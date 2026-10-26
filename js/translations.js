@@ -29,6 +29,7 @@ const TRANSLATIONS = {
     "nav.products": "Products",
     "nav.why": "Why Godwitly",
     "nav.about": "About",
+    "nav.contact": "Contact us",
 
     // Hero
     "hero.line1": "Learn Smarter.",
@@ -107,7 +108,30 @@ const TRANSLATIONS = {
     // Call to action
     "cta.title": "Ready to experience Godwitly?",
     "cta.text": "Discover a smarter way to learn, engage and prepare.",
-    "cta.button": "Back to our solutions",
+
+    // Contact / get-notified form
+    "form.label": "Get notified when Godwitly launches",
+    "form.name": "Full name",
+    "form.email": "Email",
+    "form.phone": "Phone number",
+    "form.phoneHint": "Include your country code, e.g.",
+    "form.jobTitle": "Job title",
+    "form.message": "Message (optional)",
+    "form.consent": "I agree to be contacted about Godwitly's launch.",
+    "form.submit": "Notify me",
+    "form.sending": "Sending…",
+    "form.retry": "Try again",
+    "form.checkFields": "Please check the highlighted fields.",
+    "form.errorNetwork": "We couldn't send your details. Please check your connection and try again.",
+    "form.errorNotSetUp": "The sign-up form isn't connected yet. Please try again later.",
+    "form.successTitle": "Thank you! You're on the list.",
+    "form.successText": "We'll let you know as soon as Godwitly is live.",
+    "error.name": "Please enter your full name.",
+    "error.email": "Please enter a valid email address.",
+    "error.phone": "Please enter a valid phone number (7–15 digits).",
+    "error.jobTitle": "Please enter your job title.",
+    "error.message": "Please keep your message under 1,000 characters.",
+    "error.consent": "Please tick the box to agree.",
 
     // Footer
     "footer.text": "Godwitly by BCM Hub — learning, engagement and preparedness for resilient organisations.",
@@ -128,6 +152,7 @@ const TRANSLATIONS = {
     "nav.products": "المنتجات",
     "nav.why": "لماذا Godwitly؟",
     "nav.about": "نبذة عنّا",
+    "nav.contact": "تواصل معنا",
 
     "hero.line1": "تعلّم بذكاء أكبر.",
     "hero.line2": "تفاعل بفاعلية أكبر.",
@@ -200,7 +225,29 @@ const TRANSLATIONS = {
 
     "cta.title": "هل أنت مستعد لتجربة Godwitly؟",
     "cta.text": "اكتشف طريقة أذكى للتعلّم والتفاعل والاستعداد.",
-    "cta.button": "عُد إلى حلولنا",
+
+    "form.label": "احصل على إشعار عند إطلاق Godwitly",
+    "form.name": "الاسم الكامل",
+    "form.email": "البريد الإلكتروني",
+    "form.phone": "رقم الهاتف",
+    "form.phoneHint": "أضف رمز الدولة، مثال:",
+    "form.jobTitle": "المسمى الوظيفي",
+    "form.message": "رسالة (اختياري)",
+    "form.consent": "أوافق على التواصل معي بخصوص إطلاق Godwitly.",
+    "form.submit": "أبلغني عند الإطلاق",
+    "form.sending": "جارٍ الإرسال…",
+    "form.retry": "حاول مرة أخرى",
+    "form.checkFields": "يُرجى مراجعة الحقول المحددة.",
+    "form.errorNetwork": "تعذّر إرسال بياناتك. يُرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
+    "form.errorNotSetUp": "نموذج التسجيل غير متصل بعد. يُرجى المحاولة لاحقًا.",
+    "form.successTitle": "شكرًا لك! تمت إضافتك إلى القائمة.",
+    "form.successText": "سنُبلغك فور إطلاق Godwitly.",
+    "error.name": "يُرجى إدخال اسمك الكامل.",
+    "error.email": "يُرجى إدخال بريد إلكتروني صحيح.",
+    "error.phone": "يُرجى إدخال رقم هاتف صحيح (من 7 إلى 15 رقمًا).",
+    "error.jobTitle": "يُرجى إدخال مسماك الوظيفي.",
+    "error.message": "يُرجى ألا تتجاوز رسالتك 1000 حرف.",
+    "error.consent": "يُرجى تحديد المربع للموافقة.",
 
     "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والجاهزية لمؤسسات أكثر مرونة.",
   },

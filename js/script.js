@@ -53,6 +53,9 @@ function setLanguage(language) {
 
   updateMenuLabel();
 
+  // Tell other scripts (the contact form) to re-translate their messages.
+  document.dispatchEvent(new CustomEvent("godwitly:languagechange"));
+
   // Remember the choice for next time (some browsers block this for local files).
   try {
     localStorage.setItem(STORAGE_KEY, language);

@@ -25,6 +25,7 @@
   --color-brand-deep: #3f1510; /* deep maroon: big headings */
   --color-accent: #2f6f73; /* teal: the "Learn" product, focus outline */
   --color-success: #059669;
+  --color-danger: #be123c; /* form error messages */
 
   /* Neutral colours */
   --color-page: #f8f7f5; /* warm off-white page background */
@@ -139,6 +140,17 @@ footer[id] {
 
 .skip-link:focus {
   top: 16px;
+}
+
+/* Anything marked hidden stays hidden, even if a class gives it a display style */
+[hidden] {
+  display: none !important;
+}
+
+/* Keep numbers like +20 10 1234 5678 on one line and in the right order */
+.keep-together {
+  white-space: nowrap;
+  unicode-bidi: isolate;
 }
 
 /* The hidden SVG that stores all the icons */
@@ -808,6 +820,175 @@ footer[id] {
   text-align: center;
 }
 
+/* ---------- 8b. Contact form ---------- */
+.notify-form,
+.form-success {
+  width: 100%;
+  max-width: 640px;
+  margin-top: 28px;
+  padding: 24px;
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  text-align: start; /* the section is centered; the form reads normally */
+}
+
+.form-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: var(--color-white);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px; /* 16px stops phones from zooming in when you tap a field */
+}
+
+.field textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  border-color: var(--color-accent);
+  border-radius: 12px;
+  outline-offset: 1px;
+}
+
+/* Red border on fields with a problem */
+.field [aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.field__hint {
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.field__error {
+  margin-top: 6px;
+  color: var(--color-danger);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.field--check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.field--check input {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  flex-shrink: 0;
+  accent-color: var(--color-brand);
+}
+
+.field--check label {
+  margin: 0;
+  font-weight: 500;
+}
+
+.field__error--check {
+  margin-inline-start: 30px;
+}
+
+/* Hidden from people; only bots fill it in */
+.form-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.form-submit {
+  width: 100%;
+  margin-top: 20px;
+  border: 0;
+}
+
+.form-submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.form-status {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.form-status__text {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.form-status.is-error .form-status__text {
+  color: var(--color-danger);
+}
+
+.form-retry {
+  margin-top: 10px;
+}
+
+/* Thank-you box shown after sending */
+.form-success {
+  text-align: center;
+}
+
+.form-success:focus {
+  outline: none;
+}
+
+.form-success__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  color: var(--color-success);
+}
+
+.form-success__icon .icon {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.5;
+}
+
+.form-success h3 {
+  margin-top: 12px;
+  color: var(--color-brand-deep);
+  font-family: var(--font-heading);
+  font-size: 22px;
+}
+
+.form-success p {
+  margin-top: 6px;
+  color: var(--color-text-soft);
+}
+
 /* ---------- 9. Arabic / right-to-left adjustments ---------- */
 /* The browser already flips the layout when <html dir="rtl">.
    These rules handle the details it cannot guess. */
@@ -863,6 +1044,25 @@ html[lang="ar"] .cta__content p {
 
 html[lang="ar"] .site-footer p {
   font-size: 14px;
+}
+
+html[lang="ar"] .field label {
+  font-size: 16px;
+}
+
+html[lang="ar"] .field__hint,
+html[lang="ar"] .field__error,
+html[lang="ar"] .form-status__text {
+  font-size: 15px;
+}
+
+html[lang="ar"] .form-success h3 {
+  font-family: var(--font-arabic-heading);
+}
+
+/* Email and phone are typed left-to-right, but sit on the right like the other fields */
+html[dir="rtl"] .field input[dir="ltr"] {
+  text-align: right;
 }
 
 /* Section text blocks get a little more width so the bigger text
@@ -938,6 +1138,20 @@ html[lang="ar"] .steps {
 
   .cta__content {
     padding-bottom: 176px;
+  }
+
+  /* Two columns of fields; the message box spans both */
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field--full {
+    grid-column: 1 / -1;
+  }
+
+  .notify-form,
+  .form-success {
+    padding: 32px;
   }
 }
 
