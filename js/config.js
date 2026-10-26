@@ -9,5 +9,5 @@
   from reading, changing or deleting entries with it.
   Never put the secret / service_role key or the database password here.
 */
-const SUPABASE_URL = "";
-const SUPABASE_PUBLISHABLE_KEY = "";
+const SUPABASE_URL = "https://ijpvbxglhxktnkabjdif.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_5NpWsPAwBChE1MsaFTdmuA_YDSG_Zta";
