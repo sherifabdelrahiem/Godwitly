@@ -1,0 +1,352 @@
+<!doctype html>
+<!--
+  Godwitly landing page (static recreation, English + Arabic).
+
+  How this page is organised:
+    1. Header      – logo, section links, language switcher, mobile menu button
+    2. Hero        – big headline, intro text, two buttons, device picture
+    3. Products    – three products (tabs on desktop, stacked cards on mobile)
+    4. Why Godwitly– four benefits with icons
+    5. Call to action band
+    6. Footer      – the "About" text
+
+  Text: every element with a data-i18n="..." attribute gets its text from
+  js/translations.js. The English text written here is the default that shows
+  if JavaScript is turned off. To change wording, edit js/translations.js.
+-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="meta.title">Godwitly — Learn, Engage, Prepare</title>
+    <meta
+      name="description"
+      data-i18n-content="meta.description"
+      content="One platform that transforms learning, participation, and organisational preparedness through interactive digital experiences."
+    />
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+
+    <!-- Fonts: Rubik + Inter for English, Cairo + IBM Plex Sans Arabic for Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rubik:wght@500;600;700&family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    />
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body id="top">
+    <!-- Icon library: each <symbol> is drawn later with <svg><use href="#icon-name"></use></svg> -->
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></symbol>
+      <symbol id="icon-arrow-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></symbol>
+      <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+      <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" /></symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></symbol>
+      <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></symbol>
+      <symbol id="icon-workflow" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="3" rx="2" /><path d="M7 11v4a2 2 0 0 0 2 2h4" /><rect width="8" height="8" x="13" y="13" rx="2" /></symbol>
+      <symbol id="icon-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="M8 17v-3" /><path d="M13 17V9" /><path d="M18 17V5" /></symbol>
+      <symbol id="icon-devices" viewBox="0 0 24 24"><path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8" /><path d="M10 19v-4" /><path d="M7 19h5" /><rect width="6" height="10" x="16" y="12" rx="2" /></symbol>
+    </svg>
+
+    <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to main content</a>
+
+    <!-- ===================== 1. HEADER ===================== -->
+    <header class="site-header container">
+      <a href="#top" class="logo-link" data-i18n-aria-label="a11y.home" aria-label="Godwitly home">
+        <img src="assets/images/godwitly-wordmark.svg" alt="Godwitly" class="logo" width="140" height="40" />
+      </a>
+
+      <nav class="main-nav" data-i18n-aria-label="a11y.mainNav" aria-label="Main">
+        <a href="#products" data-i18n="nav.products">Products</a>
+        <a href="#why-godwitly" data-i18n="nav.why">Why Godwitly</a>
+        <a href="#about" data-i18n="nav.about">About</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Language switcher: two buttons; the pressed one is the current language -->
+        <div class="lang-switch" role="group" data-i18n-aria-label="a11y.language" aria-label="Choose language">
+          <svg class="icon lang-switch__globe" aria-hidden="true"><use href="#icon-globe"></use></svg>
+          <button type="button" class="lang-switch__btn" data-lang="en" lang="en" aria-pressed="true">English</button>
+          <button type="button" class="lang-switch__btn" data-lang="ar" lang="ar" aria-pressed="false">العربية</button>
+        </div>
+
+        <button
+          type="button"
+          class="menu-button"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          data-i18n-aria-label="a11y.menuOpen"
+          aria-label="Open menu"
+        >
+          <svg class="icon icon--lg menu-button__open" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          <svg class="icon icon--lg menu-button__close" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <!-- Mobile menu (hidden until the menu button is pressed) -->
+      <div id="mobile-menu" class="mobile-menu" hidden>
+        <nav data-i18n-aria-label="a11y.mainNav" aria-label="Main">
+          <a href="#products" data-i18n="nav.products">Products</a>
+          <a href="#why-godwitly" data-i18n="nav.why">Why Godwitly</a>
+          <a href="#about" data-i18n="nav.about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <!-- ===================== 2. HERO ===================== -->
+      <section class="hero" aria-labelledby="hero-heading">
+        <img src="assets/images/hero-landscape.webp" alt="" class="hero__background" />
+        <img src="assets/images/flock.webp" alt="" class="hero__flock" />
+
+        <div class="container hero__grid">
+          <div class="hero__text">
+            <h1 id="hero-heading" class="hero__title">
+              <span data-i18n="hero.line1">Learn Smarter.</span>
+              <span data-i18n="hero.line2">Engage Better.</span>
+              <span class="text-brand" data-i18n="hero.line3">Prepare Stronger.</span>
+            </h1>
+            <p class="hero__intro" data-i18n="hero.intro">
+              One platform that transforms learning, participation, and organisational preparedness through
+              interactive digital experiences.
+            </p>
+            <div class="button-row">
+              <a href="#products" class="pill pill--primary">
+                <span data-i18n="hero.explore">Explore Our Solutions</span>
+                <svg class="icon" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
+              </a>
+              <a href="#why-godwitly" class="pill pill--outline">
+                <span data-i18n="nav.why">Why Godwitly</span>
+                <svg class="icon flip-in-rtl" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+              </a>
+            </div>
+          </div>
+
+          <img
+            src="assets/images/hero-devices.webp"
+            class="hero__devices"
+            data-i18n-alt="hero.devicesAlt"
+            alt="Godwitly on desktop, laptop and phone: My Programmes, a live quiz and a crisis management exercise with a 3.32 maturity score"
+            width="800"
+            height="470"
+          />
+        </div>
+      </section>
+
+      <!-- ===================== 3. PRODUCTS ===================== -->
+      <section id="products" class="section products" tabindex="-1" aria-labelledby="products-heading">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow" data-i18n="products.eyebrow">Our solutions</p>
+              <h2 id="products-heading" class="section-title">
+                <span data-i18n="products.title1">Three products.</span>
+                <span data-i18n="products.title2">A stronger tomorrow.</span>
+              </h2>
+            </div>
+            <p class="section-head__text" data-i18n="products.intro">
+              Whether you're building knowledge, engaging people, or preparing for what's next, Godwitly helps you
+              turn progress into real-world readiness.
+            </p>
+          </div>
+
+          <!-- Tabs (desktop only). On small screens all three cards are shown one under another. -->
+          <div class="tabs-row">
+            <div class="tabs" role="tablist" data-i18n-aria-label="products.tablist" aria-label="Godwitly products">
+              <button type="button" class="tab" role="tab" id="tab-engage" aria-controls="panel-engage" aria-selected="true" data-i18n="engage.name">Engage</button>
+              <button type="button" class="tab" role="tab" id="tab-learn" aria-controls="panel-learn" aria-selected="false" tabindex="-1" data-i18n="learn.name">Learn</button>
+              <button type="button" class="tab" role="tab" id="tab-resilience" aria-controls="panel-resilience" aria-selected="false" tabindex="-1" data-i18n="resilience.name">Resilience</button>
+            </div>
+          </div>
+
+          <div class="product-panels">
+            <!-- Engage -->
+            <article id="panel-engage" class="product product--engage" role="tabpanel" aria-labelledby="tab-engage">
+              <div class="product__text">
+                <p class="eyebrow product__eyebrow" data-i18n="products.from">Godwitly</p>
+                <h3 class="product__name" data-i18n="engage.name">Engage</h3>
+                <p class="product__blurb" data-i18n="engage.blurb">
+                  Turn training sessions, workshops and events into interactive experiences.
+                </p>
+                <ul class="check-list">
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="engage.f1">Live quizzes</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="engage.f2">Audience participation</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="engage.f3">Instant feedback</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="engage.f4">Leaderboards</span></li>
+                </ul>
+              </div>
+              <div class="product__media">
+                <img
+                  src="assets/images/illus-engage.webp"
+                  data-i18n-alt="engage.alt"
+                  alt="A live quiz on a phone with participant count, countdown and podium cards"
+                  width="580"
+                  height="420"
+                />
+                <!-- Small "app" card drawn with HTML + CSS (decorative) -->
+                <div class="ui-card ui-card--results" aria-hidden="true">
+                  <p class="ui-card__title" data-i18n="cards.results">Live results — Q3</p>
+                  <ul class="bars">
+                    <li><span class="bars__label" data-i18n="cards.a">A</span><span class="bars__track"><span style="width: 12%"></span></span><span class="bars__pct">12%</span></li>
+                    <li class="is-correct"><span class="bars__label" data-i18n="cards.b">B</span><span class="bars__track"><span style="width: 64%"></span></span><span class="bars__pct">64%</span></li>
+                    <li><span class="bars__label" data-i18n="cards.c">C</span><span class="bars__track"><span style="width: 16%"></span></span><span class="bars__pct">16%</span></li>
+                    <li><span class="bars__label" data-i18n="cards.d">D</span><span class="bars__track"><span style="width: 8%"></span></span><span class="bars__pct">8%</span></li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <!-- Learn -->
+            <article id="panel-learn" class="product product--learn" role="tabpanel" aria-labelledby="tab-learn">
+              <div class="product__text">
+                <p class="eyebrow product__eyebrow" data-i18n="products.from">Godwitly</p>
+                <h3 class="product__name" data-i18n="learn.name">Learn</h3>
+                <p class="product__blurb" data-i18n="learn.blurb">
+                  Support structured learning programmes with adaptive practice and assessment.
+                </p>
+                <ul class="check-list">
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="learn.f1">Learning tracks</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="learn.f2">Baseline assessment</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="learn.f3">Personalised practice</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="learn.f4">Final examinations</span></li>
+                </ul>
+              </div>
+              <div class="product__media">
+                <img
+                  src="assets/images/illus-learn.webp"
+                  data-i18n-alt="learn.alt"
+                  alt="A learning programme on a desktop with a study plan at 75% on a phone"
+                  width="580"
+                  height="420"
+                  loading="lazy"
+                />
+                <div class="ui-card ui-card--readiness" aria-hidden="true">
+                  <div class="readiness">
+                    <svg class="donut" viewBox="0 0 44 44">
+                      <circle cx="22" cy="22" r="18" class="donut__track" />
+                      <circle cx="22" cy="22" r="18" class="donut__fill" />
+                    </svg>
+                    <div>
+                      <p class="ui-card__title" data-i18n="cards.readiness">Readiness</p>
+                      <p class="ui-card__muted"><span data-i18n="cards.next">Next: 15-question practice</span><br /><span data-i18n="cards.domain">Domain 3</span></p>
+                    </div>
+                  </div>
+                  <ul class="steps">
+                    <li><span class="step step--done"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg></span><span data-i18n="cards.baseline">Baseline</span></li>
+                    <li><span class="step step--current"></span><span data-i18n="cards.practice">Practice</span></li>
+                    <li><span class="step"></span><span data-i18n="cards.final">Final exam</span></li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <!-- Resilience -->
+            <article id="panel-resilience" class="product product--resilience" role="tabpanel" aria-labelledby="tab-resilience">
+              <div class="product__text">
+                <p class="eyebrow product__eyebrow" data-i18n="products.from">Godwitly</p>
+                <h3 class="product__name" data-i18n="resilience.name">Resilience</h3>
+                <p class="product__blurb" data-i18n="resilience.blurb">
+                  Prepare teams for real-world disruptions through scenario-based tabletop exercises.
+                </p>
+                <ul class="check-list">
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="resilience.f1">Scenario simulation</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="resilience.f2">Team decision making</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="resilience.f3">Maturity assessment</span></li>
+                  <li><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span data-i18n="resilience.f4">Reporting and insights</span></li>
+                </ul>
+              </div>
+              <div class="product__media">
+                <img
+                  src="assets/images/illus-resilience.webp"
+                  data-i18n-alt="resilience.alt"
+                  alt="A crisis management exercise on a laptop with an inject on a phone and a 3.32 maturity score"
+                  width="580"
+                  height="420"
+                  loading="lazy"
+                />
+                <div class="ui-card ui-card--team" aria-hidden="true">
+                  <div class="team">
+                    <span class="team__avatar" data-i18n="cards.initials">CM</span>
+                    <div>
+                      <p class="ui-card__title" data-i18n="cards.team">Crisis Management Team</p>
+                      <p class="ui-card__muted" data-i18n="cards.lead">Lead: Amina Haddad</p>
+                    </div>
+                  </div>
+                  <p class="submitted">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+                    <span data-i18n="cards.submitted">Answer submitted</span>
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 4. WHY GODWITLY ===================== -->
+      <section id="why-godwitly" class="section why" tabindex="-1" aria-labelledby="why-heading">
+        <div class="container why__grid">
+          <div>
+            <p class="eyebrow" data-i18n="why.eyebrow">Why Godwitly</p>
+            <h2 id="why-heading" class="section-title">
+              <span data-i18n="why.title1">Built for progress.</span>
+              <span data-i18n="why.title2">Designed for people.</span>
+            </h2>
+          </div>
+          <ul class="benefits">
+            <li>
+              <span class="benefit__icon"><svg class="icon" aria-hidden="true"><use href="#icon-users"></use></svg></span>
+              <h3 data-i18n="why.b1title">Engaging experiences</h3>
+              <p data-i18n="why.b1text">Turn learning, training and exercises into meaningful participation.</p>
+            </li>
+            <li>
+              <span class="benefit__icon"><svg class="icon" aria-hidden="true"><use href="#icon-workflow"></use></svg></span>
+              <h3 data-i18n="why.b2title">Structured workflows</h3>
+              <p data-i18n="why.b2text">Proven processes from start to finish.</p>
+            </li>
+            <li>
+              <span class="benefit__icon"><svg class="icon" aria-hidden="true"><use href="#icon-chart"></use></svg></span>
+              <h3 data-i18n="why.b3title">Measurable outcomes</h3>
+              <p data-i18n="why.b3text">Track progress, readiness and maturity.</p>
+            </li>
+            <li>
+              <span class="benefit__icon"><svg class="icon" aria-hidden="true"><use href="#icon-devices"></use></svg></span>
+              <h3 data-i18n="why.b4title">Accessible everywhere</h3>
+              <p data-i18n="why.b4text">A seamless experience across desktop and mobile.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ===================== 5. CALL TO ACTION ===================== -->
+      <section class="cta" aria-labelledby="cta-heading">
+        <img src="assets/images/cta-landscape.webp" alt="" class="cta__background" loading="lazy" />
+        <div class="cta__content">
+          <h2 id="cta-heading" class="cta__title" data-i18n="cta.title">Ready to experience Godwitly?</h2>
+          <p data-i18n="cta.text">Discover a smarter way to learn, engage and prepare.</p>
+          <a href="#products" class="pill pill--primary pill--large">
+            <span data-i18n="cta.button">Back to our solutions</span>
+            <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== 6. FOOTER ===================== -->
+    <footer id="about" class="site-footer" tabindex="-1">
+      <p class="container">
+        <span data-i18n="footer.text">Godwitly by BCM Hub — learning, engagement and preparedness for resilient organisations.</span>
+        <span dir="ltr">© <span id="year">2026</span></span>
+      </p>
+    </footer>
+
+    <!-- translations.js must load first: script.js reads the TRANSLATIONS object it defines -->
+    <script src="js/translations.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>
