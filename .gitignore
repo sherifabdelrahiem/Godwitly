@@ -4,3 +4,6 @@
 supabase/.temp/
 supabase/.branches/
 .env*
+.agents/
+.claude/
+skills-lock.json
