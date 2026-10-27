@@ -22,6 +22,29 @@ Findings:
 
 Both fixes were verified in the diff. `git grep` finds no recipient address and no Resend-style key in the working tree.
 
-## Not yet verified (needs PO-approved deploy)
+## Deploy and live verification (2026-10-27, PO-approved)
 
-AC1–AC8 at runtime: the function has not been deployed or run, the migration has not been applied, and no email has been sent. Deno is not installed locally, so the TypeScript has not been type-checked or run. Run `docs/reviews/2026-10-27-signup-email-notify-test-steps.md` after deploy.
+Setup: the PO created the Resend account and entered `RESEND_API_KEY`, `NOTIFY_TO` and `WEBHOOK_SECRET` in the dashboard. Claude then:
+- deployed the function with `supabase functions deploy notify-signup`;
+- applied `20261027150000_notify_signup_trigger.sql` with `supabase db push`. The dry run beforehand listed only this migration.
+
+Secret values never entered chat or any command line. All checks compared SHA-256 digests only.
+
+| Check | Result |
+|---|---|
+| AC2 — GET / POST without secret / POST with wrong secret / malformed body | 405 / 401 / 401 / 400. No email sent. A GET reaching the function (405, not a gateway 401) confirms `verify_jwt = false` is in effect. |
+| Function probe with the correct secret (runbook step 5) | 200 `{"status":"sent"}`. The PO received the email. |
+| AC5 — same id sent twice | 200 both times. The PO received **one** email. |
+| Secrets | The `NOTIFY_TO` digest matches the intended address. The Vault `notify_signup_webhook_secret` digest equals the `WEBHOOK_SECRET` digest. |
+| AC6 — `has_function_privilege(…, 'EXECUTE')` | `anon` false, `authenticated` false |
+| Trigger | `notify_signup` exists and is enabled (`tgenabled = 'O'`). |
+| AC1 (database path) — insert via the public REST API with the publishable key, as the form does | Insert 201. pg_net request 1 returned `status_code` 200 with no error. The PO received the alert. The test row `345ab52d-…` was deleted; 0 `@example.invalid` rows remain. |
+
+## Still not verified
+
+- **AC1 from the browser:** a real form submission on godwitly.pages.dev in EN and AR. The database path above is already proven.
+- **AC3 (a)/(b):** the transaction-scoped fault-injection probes. Their design was reviewed statically and the exception block is in place, but they were not run.
+- **AC4:** a deliberately wrong Resend key producing a 502 in `net._http_response`.
+- **AC7:** the full history `git grep` with secret fragments (a working-tree grep was clean at review time).
+- **AC8:** a visual check of the Edge Function logs.
+- **TypeScript:** not type-checked locally, because Deno is not installed. The deployed function bundled and ran correctly.
