@@ -44,7 +44,10 @@ Do not invent project requirements.
 - `js/script.js`: language switcher, mobile menu, product tabs and smooth scrolling.
 - `js/form.js`: "Get notified" form validation, submission and error/success states.
 - `js/config.js`: Supabase URL and publishable key (public by design).
-- `supabase/migrations/`: SQL migrations (the `launch_signups` table and its rules).
+- `supabase/functions/`: Edge Functions; `notify-signup` sends the owner an alert-only
+  email.
+- `supabase/migrations/`: SQL migrations (the `launch_signups` table, its rules and the
+  `notify_signup` trigger).
 - `assets/images/`: logo, favicon, backgrounds and illustrations.
 - `docs/plans/`, `docs/reviews/`: approved plans and review reports.
 
