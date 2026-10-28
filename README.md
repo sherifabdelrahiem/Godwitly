@@ -37,6 +37,9 @@ The form at the bottom of the page saves sign-ups in the Supabase project **godw
 | `js/config.js` | Supabase address + publishable key (public by design) |
 | `js/form.js` | Checks the answers, sends them, shows errors / success / "Try again" |
 | `supabase/migrations/…_launch_signups.sql` | Creates the `launch_signups` table and its rules |
+| `supabase/migrations/…_notify_signup_trigger.sql` | Adds the `notify_signup` trigger that asks for a Sign-up alert after each new sign-up |
+| `supabase/migrations/…_launch_signups_comment.sql` | Describes the table as "Launch sign-ups from the Godwitly landing page." |
+| `supabase/functions/notify-signup/index.ts` | Edge Function that emails the project owner the Sign-up alert (no visitor details; see "Email alerts") |
 
 - **See the sign-ups:** Supabase dashboard → project *godwitly* → Table Editor → `launch_signups`.
 - **Who can do what:** visitors can only *add* a row. Reading, changing and deleting are blocked
