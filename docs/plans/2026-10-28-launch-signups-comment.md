@@ -1,6 +1,6 @@
 # Plan — `launch_signups` table comment matches the glossary (#7)
 
-> Status: **DRAFT v3**, Codex gate passed (r1, r2); awaiting PO approval
+> Status: **APPROVED v3** by PO · 2026-10-28 (Codex gate r1, r2: PASS, all findings fixed)
 > Issue: #7 · Branch: `fix/launch-signups-comment` → PR → merge → apply migration
 > (applying needs separate PO approval)
 
