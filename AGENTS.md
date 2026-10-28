@@ -22,8 +22,8 @@ Before implementing a change, review the relevant existing sources:
   `docs/plans/`.
 - Design system: `css/styles.css` (tokens are the variables in `:root`), the existing
   page in `index.html`, and the behaviour in `js/`.
-- Task tracking: no external tracker. The project owner (PO) is the repository owner.
-  Every change follows this workflow:
+- Task tracking: GitHub Issues (see "Agent skills" below). The project owner (PO) is
+  the repository owner. Every change follows this workflow:
   1. Write a plan in `docs/plans/YYYY-MM-DD-<topic>.md` and label its lane:
      - **Critical**: personal data, security, Supabase or other backend changes. Needs
        a full plan plus a Codex plan gate. Save the gate reports in `docs/reviews/`.
@@ -50,6 +50,9 @@ Do not invent project requirements.
   `notify_signup` trigger).
 - `assets/images/`: logo, favicon, backgrounds and illustrations.
 - `docs/plans/`, `docs/reviews/`: approved plans and review reports.
+- `docs/agents/`: issue tracker, triage label and domain-doc settings read by agent skills.
+- `GLOSSARY.md`: the agreed domain terms in English and Arabic; use them in text, plans
+  and issues.
 
 ## Development commands
 
@@ -124,3 +127,17 @@ When finished, explain:
 1. What changed and why.
 2. What was tested and the result.
 3. Any remaining limitations, failures or decisions.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues for `sherifabdelrahiem/Godwitly` (via the `gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
