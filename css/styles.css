@@ -265,7 +265,7 @@ footer[id] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px; /* 16px from 400px, see section 10 */
+  gap: 8px;
   min-height: var(--header-height);
 }
 
