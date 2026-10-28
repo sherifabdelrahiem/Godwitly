@@ -168,6 +168,25 @@ The message sent at launch to everyone with a launch sign-up; the only contact t
 Arabic: إشعار الإطلاق
 
 **Sign-up alert**:
-The internal email the project owner receives for each new launch sign-up. It carries no
+The internal email the Project owner receives for each new launch sign-up. It carries no
 personal data.
 _Avoid_: notification, notify email
+
+### Access to sign-ups
+
+**Project owner**:
+The one person who runs the landing page and decides who may see Launch sign-ups.
+Arabic: صاحب المشروع
+_Avoid_: admin, superuser
+
+**Sign-up viewer**:
+A person the Project owner has allowed to see Launch sign-ups and their figures. Viewing is
+all they can do.
+Arabic: مُطّلع على طلبات الإشعار
+_Avoid_: admin, team member, operator
+
+**Sign-up dashboard**:
+The private page where the Project owner and Sign-up viewers see Launch sign-ups and their
+figures.
+Arabic: لوحة طلبات الإشعار
+_Avoid_: admin panel, back office, CRM
