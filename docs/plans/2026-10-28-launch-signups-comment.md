@@ -1,6 +1,6 @@
 # Plan — `launch_signups` table comment matches the glossary (#7)
 
-> Status: **DRAFT v2**, awaiting Codex plan gate round 2 and PO approval
+> Status: **DRAFT v3**, Codex gate passed (r1, r2); awaiting PO approval
 > Issue: #7 · Branch: `fix/launch-signups-comment` → PR → merge → apply migration
 > (applying needs separate PO approval)
 
@@ -16,6 +16,10 @@ Metadata only: no data, column, check, RLS, grant, policy, trigger or function c
 - **v2:** fixes all r1 findings: lock wording and timeouts (r1 #1), full permission
   comparison (r1 #2), full trigger and function comparison (r1 #3), row count as supporting
   evidence only (r1 #4), verbatim rollback (r1 #5).
+- **v2:** Codex gate r2 **PASS** (0×P1, 1×P2): r1 #4 partly open, because AC4 still asked to
+  inspect rows. Report appended to the same file.
+- **v3:** fixes r2: AC4 no longer inspects rows; a count change under live traffic is recorded
+  as inconclusive (r2 / r1 #4).
 
 ## Goal
 
@@ -53,7 +57,8 @@ the schema (Table Editor, SQL Editor, generated API docs) should see the glossar
 
 ## Acceptance criteria and probes
 
-All probes are read-only metadata queries, run as the same role (`postgres`, Dashboard →
+All probes are read-only. AC1–AC3 read only metadata; AC4 reads one aggregate count and no
+personal fields. Run them as the same role (`postgres`, Dashboard →
 SQL Editor) before and after, with fixed ordering so outputs can be compared line by line.
 
 - **AC1 — comment changed.**
@@ -72,9 +77,9 @@ SQL Editor) before and after, with fixed ordering so outputs can be compared lin
   (The function body holds no secret; the hash just keeps the output short.)
 - **AC4 — no data change (r1 #4).** Primary evidence: the reviewed migration file contains
   only the two `set` statements and the one `comment on table` statement, so it cannot change
-  rows. Supporting evidence: `select count(*) from public.launch_signups;` before and after;
-  any increase should match sign-ups received in between (visible as new rows by
-  `created_at` in the Table Editor).
+  rows. Supporting evidence only: `select count(*) from public.launch_signups;` before and
+  after. Equal counts support the claim; if the count changed (live sign-ups can arrive at
+  any time), record the result as inconclusive. Do not open or inspect rows to explain it.
 - **AC5 — history consistent.** After push, `supabase migration list` shows
   `20261028120000` on both local and remote.
 - **AC6 — form still works (optional, PO decides).** A live test submission would also send a
