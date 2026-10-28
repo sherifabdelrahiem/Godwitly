@@ -29,7 +29,7 @@ const TRANSLATIONS = {
     "nav.products": "Products",
     "nav.why": "Why Godwitly",
     "nav.about": "About",
-    "nav.contact": "Contact us",
+    "nav.contact": "Get notified",
 
     // Hero
     "hero.line1": "Learn Smarter.",
@@ -152,7 +152,7 @@ const TRANSLATIONS = {
     "nav.products": "المنتجات",
     "nav.why": "لماذا Godwitly؟",
     "nav.about": "نبذة عنّا",
-    "nav.contact": "تواصل معنا",
+    "nav.contact": "احصل على إشعار",
 
     "hero.line1": "تعلّم بذكاء أكبر.",
     "hero.line2": "تفاعل بفاعلية أكبر.",
@@ -239,7 +239,7 @@ const TRANSLATIONS = {
     "form.retry": "حاول مرة أخرى",
     "form.checkFields": "يُرجى مراجعة الحقول المحددة.",
     "form.errorNetwork": "تعذّر إرسال بياناتك. يُرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
-    "form.errorNotSetUp": "نموذج التسجيل غير متصل بعد. يُرجى المحاولة لاحقًا.",
+    "form.errorNotSetUp": "نموذج طلب الإشعار غير متصل بعد. يُرجى المحاولة لاحقًا.",
     "form.successTitle": "شكرًا لك! تمت إضافتك إلى القائمة.",
     "form.successText": "سنُبلغك فور إطلاق Godwitly.",
     "error.name": "يُرجى إدخال اسمك الكامل.",
