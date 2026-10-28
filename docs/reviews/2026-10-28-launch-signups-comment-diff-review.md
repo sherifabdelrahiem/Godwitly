@@ -38,10 +38,43 @@
 - No local database test: Docker is installed but not running and no Postgres image is
   present; downloading one needs PO approval. Codex confirmed the SQL is valid PostgreSQL, and
   the dry run (step 5) is a further check before anything applies.
-- Steps 3–7 and AC1–AC6 run against the live database after merge, each with PO approval.
-  Results will be added to this file.
+- Steps 3–7 and AC1–AC6 ran against the live database after merge; see below.
 
 ### Follow-up noted (out of scope)
 
 - `README.md`'s Supabase file table lists only the first migration; it doesn't list the
   trigger migration or this one.
+
+## Live application (2026-10-28, each step PO-approved)
+
+Run by Claude with the Supabase CLI (v2.121.0) against the linked project
+`ijpvbxglhxktnkabjdif`. Probes used `supabase db query --linked` (Management API), the same
+way before and after, so the outputs compare directly. All probes were `select`s.
+
+1. **Before probes** (AC1–AC4): recorded; AC1 read
+   `Waitlist sign-ups from the Godwitly landing page contact form.` (kept for C8 rollback).
+2. **`supabase migration list`:** `20261027120000` and `20261027150000` on both sides;
+   only `20261028120000` local-only. As expected.
+3. **`supabase db push --dry-run`:** would push only
+   `20261028120000_launch_signups_comment.sql`; no seeds, no roles. As expected.
+4. **`supabase db push`:** applied `20261028120000_launch_signups_comment.sql`; finished
+   without errors (no lock timeout).
+5. **After probes:**
+
+| Check | Result |
+|---|---|
+| AC1 comment | **Changed** to `Launch sign-ups from the Godwitly landing page.` |
+| AC2 table ACL, RLS flags | Identical (`postgres`, `service_role` full; RLS on; forced RLS off) |
+| AC2 column ACLs | Identical (`anon` insert-only on the 7 form columns) |
+| AC2 policies | Identical ("Visitors can sign up", PERMISSIVE, INSERT, `anon`) |
+| AC3 trigger + function | Identical (`notify_signup`, enabled, AFTER INSERT; function md5 `7b629f1d2ce07f0579ef49712d84bd02`) |
+| AC4 row count | Identical (3) |
+| AC5 history | `20261028120000` now on local and remote |
+
+AC6 (live test sign-up) was not run: optional, and the migration touches no path the form
+uses, as AC2 and AC3 confirm.
+
+The CLI printed "Initialising login role..." before each connection; that is its own
+temporary login, not a change to the table.
+
+Issue #7 closed.
