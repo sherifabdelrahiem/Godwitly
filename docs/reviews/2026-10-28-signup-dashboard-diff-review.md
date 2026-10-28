@@ -132,4 +132,13 @@ Not verified: that live GoTrue maps the hook's 403 to `error=access_denied`. AC2
 | Spec (a)1: Sign out on the start-up error screen | **Fixed:** the header Sign out is always shown on the error screen; `signOut()` already forgets a session it can't revoke |
 | Spec (b): extra behaviour | **Proposed accept:** each item supports a decided behaviour (sign-out robustness, P-e guidance, clearer states) and adds no data, permission or scope |
 
-The "proposed accept" items need the PO's explicit acceptance before merge.
+**PO acceptance (2026-10-28):** the PO explicitly accepted all three "proposed accept" items
+for this MVP (decision A3):
+
+1. The baseline code-smell suggestions are **deferred** to a later architecture-improvement
+   pass.
+2. The extra behaviour is **accepted**: the backup sign-out, the extra Access messages, the
+   counts, the chart notes and the search hint.
+3. The raw `#f1f5f9` in `css/dashboard.css` is **accepted**.
+
+With this, every finding in this review is either fixed or accepted.
