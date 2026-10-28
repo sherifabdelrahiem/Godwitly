@@ -1,4 +1,4 @@
-# Codex plan gate — launch_signups comment (round 1)
+# Codex plan gate — launch_signups comment (rounds 1–2)
 
 > Reviewer: Codex (GPT-6), read-only · Plan: docs/plans/2026-10-28-launch-signups-comment.md v1 · 2026-10-28
 
