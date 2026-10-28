@@ -9,8 +9,10 @@
 - Users: organisations and training managers, mostly Arabic and English speakers.
 - Current stage: MVP. Live at https://godwitly.pages.dev
 - Technology: static HTML, CSS and vanilla JavaScript (no build tools, no package
-  manager). Supabase project `godwitly` (Frankfurt, `eu-central-1`) stores form sign-ups.
-  Hosted on Cloudflare Pages. Fonts are loaded from Google Fonts.
+  manager). Supabase project `godwitly` (Frankfurt, `eu-central-1`) stores form sign-ups
+  and, through Supabase Auth with Google sign-in, controls who may read them on the Sign-up
+  dashboard (ADR-0005). Hosted on Cloudflare Pages. Fonts are loaded from Google Fonts; the
+  dashboard alone also loads supabase-js from jsDelivr at a pinned version with an SRI hash.
 
 ## Sources of truth
 

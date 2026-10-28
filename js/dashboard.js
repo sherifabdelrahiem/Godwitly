@@ -754,7 +754,10 @@
 
     // The header's Sign out shows while someone is signed in. "No access" has its own.
     const headerSignOut = document.querySelector(".dash-header .dash-signout");
-    headerSignOut.hidden = !state.hasSession || !["loading", "error", "dashboard"].includes(state.view);
+    // On the error screen a session may still be stored even if it was never confirmed, so
+    // Sign out is always offered there (signOut() also forgets a session it can't revoke).
+    headerSignOut.hidden =
+      state.view !== "error" && !(state.hasSession && ["loading", "dashboard"].includes(state.view));
     document.querySelectorAll('[data-action="sign-in"]').forEach((button) => {
       button.disabled = state.signingOut;
     });

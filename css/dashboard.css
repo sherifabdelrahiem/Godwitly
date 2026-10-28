@@ -21,6 +21,11 @@
   sets; they grow from the start edge (left in English, right in Arabic).
 */
 
+/* Dashboard-only colours (the shared ones live in css/styles.css) */
+:root {
+  --color-danger-hover: #9f1239; /* darker red for a hovered "Remove" button */
+}
+
 /* ---------- 1. Shared pieces ---------- */
 
 /* Read by screen readers, not shown on screen */
@@ -103,7 +108,7 @@
 }
 
 .dash-pill-danger:hover {
-  background: #9f1239;
+  background: var(--color-danger-hover);
 }
 
 .pill:disabled {

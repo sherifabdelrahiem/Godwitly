@@ -265,8 +265,9 @@ photographed; treat any such copy as a possible personal-data incident.
 3. Optional: Authentication → Users → delete the viewers' Auth accounts. This ends their
    refresh tokens.
 
-**Restore** only with PO approval, once the cause is fixed: re-run the two `grant` lines from
-the `…_signup_dashboard.sql` migration, then turn Google back on.
+**Restore** only with PO approval, once the cause is fixed: re-run the five `grant` statements
+below (one table grant and four function grants, copied from the `…_signup_dashboard.sql`
+migration), then turn Google back on.
 
 ```sql
 grant select on public.launch_signups to authenticated;
