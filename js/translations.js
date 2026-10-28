@@ -101,7 +101,7 @@ const TRANSLATIONS = {
     "why.b2title": "Structured workflows",
     "why.b2text": "Proven processes from start to finish.",
     "why.b3title": "Measurable outcomes",
-    "why.b3text": "Track progress, readiness and maturity.",
+    "why.b3text": "Track progress, preparedness and maturity.",
     "why.b4title": "Accessible everywhere",
     "why.b4text": "A seamless experience across desktop and mobile.",
 
@@ -219,7 +219,7 @@ const TRANSLATIONS = {
     "why.b2title": "مسارات عمل منظّمة",
     "why.b2text": "عمليات مُجرّبة من البداية حتى النهاية.",
     "why.b3title": "نتائج قابلة للقياس",
-    "why.b3text": "تابِع التقدّم والجاهزية ومستوى النضج.",
+    "why.b3text": "تابِع التقدّم والاستعداد المؤسسي ومستوى النضج.",
     "why.b4title": "متاحة في كل مكان",
     "why.b4text": "تجربة سلسة على أجهزة الحاسوب والهواتف المحمولة.",
 
