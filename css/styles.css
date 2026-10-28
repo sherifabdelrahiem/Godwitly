@@ -265,7 +265,7 @@ footer[id] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px; /* 16px from 400px, see section 10 */
   min-height: var(--header-height);
 }
 
@@ -276,7 +276,7 @@ footer[id] {
 
 .logo {
   width: auto;
-  height: 32px;
+  height: 28px;
 }
 
 .main-nav {
@@ -300,7 +300,7 @@ footer[id] {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 /* Language switcher */
@@ -322,7 +322,7 @@ footer[id] {
 
 .lang-switch__btn {
   min-height: 36px;
-  padding: 6px 12px;
+  padding: 6px 8px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -349,7 +349,7 @@ footer[id] {
 /* Mobile menu button (hamburger) */
 .menu-button {
   display: inline-flex;
-  padding: 8px;
+  padding: 6px;
   border: 0;
   border-radius: 8px;
   background: transparent;
@@ -1102,10 +1102,30 @@ html[lang="ar"] .steps {
 
 /* ---------- 10. Larger screens ---------- */
 
-/* Small phones: hide the globe so the header fits */
+/* Small phones (under 400px) get a tighter header and no globe, so it fits at 320px */
 @media (min-width: 400px) {
+  .site-header {
+    gap: 16px;
+  }
+
+  .logo {
+    height: 32px;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
   .lang-switch__globe {
     display: block;
+  }
+
+  .lang-switch__btn {
+    padding: 6px 12px;
+  }
+
+  .menu-button {
+    padding: 8px;
   }
 }
 
