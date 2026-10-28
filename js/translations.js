@@ -29,7 +29,7 @@ const TRANSLATIONS = {
     "nav.products": "Products",
     "nav.why": "Why Godwitly",
     "nav.about": "About",
-    "nav.contact": "Contact us",
+    "nav.contact": "Get notified",
 
     // Hero
     "hero.line1": "Learn Smarter.",
@@ -37,16 +37,16 @@ const TRANSLATIONS = {
     "hero.line3": "Prepare Stronger.",
     "hero.intro":
       "One platform that transforms learning, participation, and organisational preparedness through interactive digital experiences.",
-    "hero.explore": "Explore Our Solutions",
+    "hero.explore": "Explore Our Products",
     "hero.devicesAlt":
-      "Godwitly on desktop, laptop and phone: My Programmes, a live quiz and a crisis management exercise with a 3.32 maturity score",
+      "Godwitly on desktop, laptop and phone: My Programmes, a live quiz, a crisis management exercise and the organisation's 3.32 maturity score",
 
     // Products section
-    "products.eyebrow": "Our solutions",
+    "products.eyebrow": "Our products",
     "products.title1": "Three products.",
     "products.title2": "A stronger tomorrow.",
     "products.intro":
-      "Whether you're building knowledge, engaging people, or preparing for what's next, Godwitly helps you turn progress into real-world readiness.",
+      "Whether you're building knowledge, engaging people, or preparing for what's next, Godwitly helps you turn progress into real-world preparedness.",
     "products.tablist": "Godwitly products",
     "products.from": "Godwitly",
 
@@ -60,20 +60,20 @@ const TRANSLATIONS = {
 
     "learn.name": "Learn",
     "learn.blurb": "Support structured learning programmes with adaptive practice and assessment.",
-    "learn.f1": "Learning tracks",
+    "learn.f1": "Structured programmes",
     "learn.f2": "Baseline assessment",
     "learn.f3": "Personalised practice",
-    "learn.f4": "Final examinations",
+    "learn.f4": "Final exams",
     "learn.alt": "A learning programme on a desktop with a study plan at 75% on a phone",
 
     "resilience.name": "Resilience",
     "resilience.blurb": "Prepare teams for real-world disruptions through scenario-based tabletop exercises.",
-    "resilience.f1": "Scenario simulation",
+    "resilience.f1": "Realistic scenarios",
     "resilience.f2": "Team decision making",
     "resilience.f3": "Maturity assessment",
     "resilience.f4": "Reporting and insights",
     "resilience.alt":
-      "A crisis management exercise on a laptop with an inject on a phone and a 3.32 maturity score",
+      "A crisis management exercise on a laptop, an inject on a phone, and the organisation's 3.32 maturity score",
 
     // Small "app" cards over the product pictures
     "cards.results": "Live results — Q3",
@@ -134,13 +134,13 @@ const TRANSLATIONS = {
     "error.consent": "Please tick the box to agree.",
 
     // Footer
-    "footer.text": "Godwitly by BCM Hub — learning, engagement and preparedness for resilient organisations.",
+    "footer.text": "Godwitly by BCM Hub — learning, engagement and organisational preparedness.",
   },
 
   ar: {
     "meta.title": "Godwitly — تعلّم، تفاعل، استعدّ",
     "meta.description":
-      "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والجاهزية المؤسسية من خلال تجارب رقمية تفاعلية.",
+      "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والاستعداد المؤسسي من خلال تجارب رقمية تفاعلية.",
 
     "a11y.skip": "انتقل إلى المحتوى الرئيسي",
     "a11y.home": "الصفحة الرئيسية لـ Godwitly",
@@ -152,22 +152,22 @@ const TRANSLATIONS = {
     "nav.products": "المنتجات",
     "nav.why": "لماذا Godwitly؟",
     "nav.about": "نبذة عنّا",
-    "nav.contact": "تواصل معنا",
+    "nav.contact": "احصل على إشعار",
 
     "hero.line1": "تعلّم بذكاء أكبر.",
     "hero.line2": "تفاعل بفاعلية أكبر.",
     "hero.line3": "استعدّ بقوة أكبر.",
     "hero.intro":
-      "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والجاهزية المؤسسية من خلال تجارب رقمية تفاعلية.",
-    "hero.explore": "استكشف حلولنا",
+      "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والاستعداد المؤسسي من خلال تجارب رقمية تفاعلية.",
+    "hero.explore": "استكشف منتجاتنا",
     "hero.devicesAlt":
-      "منصة Godwitly على حاسوب مكتبي وحاسوب محمول وهاتف: صفحة برامجي، واختبار مباشر، وتمرين لإدارة الأزمات بدرجة نضج 3.32",
+      "منصة Godwitly على حاسوب مكتبي وحاسوب محمول وهاتف: صفحة برامجي، واختبار مباشر، وتمرين لإدارة الأزمات، ودرجة نضج المؤسسة 3.32",
 
-    "products.eyebrow": "حلولنا",
+    "products.eyebrow": "منتجاتنا",
     "products.title1": "ثلاثة منتجات.",
     "products.title2": "لغدٍ أقوى.",
     "products.intro":
-      "سواء كنت تبني المعرفة، أو تُشرك الناس، أو تستعد لما هو قادم، تساعدك Godwitly على تحويل التقدّم إلى جاهزية حقيقية على أرض الواقع.",
+      "سواء كنت تبني المعرفة، أو تُشرك الناس، أو تستعد لما هو قادم، تساعدك Godwitly على تحويل التقدّم إلى استعداد حقيقي على أرض الواقع.",
     "products.tablist": "منتجات Godwitly",
     "products.from": "من Godwitly",
 
@@ -180,20 +180,20 @@ const TRANSLATIONS = {
     "engage.alt": "اختبار مباشر على هاتف يعرض عدد المشاركين والعدّ التنازلي وبطاقات منصة التتويج",
 
     "learn.name": "تعلُّم",
-    "learn.blurb": "ادعم برامج التعلّم المنظّمة بتدريب تكيّفي وتقييمات متكاملة.",
-    "learn.f1": "مسارات تعليمية",
+    "learn.blurb": "ادعم برامج التعلّم المنظّمة بممارسة تكيّفية وتقييمات متكاملة.",
+    "learn.f1": "برامج منظّمة",
     "learn.f2": "تقييم مبدئي",
-    "learn.f3": "تدريب مخصّص",
-    "learn.f4": "اختبارات نهائية",
+    "learn.f3": "ممارسة مخصّصة",
+    "learn.f4": "امتحانات نهائية",
     "learn.alt": "برنامج تعليمي على حاسوب مكتبي، وخطة دراسة مكتملة بنسبة 75% على هاتف",
 
     "resilience.name": "مرونة",
-    "resilience.blurb": "جهّز الفرق لمواجهة الاضطرابات الواقعية من خلال تمارين محاكاة قائمة على السيناريوهات.",
-    "resilience.f1": "محاكاة السيناريوهات",
+    "resilience.blurb": "جهّز الفرق لمواجهة الاضطرابات الواقعية من خلال تمارين قائمة على السيناريوهات.",
+    "resilience.f1": "سيناريوهات واقعية",
     "resilience.f2": "اتخاذ القرار الجماعي",
     "resilience.f3": "تقييم مستوى النضج",
     "resilience.f4": "التقارير والرؤى",
-    "resilience.alt": "تمرين لإدارة الأزمات على حاسوب محمول، وحدث مستجد على هاتف، ودرجة نضج 3.32",
+    "resilience.alt": "تمرين لإدارة الأزمات على حاسوب محمول، وحدث مستجد على هاتف، ودرجة نضج المؤسسة 3.32",
 
     "cards.results": "النتائج المباشرة — السؤال 3",
     "cards.a": "أ",
@@ -201,11 +201,11 @@ const TRANSLATIONS = {
     "cards.c": "ج",
     "cards.d": "د",
     "cards.readiness": "الجاهزية",
-    "cards.next": "التالي: تدريب من 15 سؤالًا",
+    "cards.next": "التالي: ممارسة من 15 سؤالًا",
     "cards.domain": "المجال 3",
     "cards.baseline": "التقييم المبدئي",
-    "cards.practice": "التدريب",
-    "cards.final": "الاختبار النهائي",
+    "cards.practice": "الممارسة",
+    "cards.final": "الامتحان النهائي",
     "cards.initials": "إأ",
     "cards.team": "فريق إدارة الأزمات",
     "cards.lead": "القائدة: أمينة حداد",
@@ -239,7 +239,7 @@ const TRANSLATIONS = {
     "form.retry": "حاول مرة أخرى",
     "form.checkFields": "يُرجى مراجعة الحقول المحددة.",
     "form.errorNetwork": "تعذّر إرسال بياناتك. يُرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
-    "form.errorNotSetUp": "نموذج التسجيل غير متصل بعد. يُرجى المحاولة لاحقًا.",
+    "form.errorNotSetUp": "نموذج طلب الإشعار غير متصل بعد. يُرجى المحاولة لاحقًا.",
     "form.successTitle": "شكرًا لك! تمت إضافتك إلى القائمة.",
     "form.successText": "سنُبلغك فور إطلاق Godwitly.",
     "error.name": "يُرجى إدخال اسمك الكامل.",
@@ -249,6 +249,6 @@ const TRANSLATIONS = {
     "error.message": "يُرجى ألا تتجاوز رسالتك 1000 حرف.",
     "error.consent": "يُرجى تحديد المربع للموافقة.",
 
-    "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والجاهزية لمؤسسات أكثر مرونة.",
+    "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والاستعداد المؤسسي.",
   },
 };
