@@ -48,6 +48,10 @@ access table, an Auth hook and new database permissions.
   - r2 #3: every AC8 call is fully qualified.
   - r2 #8: the AC3 write probes target one synthetic test row, never real sign-ups, and run
     only after the AC14 grant checks pass.
+- **D1 (PO, 2026-10-28, after the build):** the dashboard view has no Try again; that
+  button exists only on the error screen. AC4 and AC10 now use a page reload. AC5
+  explicitly never reloads, so it still proves that late responses after Sign out or
+  removal cannot restore data.
 
 ## Goal
 
@@ -579,13 +583,22 @@ a non-null `error`; the expected `error.code` is given where it is fixed.
    - `(await probe.from('launch_signups').select('id')).data` returns `[]`.
    - `(await probe.rpc('dashboard_role')).data` returns `'none'`.
 
-   Both **Try again** and a page reload show **no access**, not the empty state. The open
-   page's `document.body.textContent` no longer contains any test sign-up value.
-5. **Stale responses are dropped (r1 #2):** in DevTools, set Network → throttling to
-   "Slow 3G", start a load, and click **Sign out** before it finishes. After all requests have
-   settled, the page stays **signed out**, and `document.body.textContent` contains no
-   sign-up value. Repeat with the owner removing the viewer during a slow load, then Try
-   again: the page stays **no access**.
+   Then **reload the page** (D1). It shows **no access**, not the empty state, and
+   `document.body.textContent` contains no test sign-up value. Try again exists only on the
+   **error** screen, so this AC doesn't use it.
+5. **Stale responses are dropped (r1 #2):** this AC must exercise late responses, so it
+   **never reloads the page** (D1). In DevTools, set Network → throttling to "Slow 3G".
+   - **(a) Sign out while requests are pending:** start a load as a viewer and click
+     **Sign out** while the `dashboard_role` and sign-up page requests are still pending.
+     Wait until the Network panel shows every request finished. The page stays **signed
+     out**, and `document.body.textContent` contains no sign-up value, so no late response
+     restored data.
+   - **(b) The same as the owner,** with the Access list request also pending. The Access
+     section stays empty and hidden.
+   - **(c) Removal during a load:** start a slow load as a viewer, and have the owner remove
+     that viewer before the load finishes. Without reloading, when the load completes, the
+     role re-check at the end of the load shows **no access**, never the dashboard, the
+     empty state or a partial list.
 6. **Owner Access:**
    - Adding `"  Viewer@Example.com "` shows `viewer@example.com`.
    - Adding it again shows "already a viewer", and `not-an-email` shows "invalid address".
@@ -646,7 +659,7 @@ a non-null `error`; the expected `error.code` is given where it is fixed.
       no duplicates).
     - Then pause on a DevTools breakpoint between two page requests, insert a test row in the
       SQL editor, and resume. The page has no duplicates and no missing older rows, and the
-      new row appears only after Try again. Delete the test row afterwards.
+      new row appears only after a page reload (D1). Delete the test row afterwards.
 11. **Session and headers:**
     - Close the tab, open the dashboard in a new tab: the person must sign in again.
     - Sign out returns to **signed out**, and the page text no longer contains sign-up values.

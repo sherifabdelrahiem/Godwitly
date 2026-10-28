@@ -45,11 +45,17 @@ Do not invent project requirements.
 - `js/translations.js`: every piece of text in English (`en`) and Arabic (`ar`).
 - `js/script.js`: language switcher, mobile menu, product tabs and smooth scrolling.
 - `js/form.js`: "Get notified" form validation, submission and error/success states.
-- `js/config.js`: Supabase URL and publishable key (public by design).
+- `js/config.js`: Supabase URL and publishable key (public by design); used by the form
+  and the Sign-up dashboard.
+- `dashboard.html`: the private Sign-up dashboard (Google sign-in; not linked, `noindex`).
+- `css/dashboard.css`: dashboard-only styling; reuses the `:root` variables.
+- `js/dashboard.js`: dashboard sign-in, Launch sign-ups list, search, figures and Access.
+- `_headers`: Cloudflare Pages security headers (CSP) for the dashboard only.
 - `supabase/functions/`: Edge Functions; `notify-signup` sends the owner an alert-only
   email.
-- `supabase/migrations/`: SQL migrations (the `launch_signups` table, its rules and the
-  `notify_signup` trigger).
+- `supabase/migrations/`: SQL migrations (the `launch_signups` table, its rules, the
+  `notify_signup` trigger, and the Sign-up dashboard's viewers list, Auth hook and read
+  policy).
 - `assets/images/`: logo, favicon, backgrounds and illustrations.
 - `docs/plans/`, `docs/reviews/`: approved plans and review reports.
 - `docs/adr/`: architecture decision records; read them before changing the form, the
@@ -64,13 +70,15 @@ Use the commands verified for this repository:
 
 - Install: none (no dependencies).
 - Run locally: `open index.html`. Add `?lang=ar` to the URL for the Arabic version.
+  The Sign-up dashboard needs a local server: `python3 -m http.server 8000`, then
+  http://localhost:8000/dashboard.html (online only; see README "Sign-up dashboard").
 - Lint: none configured.
 - Test: none configured; verify manually in a browser (see Verification).
 - Build: none. Never push to `main` directly.
 - Deploy: manual. The Cloudflare Pages project `godwitly` is not connected to GitHub, so
   merging to `main` does **not** deploy. Ask the PO first, then copy only the site files
   from `main` into an empty folder and upload them:
-  `git archive main index.html css js assets | tar -x -C <empty-folder>`, then
+  `git archive main index.html dashboard.html _headers css js assets | tar -x -C <empty-folder>`, then
   `npx wrangler@4.153.0 pages deploy <empty-folder> --project-name godwitly --branch main
   --commit-hash "$(git rev-parse main)"`. Check https://godwitly.pages.dev afterwards.
 
@@ -85,7 +93,7 @@ If a command is unavailable or fails, report that accurately.
 - All user-facing text goes in `js/translations.js`; update both `en` and `ar` together.
 - Form rules exist in both `js/form.js` and the Supabase migration; change both together.
 - The page must keep working when opened by double-click (`file://`) and on Cloudflare
-  Pages.
+  Pages. Exception: `dashboard.html` works online only (ADR-0005).
 
 ## Web app and design
 
@@ -102,7 +110,9 @@ If a command is unavailable or fails, report that accurately.
   secret / service_role key. Only the publishable key belongs in `js/config.js`.
 - Validate input and enforce access control at the appropriate server boundary. The
   public key may only insert into `launch_signups`, and the database enforces the
-  field checks.
+  field checks. Signed-in Sign-up viewers (Google sign-in only) may SELECT
+  `launch_signups` through RLS; nobody else can read it. Only the Project owner manages
+  the Sign-up viewers list, and never in Git.
 - Follow project requirements for authentication, privacy and logging (see `README.md`),
   including deleting old sign-ups about 12 months after launch.
 - Do not expose sensitive information in logs or error messages.
