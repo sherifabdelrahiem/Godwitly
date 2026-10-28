@@ -37,16 +37,16 @@ const TRANSLATIONS = {
     "hero.line3": "Prepare Stronger.",
     "hero.intro":
       "One platform that transforms learning, participation, and organisational preparedness through interactive digital experiences.",
-    "hero.explore": "Explore Our Solutions",
+    "hero.explore": "Explore Our Products",
     "hero.devicesAlt":
       "Godwitly on desktop, laptop and phone: My Programmes, a live quiz and a crisis management exercise with a 3.32 maturity score",
 
     // Products section
-    "products.eyebrow": "Our solutions",
+    "products.eyebrow": "Our products",
     "products.title1": "Three products.",
     "products.title2": "A stronger tomorrow.",
     "products.intro":
-      "Whether you're building knowledge, engaging people, or preparing for what's next, Godwitly helps you turn progress into real-world readiness.",
+      "Whether you're building knowledge, engaging people, or preparing for what's next, Godwitly helps you turn progress into real-world preparedness.",
     "products.tablist": "Godwitly products",
     "products.from": "Godwitly",
 
@@ -134,13 +134,13 @@ const TRANSLATIONS = {
     "error.consent": "Please tick the box to agree.",
 
     // Footer
-    "footer.text": "Godwitly by BCM Hub — learning, engagement and preparedness for resilient organisations.",
+    "footer.text": "Godwitly by BCM Hub — learning, engagement and organisational preparedness.",
   },
 
   ar: {
     "meta.title": "Godwitly — تعلّم، تفاعل، استعدّ",
     "meta.description":
-      "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والجاهزية المؤسسية من خلال تجارب رقمية تفاعلية.",
+      "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والاستعداد المؤسسي من خلال تجارب رقمية تفاعلية.",
 
     "a11y.skip": "انتقل إلى المحتوى الرئيسي",
     "a11y.home": "الصفحة الرئيسية لـ Godwitly",
@@ -158,16 +158,16 @@ const TRANSLATIONS = {
     "hero.line2": "تفاعل بفاعلية أكبر.",
     "hero.line3": "استعدّ بقوة أكبر.",
     "hero.intro":
-      "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والجاهزية المؤسسية من خلال تجارب رقمية تفاعلية.",
-    "hero.explore": "استكشف حلولنا",
+      "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والاستعداد المؤسسي من خلال تجارب رقمية تفاعلية.",
+    "hero.explore": "استكشف منتجاتنا",
     "hero.devicesAlt":
       "منصة Godwitly على حاسوب مكتبي وحاسوب محمول وهاتف: صفحة برامجي، واختبار مباشر، وتمرين لإدارة الأزمات بدرجة نضج 3.32",
 
-    "products.eyebrow": "حلولنا",
+    "products.eyebrow": "منتجاتنا",
     "products.title1": "ثلاثة منتجات.",
     "products.title2": "لغدٍ أقوى.",
     "products.intro":
-      "سواء كنت تبني المعرفة، أو تُشرك الناس، أو تستعد لما هو قادم، تساعدك Godwitly على تحويل التقدّم إلى جاهزية حقيقية على أرض الواقع.",
+      "سواء كنت تبني المعرفة، أو تُشرك الناس، أو تستعد لما هو قادم، تساعدك Godwitly على تحويل التقدّم إلى استعداد حقيقي على أرض الواقع.",
     "products.tablist": "منتجات Godwitly",
     "products.from": "من Godwitly",
 
@@ -249,6 +249,6 @@ const TRANSLATIONS = {
     "error.message": "يُرجى ألا تتجاوز رسالتك 1000 حرف.",
     "error.consent": "يُرجى تحديد المربع للموافقة.",
 
-    "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والجاهزية لمؤسسات أكثر مرونة.",
+    "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والاستعداد المؤسسي.",
   },
 };
