@@ -52,6 +52,8 @@ Do not invent project requirements.
   `notify_signup` trigger).
 - `assets/images/`: logo, favicon, backgrounds and illustrations.
 - `docs/plans/`, `docs/reviews/`: approved plans and review reports.
+- `docs/adr/`: architecture decision records; read them before changing the form, the
+  alerts or the site setup.
 - `docs/agents/`: issue tracker, triage label and domain-doc settings read by agent skills.
 - `GLOSSARY.md`: the agreed domain terms in English and Arabic; use them in text, plans
   and issues.
