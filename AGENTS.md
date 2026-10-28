@@ -32,6 +32,8 @@ Before implementing a change, review the relevant existing sources:
      - There is no lighter lane; even small text or colour fixes are Standard.
   2. Get PO approval before implementing.
   3. Work on a feature branch, push it, open a PR, and merge into `main`.
+  4. If the change touches the site files, deploy `main` to Cloudflare Pages (see
+     Development commands) with PO approval.
 
 If a source does not exist or instructions conflict, report the gap.
 Do not invent project requirements.
@@ -62,8 +64,13 @@ Use the commands verified for this repository:
 - Run locally: `open index.html`. Add `?lang=ar` to the URL for the Arabic version.
 - Lint: none configured.
 - Test: none configured; verify manually in a browser (see Verification).
-- Build: none. Pushing or merging to `main` deploys automatically to Cloudflare Pages.
-  Never push to `main` directly.
+- Build: none. Never push to `main` directly.
+- Deploy: manual. The Cloudflare Pages project `godwitly` is not connected to GitHub, so
+  merging to `main` does **not** deploy. Ask the PO first, then copy only the site files
+  from `main` into an empty folder and upload them:
+  `git archive main index.html css js assets | tar -x -C <empty-folder>`, then
+  `npx wrangler@4.153.0 pages deploy <empty-folder> --project-name godwitly --branch main
+  --commit-hash "$(git rev-parse main)"`. Check https://godwitly.pages.dev afterwards.
 
 If a command is unavailable or fails, report that accurately.
 
@@ -115,7 +122,7 @@ If a command is unavailable or fails, report that accurately.
   - adding any dependency, library, CDN script or build tool;
   - creating or applying Supabase migrations, or changing data in the live `godwitly`
     project;
-  - pushing branches, opening PRs or merging to `main` (merging deploys to production);
+  - pushing branches, opening PRs or merging to `main`;
   - changing the form's personal-data fields, consent text or data retention;
   - deploying or taking any other action that affects production.
 - Follow the project's rules for adding dependencies, migrations and Git actions.
