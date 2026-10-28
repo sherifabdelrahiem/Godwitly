@@ -39,7 +39,7 @@ const TRANSLATIONS = {
       "One platform that transforms learning, participation, and organisational preparedness through interactive digital experiences.",
     "hero.explore": "Explore Our Products",
     "hero.devicesAlt":
-      "Godwitly on desktop, laptop and phone: My Programmes, a live quiz and a crisis management exercise with a 3.32 maturity score",
+      "Godwitly on desktop, laptop and phone: My Programmes, a live quiz, a crisis management exercise and the organisation's 3.32 maturity score",
 
     // Products section
     "products.eyebrow": "Our products",
@@ -68,12 +68,12 @@ const TRANSLATIONS = {
 
     "resilience.name": "Resilience",
     "resilience.blurb": "Prepare teams for real-world disruptions through scenario-based tabletop exercises.",
-    "resilience.f1": "Scenario simulation",
+    "resilience.f1": "Realistic scenarios",
     "resilience.f2": "Team decision making",
     "resilience.f3": "Maturity assessment",
     "resilience.f4": "Reporting and insights",
     "resilience.alt":
-      "A crisis management exercise on a laptop with an inject on a phone and a 3.32 maturity score",
+      "A crisis management exercise on a laptop, an inject on a phone, and the organisation's 3.32 maturity score",
 
     // Small "app" cards over the product pictures
     "cards.results": "Live results — Q3",
@@ -161,7 +161,7 @@ const TRANSLATIONS = {
       "منصة واحدة تُحدث نقلة في التعلّم والمشاركة والاستعداد المؤسسي من خلال تجارب رقمية تفاعلية.",
     "hero.explore": "استكشف منتجاتنا",
     "hero.devicesAlt":
-      "منصة Godwitly على حاسوب مكتبي وحاسوب محمول وهاتف: صفحة برامجي، واختبار مباشر، وتمرين لإدارة الأزمات بدرجة نضج 3.32",
+      "منصة Godwitly على حاسوب مكتبي وحاسوب محمول وهاتف: صفحة برامجي، واختبار مباشر، وتمرين لإدارة الأزمات، ودرجة نضج المؤسسة 3.32",
 
     "products.eyebrow": "منتجاتنا",
     "products.title1": "ثلاثة منتجات.",
@@ -188,12 +188,12 @@ const TRANSLATIONS = {
     "learn.alt": "برنامج تعليمي على حاسوب مكتبي، وخطة دراسة مكتملة بنسبة 75% على هاتف",
 
     "resilience.name": "مرونة",
-    "resilience.blurb": "جهّز الفرق لمواجهة الاضطرابات الواقعية من خلال تمارين محاكاة قائمة على السيناريوهات.",
-    "resilience.f1": "محاكاة السيناريوهات",
+    "resilience.blurb": "جهّز الفرق لمواجهة الاضطرابات الواقعية من خلال تمارين قائمة على السيناريوهات.",
+    "resilience.f1": "سيناريوهات واقعية",
     "resilience.f2": "اتخاذ القرار الجماعي",
     "resilience.f3": "تقييم مستوى النضج",
     "resilience.f4": "التقارير والرؤى",
-    "resilience.alt": "تمرين لإدارة الأزمات على حاسوب محمول، وحدث مستجد على هاتف، ودرجة نضج 3.32",
+    "resilience.alt": "تمرين لإدارة الأزمات على حاسوب محمول، وحدث مستجد على هاتف، ودرجة نضج المؤسسة 3.32",
 
     "cards.results": "النتائج المباشرة — السؤال 3",
     "cards.a": "أ",
