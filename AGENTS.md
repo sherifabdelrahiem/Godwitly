@@ -151,8 +151,8 @@ actions. They add to the Boundaries list. Get the PO's approval, in the session,
 - merging;
 - deploying;
 - **closing any issue**, including by a `Closes #n` keyword or by `implement-spec`
-  resolving tickets. Until the PO approves closing, a PR says `Refs #n`. The PO may approve
-  a named list of issues at once.
+  resolving tickets. Until the PO approves closing, a PR or commit says `Refs #n`. The PO
+  may approve a named list of issues at once.
 - relabelling or editing an issue the PO didn't ask to change;
 - pushing a `wayfinder` research branch.
 

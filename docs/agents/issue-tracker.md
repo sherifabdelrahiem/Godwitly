@@ -25,14 +25,18 @@ The rules (the hash command, who approves, what needs approval, the `[Agent]` la
 formats they use.
 
 - **Spec Issue body**: first line `Spec version: vN`; last section `## Changes`, one line
-  per version. The hash is never written into the body.
+  per version.
 - **Spec hash**: record all 64 hex characters the command prints (it hashes the body as
   `gh` prints it, final newline included). A shortened form is for display only.
 - **Approval record**: a comment on the spec Issue:
   `[Agent] PO approval recorded: spec vN, sha256 <64 hex>, approved in session on YYYY-MM-DD.`
   A typo-only re-approval uses the same format with the new hash, plus "(typo only)".
-- **Issue references**: a PR or commit says `Refs #n` until the PO approves closing that
-  issue, then `Closes #n`. The **Close** command above runs only after that approval.
+- **Ticket and Codex gate report header**: first line
+  `Spec: #<n> · Spec version: vN · sha256 <64 hex>`, naming the version the ticket or
+  report was made from.
+- **Issue references**: `Refs #n` in a PR or commit, and `Closes #n` once the PO has
+  approved closing that issue. Every `gh issue close` in this file (**Close**, and
+  **Resolve** under Wayfinding) needs that approval first.
 
 ## Pull requests as a triage surface
 
