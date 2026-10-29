@@ -20,32 +20,19 @@ File issues only into the user's own repo. Never file into `mattpocock/skills` (
 
 ## Project rules for specs, approvals and closing
 
-These carry out `AGENTS.md`, Workflow ("Spec versions" and "External actions").
+The rules (the hash command, who approves, what needs approval, the `[Agent]` label) are in
+`AGENTS.md`, Workflow, "Spec versions" and "External actions". This section holds only the
+formats they use.
 
-- **Agent posts**: every issue or comment the agent writes starts with `[Agent]`,
-  because `gh` posts as the PO. A triage post puts `[Agent]` first, then the triage
-  disclaimer on the next line.
-- **Spec Issue**: the body starts with `Spec version: vN` and ends with a `## Changes`
-  list (one line per version). The body never contains its own hash.
-- **Spec hash**: the full SHA-256 printed by exactly this command (the body as `gh` prints
-  it, final newline included):
-
-  ```bash
-  gh issue view <n> --json body --jq .body | shasum -a 256
-  ```
-
-  Store all 64 hex characters. A shortened form is for display only.
-- **Approval record**: a comment on the spec Issue, posted only for an approval the PO
-  actually gave:
+- **Spec Issue body**: first line `Spec version: vN`; last section `## Changes`, one line
+  per version. The hash is never written into the body.
+- **Spec hash**: record all 64 hex characters the command prints (it hashes the body as
+  `gh` prints it, final newline included). A shortened form is for display only.
+- **Approval record**: a comment on the spec Issue:
   `[Agent] PO approval recorded: spec vN, sha256 <64 hex>, approved in session on YYYY-MM-DD.`
-  The PO may instead approve by commenting themselves. A typo-only re-approval uses the
-  same format with the new hash, plus "(typo only)".
-- **Codex gate report and tickets**: each names the spec Issue, `Spec version: vN` and the
-  full hash it was made from.
-- **Closing**: closing any issue needs the PO's approval for that issue, in the session.
-  That includes closing by a PR keyword or by `implement-spec`. Until then, a PR or
-  commit refers to the issue with `Refs #n`, and uses `Closes #n` only for issues the PO
-  approved closing. The **Close** command above runs only after that approval.
+  A typo-only re-approval uses the same format with the new hash, plus "(typo only)".
+- **Issue references**: a PR or commit says `Refs #n` until the PO approves closing that
+  issue, then `Closes #n`. The **Close** command above runs only after that approval.
 
 ## Pull requests as a triage surface
 

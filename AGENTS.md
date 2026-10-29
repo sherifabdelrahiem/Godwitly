@@ -35,8 +35,8 @@ Do not invent project requirements.
 
 New work follows the main flow of the vendored Matt Pocock skills
 (`.claude/skills/ask-matt/SKILL.md`). Work approved before this section existed
-(2026-10-29) finishes under the plan-file process it was approved with (`AGENTS.md` before
-commit `5989854`: `git show d090b6b:AGENTS.md`).
+(2026-10-29) finishes under the plan-file process it was approved with
+(`git show d090b6b:AGENTS.md`).
 
 ### Who starts a skill
 
@@ -52,7 +52,7 @@ gates below. A skill the PO started may call them without a new hand-over. If a 
 | # | Step | Skill file | Started by | Produces | Agent waits |
 |---|---|---|---|---|---|
 | 1 | Sharpen the idea | `.claude/skills/grill-with-docs/SKILL.md` | PO | `GLOSSARY.md` and ADR updates | for the PO to end the interview |
-| 2 | Prototype (only when a question needs runnable code) | `.claude/skills/prototype/SKILL.md` | agent, once the PO agrees | a `prototype/<name>` branch | after reporting the answer, which goes into the spec; the prototype's "fold into real code" step waits for step 7 |
+| 2 | Prototype (only when a question needs runnable code) | `.claude/skills/prototype/SKILL.md` | agent, once the PO agrees | a `prototype/<name>` branch | after reporting the answer |
 | 3 | Spec | `.claude/skills/to-spec/SKILL.md` | PO | the spec Issue (`Spec version: v1`) | after publishing it |
 | 4 | Codex gate (Critical only) | none | agent | a gate report in `docs/reviews/` | until the findings are resolved |
 | 5 | PO approval | none | PO | an approval record on the Issue | for it, before any code change |
@@ -83,7 +83,9 @@ if Critical, then PO approval. That holds for:
 - a `triage` brief, which becomes the spec or links to it;
 - `diagnosing-bugs`, which reproduces and collects evidence, then hands that to a spec;
 - a `ready-for-agent` issue (the label is never approval);
-- a `retro` suggestion.
+- a `retro` suggestion;
+- a `prototype` answer, which goes into the spec. Its "fold into real code" step waits for
+  step 7.
 
 ### Spec versions
 
@@ -197,8 +199,7 @@ proposed work that enters this Workflow at step 1 or 3.
 
 Use the commands verified for this repository:
 
-- Install: none (no dependencies). Node 20 or later is needed only to run tests
-  (ADR-0006).
+- Install: none (no dependencies; for tests, see Test).
 - Run locally: `open index.html`. Add `?lang=ar` to the URL for the Arabic version.
   The Sign-up dashboard needs a local server: `python3 -m http.server 8000`, then
   http://localhost:8000/dashboard.html (online only; see README "Sign-up dashboard").
@@ -283,11 +284,18 @@ When finished, explain:
 
 ## Agent skills
 
-The Workflow names skills by path, `.claude/skills/<name>/SKILL.md`, because other skill
-collections also use names like `retro` or `review`. Besides the steps above it uses
-`ask-matt`, `triage`, `wayfinder` and `diagnosing-bugs` (see "One gate for every route"),
-and, as reference, `writing-for-agents` (for editing this file or a skill),
-`domain-modeling` and `codebase-design`. Who starts each one: "Who starts a skill".
+The Workflow names skills by path, because other skill collections also use names like
+`retro` or `review`. Who starts each one: "Who starts a skill". Besides the step skills in
+the table, it uses:
+
+- `.claude/skills/ask-matt/SKILL.md`: the map of the flow;
+- `.claude/skills/tdd/SKILL.md`: test-first building, called by step 7;
+- `.claude/skills/triage/SKILL.md` and `.claude/skills/diagnosing-bugs/SKILL.md`: the
+  on-ramps (see "One gate for every route");
+- `.claude/skills/wayfinder/SKILL.md`: for a huge, foggy effort; it ends at step 3;
+- `.claude/skills/writing-for-agents/SKILL.md`: for editing this file or a skill;
+- `.claude/skills/domain-modeling/SKILL.md` and `.claude/skills/codebase-design/SKILL.md`:
+  shared vocabulary.
 
 ### Issue tracker
 
