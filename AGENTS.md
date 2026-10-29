@@ -43,8 +43,8 @@ Work approved before that merge finishes under the plan-file process it was appr
 A skill whose `SKILL.md` frontmatter has `disable-model-invocation: true` is started **only
 by the PO**, with its slash command. At each such step, recommend the command, say what it
 will do, then stop and wait. Start the other skills the Workflow uses (`code-review`,
-`tdd`, `pr`, `diagnosing-bugs`, and `prototype` once the PO agrees its question and scope)
-yourself, within the gates below. A skill the PO started may call them without a new
+`tdd`, `pr`, `diagnosing-bugs`, and `prototype` on the terms in "One gate for every
+route") yourself, within the gates below. A skill the PO started may call them without a new
 hand-over. If a skill's `SKILL.md` is missing, stop and report it.
 
 ### Steps
@@ -52,10 +52,10 @@ hand-over. If a skill's `SKILL.md` is missing, stop and report it.
 | # | Step | Skill file | Started by | Produces | Agent waits |
 |---|---|---|---|---|---|
 | 1 | Sharpen the idea | `.claude/skills/grill-with-docs/SKILL.md` | PO | `GLOSSARY.md` and ADR updates | for the PO to end the interview |
-| 2 | Prototype (only when a question needs runnable code) | `.claude/skills/prototype/SKILL.md` | agent, once the PO agrees its question and scope | throwaway code on a `prototype/<name>` branch | after reporting the answer |
+| 2 | Prototype (only when a question needs runnable code) | `.claude/skills/prototype/SKILL.md` | agent (see "One gate for every route") | throwaway code on a `prototype/<name>` branch | after reporting the answer |
 | 3 | Spec | `.claude/skills/to-spec/SKILL.md` | PO | the spec Issue (`Spec version: v1`) | after publishing it |
 | 4 | Codex gate (Critical only) | none | agent | a gate report in `docs/reviews/` | until the findings are resolved |
-| 5 | PO approval | none | PO | an approval record on the Issue | for it, before any code change |
+| 5 | PO approval | none | PO | an approval record on the Issue | for it, before any production code change |
 | 6 | Tickets (multi-session work only) | `.claude/skills/to-tickets/SKILL.md` | PO | ticket Issues naming the spec version and hash | after publishing them |
 | 7 | Build, test-first where it applies | `.claude/skills/implement/SKILL.md` or `.claude/skills/implement-spec/SKILL.md` (they call `tdd` and `code-review`) | PO | commits on a feature branch | before any push |
 | 8 | Diff review | `.claude/skills/code-review/SKILL.md` | agent | a report in `docs/reviews/` | until every finding is fixed or accepted |
@@ -85,9 +85,10 @@ for:
 - `diagnosing-bugs`, which reproduces and collects evidence, then hands that to a spec;
 - a `ready-for-agent` issue (the label is never approval);
 - a `retro` suggestion;
-- a `prototype`. Its throwaway code may come before the spec, once the PO agrees its
-  question and scope. Its answer goes into the spec. Folding its decisions into real code
-  is step 7, after the gate. Pushing its branch is still an external action.
+- a `prototype`. Once the PO explicitly agrees its question and scope, the agent may start
+  it and write throwaway code before the spec. Its answer goes into the spec. Folding its
+  decisions into production code is step 7, after the gate. Pushing its branch needs
+  approval (see External actions).
 
 ### Spec versions
 
