@@ -150,13 +150,55 @@ deferred; AC10 skipped.
     addresses and accepts `viewer@example.com` and `"<b>x</b>"@example.com`. ✅
   - Owner access after the push: the dashboard loads the figures, the list and Access;
     no console errors. ✅
+- AC6 after D2, by the PO in the local preview: `Viewer@Example.com,` was refused, and the
+  list gained no comma entry. ✅
+- AC7 (Access part): the PO added `"<b>x</b>"@example.com`. It was shown as text, with 0
+  `b` elements on the page; the database stored it exactly. The PO removed it, and a
+  `viewer@example.com` entry added at 12:31:29 UTC. Check: the list held only the owner
+  row. ✅
+- AC11 (local part): Sign out returns to signed out, with 0 rows, no sign-up values and no
+  session. A closed tab's session does not reach a new tab. ✅ (The CSP, `X-Robots-Tag` and
+  jQuery-block parts run on production after the deploy.)
+- AC2: the second Google account (not on the list) got "Sign-in didn't finish, or this
+  Google account doesn't have access." in EN and AR (RTL, no sideways scroll). No `error`
+  in the address bar. `auth.users` stayed at 1 (owner). ✅ Observation: the refused
+  sign-in leaves three PKCE `code-verifier` keys (no session token) in `sessionStorage`
+  until Sign out or the tab closes. Harmless, not a failure.
+- AC3: the PO added the second account in Access (address not recorded). Before testing,
+  the probe client confirmed role `viewer`, and Access was hidden. Test row
+  `45876f44-fdba-479d-9637-5d1679cf1e57` (`Probe Row`, created 12:35:46 UTC, job title
+  `Original`).
+  - From the viewer session, every attempt was refused with `42501`: add, remove and list
+    viewers; delete and update **only that row**; insert. Reading
+    `private.signup_viewers` gave `PGRST106`.
+  - The row still read `Original`; no `Test Name` row, no `x@example.com` entry. ✅
+  - The viewer view in AR: RTL, no sideways scroll, no Access. ✅
+- AC4: the PO removed the viewer. Without a reload, the viewer's probe got `[]` and role
+  `none`; after a reload: no access, and no sign-up values in the page text. ✅
+- Cleanup: the `Probe Row` was deleted by id (and name). Check: 0 rows with that id, 0
+  `example.com`/`x.co` rows, 4 sign-ups (the real ones). ✅
+- AC12, more: the empty state, through a temporary uncommitted test page that faked an
+  empty list, read "There are no Launch sign-ups yet." (EN) and its Arabic text (RTL), with
+  the table hidden. Keyboard: Tab reaches the skip link, both language buttons, Sign out,
+  Day/Week, search, the Access address and Add, all native controls. ✅
+- AC5 (partial): the same temporary page delayed every Data API reply by 6 s. Sign out
+  while the sign-up list request was pending: after it finished, the page stayed signed
+  out, with 0 rows, Access hidden and empty, no sign-up values and no session. ✅
+  **Untested:** AC5 (a) with the role request pending, (b) with the Access list request
+  pending, and (c) removal during a load. The agent can't do the timed removal (the
+  permission system blocks it), and the PO chose to skip it for now. Tracked in issue #25.
+  The temporary page was deleted, and `git status` was clean.
 - AC10: **untested** (skipped by the PO), not passed.
 - AC15: **deferred** by the PO, to be tested first in an isolated environment.
 
 ## Remaining
 
-- Local browser test: AC2–AC5, AC6 (Access add/duplicate/invalid), AC7 (Access entry),
-  AC11 (session part), AC12 (no access and viewer states). AC10 untested; AC15 deferred.
+- Local clean-up: the PO removes the second account from Access and deletes its Auth user;
+  then `auth.users` is back to 1 (the owner).
+- Local, still open: AC12 `file://` message (the PO double-clicks `dashboard.html`) and
+  "the Arabic choice survives sign-in".
+- Untested at merge: AC5 (a)/(b)/(c) (issue #25), AC10 (PO skip), AC15 (deferred to an
+  isolated environment). AC6 owner-row removal was verified from the code, not run.
 - The PO merges PR #24, then step 7 deploy ("go deploy").
 - Step 8: remove the localhost redirect and re-run the Advisor.
 - Record the results here.
