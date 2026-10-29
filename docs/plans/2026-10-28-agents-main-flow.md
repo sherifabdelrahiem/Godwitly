@@ -1,6 +1,6 @@
 # Plan — Adopt the Matt Pocock "Skills For Real Engineers" main flow in AGENTS.md
 
-> Status: **DRAFT v3**, waiting for a Codex re-review, then PO approval (A2) · 2026-10-29
+> Status: **DRAFT v4**, waiting for PO approval (A2) · 2026-10-29
 > Branch: `docs/agents-main-flow`, rebuilt on `main` at `d090b6b` → PR → merge to `main`
 > Decisions: grilling session with the PO on 2026-10-28 (Q1–Q9, R1–R4); PO decisions on
 > 2026-10-29 (R5, R6, and the ten Codex findings F1–F10 accepted as requirements).
@@ -34,6 +34,10 @@ LANE: Standard — documentation and process only. No site files, data, Supabase
 
   The R5 evidence is now kept in `docs/reviews/2026-10-29-agents-main-flow-r5-evidence.md`,
   pinned to an upstream commit.
+- **v4 (2026-10-29):** fixes Codex round 3
+  (`docs/reviews/2026-10-29-agents-main-flow-codex-review-r3.md`, 0×P1, 1×P2; earlier
+  findings 8 closed, 2 partial, both covered by this fix) as **F16**. A commit can't contain
+  its own ID, so the final evidence commit's ID is recorded outside it.
 
 ## Goal
 
@@ -75,7 +79,7 @@ The project's own safeguards stay: the lanes, the Codex gate, PO approvals and t
 |---|---|
 | R5 | **(b): commit the skill files**, with the upstream MIT licence. **Evidence** (read-only investigation, nothing installed): `skills-lock.json` records only source, path and content hash for each of 38 skills, with **no commit or version**. The documented restore, `npx skills experimental_install`, is **experimental**, fetches from the source, fails with `--frozen-lockfile` when content differs, and **does not create the `.claude/skills` links**. 7 of the 38 installed `SKILL.md` files already differ from upstream `main` (including `code-review` and `implement-spec`), so exact restoration cannot be demonstrated. `mattpocock/skills` is MIT, © 2026 Matt Pocock; the installed copies carry no licence file. The evidence, pinned to upstream commit `a496f55`, is in `docs/reviews/2026-10-29-agents-main-flow-r5-evidence.md`. |
 | R6 | **Explicit human transitions.** The rule is the frontmatter: **every** skill marked `disable-model-invocation: true` (23 of the 38 installed) is started **only by the PO** with its slash command (F12). The workflow uses nine of them: `ask-matt`, `grill-with-docs`, `to-spec`, `to-tickets`, `implement`, `implement-spec`, `retro`, `triage` and `wayfinder`. The agent recommends the next command, explains what it will do, then **stops and waits**. It never reads such a skill's file to run it on its own. The agent may start `code-review`, `tdd`, `pr` and `diagnosing-bugs` itself, within the gates below. When a PO-started skill calls one of these (for example `implement` calls `tdd` and `code-review`), that call continues without a new transition. The project's commit-before-review rule (F5) still applies. |
-| F1–F15 | The fifteen Codex findings (rounds 1 and 2) are accepted as requirements (see "Traceability"). |
+| F1–F16 | The sixteen Codex findings (rounds 1–3) are accepted as requirements (see "Traceability"). |
 
 ## Changes
 
@@ -173,7 +177,11 @@ Written with `.claude/skills/writing-for-agents/SKILL.md`. It is edited on top o
           files** gets a new review of that change before merge.
         - A commit that only adds or updates **review evidence** (the report and its
           finding outcomes in `docs/reviews/`) needs no further review.
-        - The report records both the reviewed commit and the final evidence commit.
+        - The committed report records the base, the reviewed commit, the spec version
+          and hash, and the finding outcomes. A commit can't contain its own ID (F16), so
+          the ID of the final evidence commit is recorded **outside** that commit: in the
+          agent's completion report, and in the PR description when the PO approves
+          opening the PR.
         - A report that also changes a rule or policy is not evidence-only.
    - **External actions (F9).** Starting a skill **never authorises its external
      actions**. Each of these needs the PO's approval for that specific action, in the
@@ -274,6 +282,7 @@ holds the vendored agent skills (MIT, see its README).
 | F13 [P2] | One hash command, stored outside the body, full digest, frozen body | 2.2 spec versions, 4 | AC6 |
 | F14 [P2] | Checks that can pass; `.gitignore` pattern; symlinks verified | 1, AC3, AC4, AC8, AC12 | AC3, AC4, AC8, AC12 |
 | F15 [P2] | Evidence-only commits separate from reviewed content | 2.2 diff review | AC7, AC15 |
+| F16 [P2] | The evidence commit's own ID is recorded outside that commit | 2.2 diff review | AC7, AC15 |
 
 ## Acceptance checks
 
@@ -332,8 +341,9 @@ holds the vendored agent skills (MIT, see its README).
    in the review.
 7. **Diff review (F5, F15).** The rule requires:
    - commit first;
-   - base, the reviewed commit, the final evidence commit, and the spec version and hash
-     in the report;
+   - base, the reviewed commit, and the spec version and hash in the report;
+   - the final evidence commit's ID recorded outside that commit (completion report and
+     PR description, F16);
    - both axes;
    - one outcome per finding;
    - re-review of later content changes;
@@ -387,12 +397,13 @@ holds the vendored agent skills (MIT, see its README).
 14. **Transition (Q9).** The rule is stated. No existing plan in `docs/plans/` is changed,
     except this one.
 15. **Diff review.** A `code-review` of this branch against `main` is saved in
-    `docs/reviews/`, following rules F5 and F15. It names the reviewed commit and the final
-    evidence commit, and every finding is resolved or accepted.
+    `docs/reviews/`, following rules F5, F15 and F16. It names the reviewed commit, and every
+    finding is resolved or accepted. The final evidence commit's ID is given in the
+    completion report and the PR description.
 
 ## Release
 
-1. Codex re-review of v3. Any findings are fixed or answered before approval.
+1. Codex re-reviews: rounds 1–3 done. Round 4 is a targeted check of the F16 fix.
 2. PO approval of the final version (A2), recorded with its date.
 3. Implementation on `docs/agents-main-flow`, then the diff review.
 4. PO approval, then push and PR.
