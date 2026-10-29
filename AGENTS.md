@@ -34,8 +34,8 @@ Do not invent project requirements.
 ## Workflow
 
 New work follows the main flow of the vendored Matt Pocock skills
-(`.claude/skills/ask-matt/SKILL.md`). Work approved before this section existed
-(2026-10-29) finishes under the plan-file process it was approved with
+(`.claude/skills/ask-matt/SKILL.md`) from the moment this Workflow is merged into `main`.
+Work approved before that merge finishes under the plan-file process it was approved with
 (`git show d090b6b:AGENTS.md`).
 
 ### Who starts a skill
@@ -43,16 +43,16 @@ New work follows the main flow of the vendored Matt Pocock skills
 A skill whose `SKILL.md` frontmatter has `disable-model-invocation: true` is started **only
 by the PO**, with its slash command. At each such step, recommend the command, say what it
 will do, then stop and wait. Start the other skills the Workflow uses (`code-review`,
-`tdd`, `pr`, `diagnosing-bugs`, and `prototype` once the PO agrees) yourself, within the
-gates below. A skill the PO started may call them without a new hand-over. If a skill's
-`SKILL.md` is missing, stop and report it.
+`tdd`, `pr`, `diagnosing-bugs`, and `prototype` once the PO agrees its question and scope)
+yourself, within the gates below. A skill the PO started may call them without a new
+hand-over. If a skill's `SKILL.md` is missing, stop and report it.
 
 ### Steps
 
 | # | Step | Skill file | Started by | Produces | Agent waits |
 |---|---|---|---|---|---|
 | 1 | Sharpen the idea | `.claude/skills/grill-with-docs/SKILL.md` | PO | `GLOSSARY.md` and ADR updates | for the PO to end the interview |
-| 2 | Prototype (only when a question needs runnable code) | `.claude/skills/prototype/SKILL.md` | agent, once the PO agrees | a `prototype/<name>` branch | after reporting the answer |
+| 2 | Prototype (only when a question needs runnable code) | `.claude/skills/prototype/SKILL.md` | agent, once the PO agrees its question and scope | throwaway code on a `prototype/<name>` branch | after reporting the answer |
 | 3 | Spec | `.claude/skills/to-spec/SKILL.md` | PO | the spec Issue (`Spec version: v1`) | after publishing it |
 | 4 | Codex gate (Critical only) | none | agent | a gate report in `docs/reviews/` | until the findings are resolved |
 | 5 | PO approval | none | PO | an approval record on the Issue | for it, before any code change |
@@ -76,16 +76,18 @@ session; a single-session change stays in its context. For other phase boundarie
 
 ### One gate for every route
 
-Every route reaches code through the same gate: a versioned spec, its lane, the Codex gate
-if Critical, then PO approval. That holds for:
+Every route reaches production code (anything beyond a throwaway prototype) through the same
+gate: a versioned spec, its lane, the Codex gate if Critical, then PO approval. That holds
+for:
 
 - the main flow;
 - a `triage` brief, which becomes the spec or links to it;
 - `diagnosing-bugs`, which reproduces and collects evidence, then hands that to a spec;
 - a `ready-for-agent` issue (the label is never approval);
 - a `retro` suggestion;
-- a `prototype` answer, which goes into the spec. Its "fold into real code" step waits for
-  step 7.
+- a `prototype`. Its throwaway code may come before the spec, once the PO agrees its
+  question and scope. Its answer goes into the spec. Folding its decisions into real code
+  is step 7, after the gate. Pushing its branch is still an external action.
 
 ### Spec versions
 
