@@ -22,7 +22,7 @@ File issues only into the user's own repo. Never file into `mattpocock/skills` (
 
 These carry out `AGENTS.md`, Workflow ("Spec versions" and "External actions").
 
-- **Agent posts**: every issue, comment or PR body the agent writes starts with `[Agent]`,
+- **Agent posts**: every issue or comment the agent writes starts with `[Agent]`,
   because `gh` posts as the PO. A triage post puts `[Agent]` first, then the triage
   disclaimer on the next line.
 - **Spec Issue**: the body starts with `Spec version: vN` and ends with a `## Changes`

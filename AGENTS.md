@@ -35,30 +35,32 @@ Do not invent project requirements.
 
 New work follows the main flow of the vendored Matt Pocock skills
 (`.claude/skills/ask-matt/SKILL.md`). Work approved before this section existed
-(2026-10-29) finishes under the plan-file process it was approved with.
+(2026-10-29) finishes under the plan-file process it was approved with (`AGENTS.md` before
+commit `5989854`: `git show d090b6b:AGENTS.md`).
 
 ### Who starts a skill
 
 A skill whose `SKILL.md` frontmatter has `disable-model-invocation: true` is started **only
 by the PO**, with its slash command. At each such step, recommend the command, say what it
-will do, then stop and wait. Start the other skills (`code-review`, `tdd`, `pr`,
-`diagnosing-bugs`) yourself, within the gates below. A skill the PO started may call them
-without a new hand-over. If a skill's `SKILL.md` is missing, stop and report it.
+will do, then stop and wait. Start the other skills the Workflow uses (`code-review`,
+`tdd`, `pr`, `diagnosing-bugs`, and `prototype` once the PO agrees) yourself, within the
+gates below. A skill the PO started may call them without a new hand-over. If a skill's
+`SKILL.md` is missing, stop and report it.
 
 ### Steps
 
-| # | Step | Skill (`.claude/skills/<name>/SKILL.md`) | Started by | Produces | Agent stops |
+| # | Step | Skill file | Started by | Produces | Agent waits |
 |---|---|---|---|---|---|
-| 1 | Sharpen the idea | `grill-with-docs` | PO | `GLOSSARY.md` and ADR updates | when the PO ends the interview |
-| 2 | Prototype (only when a question needs runnable code) | `prototype` | agent, once the PO agrees | a `prototype/<name>` branch | with the answer |
-| 3 | Spec | `to-spec` | PO | the spec Issue (`Spec version: v1`) | after publishing it |
+| 1 | Sharpen the idea | `.claude/skills/grill-with-docs/SKILL.md` | PO | `GLOSSARY.md` and ADR updates | for the PO to end the interview |
+| 2 | Prototype (only when a question needs runnable code) | `.claude/skills/prototype/SKILL.md` | agent, once the PO agrees | a `prototype/<name>` branch | after reporting the answer, which goes into the spec; the prototype's "fold into real code" step waits for step 7 |
+| 3 | Spec | `.claude/skills/to-spec/SKILL.md` | PO | the spec Issue (`Spec version: v1`) | after publishing it |
 | 4 | Codex gate (Critical only) | none | agent | a gate report in `docs/reviews/` | until the findings are resolved |
-| 5 | PO approval | none | PO | an approval record on the Issue | before any code change |
-| 6 | Tickets (multi-session work only) | `to-tickets` | PO | ticket Issues naming the spec version | after publishing them |
-| 7 | Build, test-first where it applies | `implement` or `implement-spec` (they call `tdd` and `code-review`) | PO | commits on a feature branch | before any push |
-| 8 | Diff review | `code-review` | agent | a report in `docs/reviews/` | until every finding is fixed or accepted |
-| 9 | Pull request | `pr` | agent | a PR body draft | before publishing it |
-| 10 | Retro (once per finished feature) | `retro` | PO | proposed work | after proposing |
+| 5 | PO approval | none | PO | an approval record on the Issue | for it, before any code change |
+| 6 | Tickets (multi-session work only) | `.claude/skills/to-tickets/SKILL.md` | PO | ticket Issues naming the spec version and hash | after publishing them |
+| 7 | Build, test-first where it applies | `.claude/skills/implement/SKILL.md` or `.claude/skills/implement-spec/SKILL.md` (they call `tdd` and `code-review`) | PO | commits on a feature branch | before any push |
+| 8 | Diff review | `.claude/skills/code-review/SKILL.md` | agent | a report in `docs/reviews/` | until every finding is fixed or accepted |
+| 9 | Pull request | `.claude/skills/pr/SKILL.md` | agent | a PR body draft | before publishing it |
+| 10 | Retro (once per finished feature) | `.claude/skills/retro/SKILL.md` | PO | proposed work | after proposing it |
 
 Keep steps 1, 3 and 6 in one context window. Start each ticket's step 7 in a fresh
 session; a single-session change stays in its context. For other phase boundaries, see
@@ -94,9 +96,12 @@ if Critical, then PO approval. That holds for:
     version and needs full re-approval. A Critical change goes back through the Codex
     gate, and tickets from the older version are updated or closed, with approval (see
     External actions).
+- The hash is the full SHA-256 from `gh issue view <n> --json body --jq .body | shasum -a 256`.
+  It is stored outside the body: in the approval record, the Codex gate report and each
+  ticket, next to the version.
 - Before building, recompute the hash and compare it with the latest approval record, and
   check the tickets still match the spec. On a mismatch, stop.
-- The hash command and the record formats are in `docs/agents/issue-tracker.md`.
+- The record formats are in `docs/agents/issue-tracker.md`.
 
 ### Specs sized to the change
 
@@ -136,8 +141,8 @@ User stories are optional. Multi-session work uses the full `to-spec` format and
 
 ### External actions
 
-Starting a skill authorises none of its external actions. Get the PO's approval, in the
-session, for each of these:
+Starting a skill, or the PO approving a spec or an implementation, authorises none of these
+actions. They add to the Boundaries list. Get the PO's approval, in the session, for each:
 
 - pushing a branch;
 - opening a PR, including a draft PR from `implement-spec`;
@@ -186,13 +191,14 @@ proposed work that enters this Workflow at step 1 or 3.
 - `GLOSSARY.md`: the agreed domain terms in English and Arabic; use them in text, plans
   and issues.
 - `.agents/skills/`: the vendored Matt Pocock skills (MIT; see its `README.md`).
-  `.claude/skills/` links to them. Don't edit them in place.
+  `.claude/skills/` links to them. Update them only by re-installing (see that README).
 
 ## Development commands
 
 Use the commands verified for this repository:
 
-- Install: none (no dependencies).
+- Install: none (no dependencies). Node 20 or later is needed only to run tests
+  (ADR-0006).
 - Run locally: `open index.html`. Add `?lang=ar` to the URL for the Arabic version.
   The Sign-up dashboard needs a local server: `python3 -m http.server 8000`, then
   http://localhost:8000/dashboard.html (online only; see README "Sign-up dashboard").
@@ -278,14 +284,10 @@ When finished, explain:
 ## Agent skills
 
 The Workflow names skills by path, `.claude/skills/<name>/SKILL.md`, because other skill
-collections also use names like `retro` or `review`. The ones it uses:
-
-- PO-started: `ask-matt`, `grill-with-docs`, `to-spec`, `to-tickets`, `implement`,
-  `implement-spec`, `retro`, `triage`, `wayfinder`.
-- Agent-started: `code-review`, `tdd`, `pr`, `diagnosing-bugs`, `prototype` (once the PO
-  agrees).
-- Reference: `writing-for-agents` (for editing this file or a skill), `domain-modeling`,
-  `codebase-design`.
+collections also use names like `retro` or `review`. Besides the steps above it uses
+`ask-matt`, `triage`, `wayfinder` and `diagnosing-bugs` (see "One gate for every route"),
+and, as reference, `writing-for-agents` (for editing this file or a skill),
+`domain-modeling` and `codebase-design`. Who starts each one: "Who starts a skill".
 
 ### Issue tracker
 
