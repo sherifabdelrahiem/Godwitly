@@ -1,6 +1,7 @@
 # Plan — Adopt the Matt Pocock "Skills For Real Engineers" main flow in AGENTS.md
 
-> Status: **DRAFT v4**, waiting for PO approval (A2) · 2026-10-29
+> Status: **APPROVED v4** by the PO on 2026-10-29 ("approve v4", in session). The
+> approved text is commit `d80802b`; this status line is the only later change.
 > Branch: `docs/agents-main-flow`, rebuilt on `main` at `d090b6b` → PR → merge to `main`
 > Decisions: grilling session with the PO on 2026-10-28 (Q1–Q9, R1–R4); PO decisions on
 > 2026-10-29 (R5, R6, and the ten Codex findings F1–F10 accepted as requirements).
