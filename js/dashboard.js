@@ -195,8 +195,10 @@
   const COLUMNS = "id, created_at, full_name, email, phone, job_title, message, language, consent";
   // OAuth details that Supabase or Google may add to the address after sign-in.
   const OAUTH_PARAMS = ["error", "error_code", "error_description", "sb"];
-  // Keep this the same as the email CHECK rule on private.signup_viewers.
-  const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  // Keep this the same as the email CHECK rule on private.signup_viewers
+  // (migration 20261029120000): no ASCII space or control whitespace, "," or ";", and a
+  // plain domain after "@". The characters are listed, not \s, so both engines agree.
+  const EMAIL_PATTERN = /^[^@ \t\n\r\f\v,;]+@[a-z0-9-]+(\.[a-z0-9-]+)+$/;
   // Access messages shown in red.
   const ACCESS_ERRORS = ["dash.accessInvalid", "dash.accessFailed"];
 

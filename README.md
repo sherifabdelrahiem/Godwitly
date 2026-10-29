@@ -47,6 +47,7 @@ The form at the bottom of the page saves sign-ups in the Supabase project **godw
 | `supabase/migrations/…_notify_signup_trigger.sql` | Adds the `notify_signup` trigger that asks for a Sign-up alert after each new sign-up |
 | `supabase/migrations/…_launch_signups_comment.sql` | Describes the table as "Launch sign-ups from the Godwitly landing page." |
 | `supabase/migrations/…_signup_dashboard.sql` | Adds the Sign-up viewers list, the Google-only Auth hook and the read-only access for the Sign-up dashboard |
+| `supabase/migrations/…_signup_viewers_email_check.sql` | Tightens the Sign-up viewer address rule (no `,` `;` or spaces; a plain domain), the same rule as the dashboard page |
 | `supabase/functions/notify-signup/index.ts` | Edge Function that emails the Project owner the Sign-up alert (no visitor details; see "Email alerts") |
 
 - **See the sign-ups:** the Project owner and Sign-up viewers use the Sign-up dashboard at

@@ -52,6 +52,35 @@ access table, an Auth hook and new database permissions.
   button exists only on the error screen. AC4 and AC10 now use a page reload. AC5
   explicitly never reloads, so it still proves that late responses after Sign out or
   removal cannot restore data.
+- **D2 (APPROVED by the PO on 2026-10-29; Codex gate r2 PASS): tighter Sign-up viewer
+  address rule.** The approval covers this one migration only, after the AC6 test entries
+  are removed and the push target and pending list are confirmed.
+  In the local test (AC6), the owner typed `Viewer@Example.com,` and it was saved as
+  `viewer@example.com,`. The page check and the database CHECK rule both used
+  `^[^@\s]+@[^@\s]+\.[^@\s]+$`, which allows `,`, `;` and a trailing `.`. No access was
+  granted (no Google address has a comma), but a typo showed as "added" and the real person
+  could not sign in.
+  - **Change:** `js/dashboard.js` `EMAIL_PATTERN` and a new migration
+    `20261029120000_signup_viewers_email_check.sql` both use
+    `^[^@ \t\n\r\f\v,;]+@[a-z0-9-]+(\.[a-z0-9-]+)+$` (checked after `lower(btrim())`).
+    Whitespace is listed instead of `\s`, because Postgres `\s` depends on the database
+    locale and differs from JavaScript's (Codex gate D2 r1 #1). The migration only replaces
+    `signup_viewers_email_check`; no data, grants, policies or functions change.
+  - **Still valid:** `"<b>x</b>"@example.com` (AC7), `first.last+tag@gmail.com`,
+    `a@sub.example.co.uk`, `xn--` domains. **Refused:** a trailing `,` `;` `.` or `>`, any
+    ASCII space or tab/newline/CR/FF/VT, `_` in the domain, empty or repeated dots, no dot.
+    **Same answer in both engines** for Unicode spaces inside the address (U+00A0, U+0085,
+    U+FEFF, U+2003, U+3000) and `é`. Checked with 33 cases in Node (pattern read from the
+    file) and with the migration applied inside a rolled-back transaction on the isolated
+    `godwitly-test` database: 0 mismatches. On that database the migration also fails, and
+    changes nothing, while a comma row exists. The live owner row passes the new rule.
+  - **Known limit:** a domain written in non-Latin letters is refused. An `xn--` form is
+    accepted, but it grants access only if it is exactly the address Google reports.
+    Google Workspace primary domains are ASCII, and this project's accounts use Latin
+    domains.
+  - **Order:** remove the AC6 test entries first (the comma row would make the migration
+    fail), then `supabase db push` (PO approval), then AC6 adds: `Viewer@Example.com,`,
+    `viewer@example.com.` and `not-an-email` show "invalid address".
 
 ## Goal
 
