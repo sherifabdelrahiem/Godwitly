@@ -29,14 +29,14 @@
 | S1 | Sprawl: `AGENTS.md` 164 → 310 lines; Spec versions, Diff review and External actions could move behind a pointer | **Accepted by the PO, 2026-10-29:** "I accept AGENTS.md's 310-line length for now. Do not restructure it merely to shorten it; small additions needed for clarity are fine." (Now 313 lines after the round-5 and round-6 clarifications.) |
 | S2 | Who starts a skill stated three times; `prototype` missing from one list | **Fixed** `92bbee7`, `bacae69`: one rule ("Who starts a skill"), the table column, and Agent skills as paths only |
 | S3 | `[Agent]` rule, closing rule and spec-body format in both `AGENTS.md` and `issue-tracker.md`, and drifting | **Fixed** `bacae69`, `b23e0d9`: rules in `AGENTS.md`, formats in `issue-tracker.md` |
-| S4 | Critical order repeats the step table | **Pending PO decision.** Not changed, because plan Q2 asks for the Critical order to be stated. Agent recommendation: accept. |
-| S5 | Two lists of PO-approval actions (Boundaries, External actions) | **Pending PO decision.** Not merged, because AC8 keeps Boundaries word for word. External actions now says it adds to Boundaries. Agent recommendation: accept. |
+| S4 | Critical order repeats the step table | **Accepted by the PO, 2026-10-29:** "I accept S4, S5, S10, S11 and S13 for this version." Not changed, because plan Q2 asks for the Critical order to be stated. |
+| S5 | Two lists of PO-approval actions (Boundaries, External actions) | **Accepted by the PO, 2026-10-29:** "I accept S4, S5, S10, S11 and S13 for this version." Not merged, because AC8 keeps Boundaries word for word. External actions says it adds to Boundaries. |
 | S6 | Dangling pointer to the old process; then a branch-only commit ID | **Fixed** `92bbee7`, `bacae69`: `git show d090b6b:AGENTS.md` |
 | S7 | "Install: none" stale after ADR-0006, then a duplicate of the Test line | **Fixed** `bacae69`: "none (no dependencies; for tests, see Test)" |
 | S8 | "Agent stops … until" wording | **Fixed** `92bbee7`: "Agent waits" column |
 | S9 | Negations: "Don't edit them in place"; "The hash is never written into the body" | **Fixed** `92bbee7`, `b23e0d9`: positive wording, or cut |
-| S10 | Explanation "because other skill collections…" | **Pending PO decision.** Not cut: it records the reason for path naming (Q8), which an agent can't find elsewhere. Agent recommendation: accept. |
-| S11 | Unused vendored skills (e.g. `setup-pre-commit`) add to always-loaded descriptions | **Pending PO decision.** The PO's R5 decision (2026-10-29) chose to commit the skill files, and v4 (approved) vendors all 38; that approval didn't address this context-load point. Agent recommendation: accept for now. |
+| S10 | Explanation "because other skill collections…" | **Accepted by the PO, 2026-10-29:** "I accept S4, S5, S10, S11 and S13 for this version." Not cut: it records the reason for path naming (Q8), which an agent can't find elsewhere. |
+| S11 | Unused vendored skills (e.g. `setup-pre-commit`) add to always-loaded descriptions | **Accepted by the PO, 2026-10-29:** "I accept S4, S5, S10, S11 and S13 for this version." The R5 decision vendors all 38 skills; this acceptance covers the context-load point for this version. |
 | S12 | Agent skills pointer said "One gate" covers `ask-matt` and `wayfinder` | **Fixed** `bacae69` |
 
 Vendored files: all 103 files under `.agents/skills` (excluding `LICENSE` and `README.md`) are
@@ -63,8 +63,8 @@ One subagent, with the two axes reported separately (14-line diff).
 - **Standards:**
   - fixed: the negation is gone, and "PR or commit" matches in both files;
   - minor (**S13**): the `Closes #n` line in `issue-tracker.md` is partly a rule in a
-    "formats" section. **Pending PO decision.** It's the format the rule produces, and the
-    pointer sits where the close commands are used. Agent recommendation: accept;
+    "formats" section. **Accepted by the PO, 2026-10-29:** "I accept S4, S5, S10, S11 and S13 for this version." It's the format the rule
+    produces, and the pointer sits where the close commands are used;
   - no new smell.
 - **Spec:** section 4 is met (ticket and gate-report header with the full hash; approval
   covers **Close** and **Resolve**). AC6 and AC11 hold, and nothing is newly wrong.
@@ -98,9 +98,8 @@ One subagent, with the two axes reported separately, on `2fa0d88..cb6e605`.
   the spec; production code at step 7 after the gate; external actions unchanged). Q9,
   R6 and F3 are intact; nothing new.
 
-**Result:** no findings left to fix. **Pending PO decisions:** S4, S5, S10, S11, S13 (each
-with the agent's recommendation above). Under plan Q5, every finding must be fixed or
-explicitly accepted by the PO before merge.
+**Result:** no findings left to fix. S4, S5, S10, S11 and S13 were accepted by the PO on
+2026-10-29, so every finding is now fixed or explicitly accepted by the PO (plan Q5).
 
 ## Acceptance checks (run 2026-10-29 on this branch)
 
