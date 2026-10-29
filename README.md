@@ -24,6 +24,7 @@ address, not by double-click. See "Sign-up dashboard" below.
 | `css/dashboard.css` | Styling for the Sign-up dashboard only. It reuses the `:root` variables. |
 | `js/dashboard.js` | Google sign-in, the Launch sign-ups list, search, figures and Access. |
 | `_headers` | Cloudflare Pages security headers for `/dashboard` and `/dashboard.html` only. |
+| `tests/` | Automated tests for the development workflow: `node --test` (Node 20 or later, no packages). Not part of the site. |
 | `.agents/skills/` | Agent skills used by the development workflow (MIT; see its `README.md`). Not part of the site. |
 
 ## Common changes
@@ -43,7 +44,8 @@ The form at the bottom of the page saves sign-ups in the Supabase project **godw
 | File | What it does |
 |---|---|
 | `js/config.js` | Supabase address + publishable key (public by design); used by the form and the Sign-up dashboard |
-| `js/form.js` | Checks the answers, sends them, shows errors / success / "Try again" |
+| `js/form.js` | Checks the answers, sends them, shows errors / success / "Try again" and the Message's characters-left counter |
+| `js/message-length.js` | The Message length rule (up to 1,000 characters), shared by the check and the counter |
 | `supabase/migrations/…_launch_signups.sql` | Creates the `launch_signups` table and its rules |
 | `supabase/migrations/…_notify_signup_trigger.sql` | Adds the `notify_signup` trigger that asks for a Sign-up alert after each new sign-up |
 | `supabase/migrations/…_launch_signups_comment.sql` | Describes the table as "Launch sign-ups from the Godwitly landing page." |
@@ -60,8 +62,8 @@ The form at the bottom of the page saves sign-ups in the Supabase project **godw
   or delete sign-ups from the dashboard. Only the Project owner changes who is a Sign-up
   viewer, and only the Project owner deletes rows, in the Supabase dashboard.
 - **Rules:** name and job title 2–100 characters, a valid email, a phone number with 7–15 digits,
-  message up to 1,000 characters, consent ticked. The same rules are in `js/form.js` and in the
-  migration file — change both together.
+  message up to 1,000 characters, consent ticked. The same rules are in `js/form.js` (the
+  message length in `js/message-length.js`) and in the migration file — change them together.
 - **Spam:** a hidden "honeypot" field stops simple bots. If junk rows appear, delete them in the
   Table Editor.
 - **Never commit** the database password (it is in the macOS Keychain as

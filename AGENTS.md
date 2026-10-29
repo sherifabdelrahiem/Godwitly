@@ -175,7 +175,9 @@ proposed work that enters this Workflow at step 1 or 3.
 - `css/styles.css`: all styling; colours and fonts are `:root` variables.
 - `js/translations.js`: every piece of text in English (`en`) and Arabic (`ar`).
 - `js/script.js`: language switcher, mobile menu, product tabs and smooth scrolling.
-- `js/form.js`: "Get notified" form validation, submission and error/success states.
+- `js/form.js`: "Get notified" form validation, submission, error/success states and the
+  Message's characters-left counter.
+- `js/message-length.js`: the Message length rule, shared by `js/form.js` and the tests.
 - `js/config.js`: Supabase URL and publishable key (public by design); used by the form
   and the Sign-up dashboard.
 - `dashboard.html`: the private Sign-up dashboard (Google sign-in; not linked, `noindex`).
@@ -195,6 +197,7 @@ proposed work that enters this Workflow at step 1 or 3.
 - `docs/agents/`: issue tracker, triage label and domain-doc settings read by agent skills.
 - `GLOSSARY.md`: the agreed domain terms in English and Arabic; use them in text, plans
   and issues.
+- `tests/`: `node --test` tests (development only, ADR-0006).
 - `.agents/skills/`: the vendored Matt Pocock skills (MIT; see its `README.md`).
   `.claude/skills/` links to them. Update them only by re-installing (see that README).
 
@@ -207,9 +210,9 @@ Use the commands verified for this repository:
   The Sign-up dashboard needs a local server: `python3 -m http.server 8000`, then
   http://localhost:8000/dashboard.html (online only; see README "Sign-up dashboard").
 - Lint: none configured.
-- Test: `node --test` once tests exist (Node 20 or later; files in `tests/*.test.js`; no
-  packages; development only, ADR-0006). Until then, and for anything Node can't reach,
-  verify manually in a browser (see Verification).
+- Test: `node --test` (Node 20 or later; files in `tests/*.test.js`; no packages;
+  development only, ADR-0006). For anything Node can't reach, verify manually in a browser
+  (see Verification).
 - Build: none. Never push to `main` directly.
 - Deploy: manual. The Cloudflare Pages project `godwitly` is not connected to GitHub, so
   merging to `main` does **not** deploy. Ask the PO first, then copy only the site files
@@ -228,7 +231,8 @@ If a command is unavailable or fails, report that accurately.
 - Update relevant documentation (`README.md`, the spec Issue) when behavior or setup
   changes.
 - All user-facing text goes in `js/translations.js`; update both `en` and `ar` together.
-- Form rules exist in both `js/form.js` and the Supabase migration; change both together.
+- Form rules exist in both `js/form.js` (the Message length in `js/message-length.js`) and
+  the Supabase migration; change them together.
 - The page must keep working when opened by double-click (`file://`) and on Cloudflare
   Pages. Exception: `dashboard.html` works online only (ADR-0005).
 

@@ -71,9 +71,30 @@ function findProblems(answers) {
   if (answers.email.length > 254 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(answers.email)) problems.push("email");
   if (!/^\+?[0-9 ()-]{7,20}$/.test(answers.phone) || phoneDigits < 7 || phoneDigits > 15) problems.push("phone");
   if (!lengthBetween(answers.job_title, 2, 100)) problems.push("job_title");
-  if (answers.message !== null && characters(answers.message) > 1000) problems.push("message");
+  if (answers.message !== null && messageLength(answers.message) > MESSAGE_MAX_CHARACTERS) problems.push("message");
   if (!answers.consent) problems.push("consent");
   return problems;
+}
+
+/* ---------- Characters-left counter under the Message box ---------- */
+// It counts with messageLength(), the same rule the check above uses.
+
+const messageBox = document.getElementById("f-message");
+const messageCount = document.getElementById("f-message-count");
+const messageAlert = document.getElementById("f-message-alert");
+let messageWasOver = false;
+
+function renderMessageCount(announce) {
+  const length = messageLength(messageBox.value);
+  const over = length > MESSAGE_MAX_CHARACTERS;
+  const number = over ? length - MESSAGE_MAX_CHARACTERS : MESSAGE_MAX_CHARACTERS - length;
+  // English writes 1,000 and Arabic 1000, as in the error messages (Western digits in both).
+  const shown = document.documentElement.lang === "ar" ? String(number) : number.toLocaleString("en-GB");
+  messageCount.textContent = t(over ? "form.messageOver" : "form.messageLeft").replace("{n}", shown);
+  messageCount.classList.toggle("is-over", over);
+  // Screen readers hear only going over the limit and coming back under.
+  if (announce && over !== messageWasOver) messageAlert.textContent = messageCount.textContent;
+  messageWasOver = over;
 }
 
 /* ---------- 3. Send to Supabase ---------- */
@@ -178,3 +199,12 @@ form.addEventListener("submit", handleSubmit);
 retryButton.addEventListener("click", () => form.requestSubmit());
 document.addEventListener("godwitly:languagechange", render);
 render();
+
+messageBox.addEventListener("input", () => renderMessageCount(true));
+document.addEventListener("godwitly:languagechange", () => {
+  messageAlert.textContent = ""; // don't leave an announcement in the old language
+  renderMessageCount(false);
+});
+// pageshow: also count text the browser restored after a reload or the Back button.
+window.addEventListener("pageshow", () => renderMessageCount(false));
+renderMessageCount(false);

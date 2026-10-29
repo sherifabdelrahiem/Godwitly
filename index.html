@@ -357,7 +357,10 @@
               </div>
               <div class="field field--full">
                 <label for="f-message" data-i18n="form.message">Message (optional)</label>
-                <textarea id="f-message" name="message" rows="4" aria-describedby="f-message-error"></textarea>
+                <textarea id="f-message" name="message" rows="4" aria-describedby="f-message-count f-message-error"></textarea>
+                <p class="field__hint field__count" id="f-message-count">Characters left: 1,000</p>
+                <!-- Announces only going over the limit and coming back under, not every keystroke -->
+                <p class="visually-hidden" id="f-message-alert" aria-live="polite"></p>
                 <p class="field__error" id="f-message-error" hidden></p>
               </div>
             </div>
@@ -407,8 +410,10 @@
     <!-- translations.js must load first: script.js reads the TRANSLATIONS object it defines -->
     <script src="js/translations.js"></script>
     <script src="js/script.js"></script>
-    <!-- The contact form: config.js holds the Supabase address, form.js does the sending -->
+    <!-- The contact form: config.js holds the Supabase address, message-length.js the Message
+         length rule, form.js does the sending -->
     <script src="js/config.js"></script>
+    <script src="js/message-length.js"></script>
     <script src="js/form.js"></script>
   </body>
 </html>
