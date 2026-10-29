@@ -200,6 +200,8 @@ function handleMessageInput() {
   if (messageIsOver !== wasOver) messageAlert.textContent = messageCount.textContent;
 }
 
+/* ---------- Start: connect the form and the counter ---------- */
+
 form.addEventListener("submit", handleSubmit);
 retryButton.addEventListener("click", () => form.requestSubmit());
 messageBox.addEventListener("input", handleMessageInput);
