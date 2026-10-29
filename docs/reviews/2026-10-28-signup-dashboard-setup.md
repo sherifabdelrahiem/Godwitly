@@ -59,14 +59,36 @@ Verified without reading the address: 1 owner, 0 viewers, stored lower-case and 
 `supabase config diff` shows `auth.hook.before_user_created.enabled = true`, with uri
 `pg-functions://postgres/public/hook_before_user_created`. ✅
 
-## Step 5 — Google (PO), in progress
+## Step 5 — Google (PO, 2026-10-29)
 
-5a–5f (Google Cloud project, branding, scopes check, publish, OAuth client, paste into
-Supabase): **not confirmed yet**.
+- 5a: the Google Cloud project `godwitly` is in use.
+- 5b: Google Auth Platform is set up as **External**, with no logo and no app domain links.
+- 5c: Data Access lists no scopes (non-sensitive, sensitive and restricted are all empty),
+  so sign-in asks only for the default `openid`, `email` and `profile`. ✅
+- 5d: **deviation from P-d, accepted by the PO.** Google will not switch an External app to
+  "In production" without a homepage URL and a privacy policy URL, and the site has no
+  privacy policy page. The app stays in **Testing**. The PO added the Google accounts of the
+  owner and the second test account as Test users. Effects: each new Sign-up viewer must
+  also be added as a Google Test user (lifetime cap 100), and Google shows an "unverified
+  app" notice at sign-in. Follow-up: a separate plan for a privacy policy page (EN/AR), then
+  set the homepage, privacy URL and authorised domain, and publish.
+- 5e: an OAuth client of type "Web application" (`Godwitly Supabase`) was created. It has no
+  JavaScript origins and one redirect URI,
+  `https://ijpvbxglhxktnkabjdif.supabase.co/auth/v1/callback`.
+- 5f: the client ID and secret were pasted into Supabase by the PO, not through the agent.
+  Re-check: `/auth/v1/settings` shows `google: true`, with `email`, `phone` and
+  `anonymous_users` still `false` and `disable_signup: false`. `supabase config diff` shows
+  `auth.external.google.enabled` and `client_id` set on the remote (values not printed). ✅
+
+## Step 6 — Redirects (PO, 2026-10-29)
+
+`supabase config diff` shows the Site URL `https://godwitly.pages.dev` and exactly three
+Redirect URLs: `https://godwitly.pages.dev/dashboard`,
+`https://godwitly.pages.dev/dashboard.html` and `http://localhost:8000/dashboard.html`
+(the last is for testing only, and is removed in step 8). ✅
 
 ## Remaining
 
-- Step 6: the Site URL and the three Redirect URLs.
 - Local browser test (AC2–AC10, AC12, AC15), which needs a second Google account.
 - The PO merges PR #24, then step 7 deploy ("go deploy").
 - Step 8: remove the localhost redirect and re-run the Advisor.
