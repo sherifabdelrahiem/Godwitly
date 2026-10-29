@@ -18,6 +18,26 @@ Infer the repo from `git remote -v`; `gh` does this automatically when run insid
 
 File issues only into the user's own repo. Never file into `mattpocock/skills` (the repo these skills come from) unless the user owns it. In a fork, `gh` can default to the upstream parent, so before the first `gh issue create` of a session, check the target with `gh repo view --json nameWithOwner` and confirm it with the user if it is not their repo.
 
+## Project rules for specs, approvals and closing
+
+The rules (the hash command, who approves, what needs approval, the `[Agent]` label) are in
+`AGENTS.md`, Workflow, "Spec versions" and "External actions". This section holds only the
+formats they use.
+
+- **Spec Issue body**: first line `Spec version: vN`; last section `## Changes`, one line
+  per version.
+- **Spec hash**: record all 64 hex characters the command prints (it hashes the body as
+  `gh` prints it, final newline included). A shortened form is for display only.
+- **Approval record**: a comment on the spec Issue:
+  `[Agent] PO approval recorded: spec vN, sha256 <64 hex>, approved in session on YYYY-MM-DD.`
+  A typo-only re-approval uses the same format with the new hash, plus "(typo only)".
+- **Ticket and Codex gate report header**: first line
+  `Spec: #<n> · Spec version: vN · sha256 <64 hex>`, naming the version the ticket or
+  report was made from.
+- **Issue references**: `Refs #n` in a PR or commit, and `Closes #n` once the PO has
+  approved closing that issue. Every `gh issue close` in this file (**Close**, and
+  **Resolve** under Wayfinding) needs that approval first.
+
 ## Pull requests as a triage surface
 
 **PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_

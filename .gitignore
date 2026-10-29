@@ -4,6 +4,7 @@
 supabase/.temp/
 supabase/.branches/
 .env*
-.agents/
-.claude/
-skills-lock.json
+# Agent skills are vendored (see .agents/skills/README.md). Only .claude/skills/ is
+# tracked; everything else in .claude/ (local settings) stays ignored.
+/.claude/*
+!/.claude/skills/
