@@ -24,6 +24,7 @@ address, not by double-click. See "Sign-up dashboard" below.
 | `css/dashboard.css` | Styling for the Sign-up dashboard only. It reuses the `:root` variables. |
 | `js/dashboard.js` | Google sign-in, the Launch sign-ups list, search, figures and Access. |
 | `_headers` | Cloudflare Pages security headers for `/dashboard` and `/dashboard.html` only. |
+| `.agents/skills/` | Agent skills used by the development workflow (MIT; see its `README.md`). Not part of the site. |
 
 ## Common changes
 

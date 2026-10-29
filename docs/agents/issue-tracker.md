@@ -18,6 +18,35 @@ Infer the repo from `git remote -v`; `gh` does this automatically when run insid
 
 File issues only into the user's own repo. Never file into `mattpocock/skills` (the repo these skills come from) unless the user owns it. In a fork, `gh` can default to the upstream parent, so before the first `gh issue create` of a session, check the target with `gh repo view --json nameWithOwner` and confirm it with the user if it is not their repo.
 
+## Project rules for specs, approvals and closing
+
+These carry out `AGENTS.md`, Workflow ("Spec versions" and "External actions").
+
+- **Agent posts**: every issue, comment or PR body the agent writes starts with `[Agent]`,
+  because `gh` posts as the PO. A triage post puts `[Agent]` first, then the triage
+  disclaimer on the next line.
+- **Spec Issue**: the body starts with `Spec version: vN` and ends with a `## Changes`
+  list (one line per version). The body never contains its own hash.
+- **Spec hash**: the full SHA-256 printed by exactly this command (the body as `gh` prints
+  it, final newline included):
+
+  ```bash
+  gh issue view <n> --json body --jq .body | shasum -a 256
+  ```
+
+  Store all 64 hex characters. A shortened form is for display only.
+- **Approval record**: a comment on the spec Issue, posted only for an approval the PO
+  actually gave:
+  `[Agent] PO approval recorded: spec vN, sha256 <64 hex>, approved in session on YYYY-MM-DD.`
+  The PO may instead approve by commenting themselves. A typo-only re-approval uses the
+  same format with the new hash, plus "(typo only)".
+- **Codex gate report and tickets**: each names the spec Issue, `Spec version: vN` and the
+  full hash it was made from.
+- **Closing**: closing any issue needs the PO's approval for that issue, in the session.
+  That includes closing by a PR keyword or by `implement-spec`. Until then, a PR or
+  commit refers to the issue with `Refs #n`, and uses `Closes #n` only for issues the PO
+  approved closing. The **Close** command above runs only after that approval.
+
 ## Pull requests as a triage surface
 
 **PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_
