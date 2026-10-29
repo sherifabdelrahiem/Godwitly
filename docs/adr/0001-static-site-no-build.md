@@ -14,3 +14,5 @@ tokens without installing anything (see `README.md`, "Common changes").
   `js/translations.js`, so the page reads correctly before JavaScript runs. Change both
   together.
 - Adding any dependency, CDN script or build tool needs the PO's approval (`AGENTS.md`).
+- The Sign-up dashboard (`dashboard.html`) is a deliberate exception: it works online only and
+  loads one pinned CDN script (ADR-0005).

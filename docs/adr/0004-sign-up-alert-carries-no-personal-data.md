@@ -20,4 +20,5 @@ the first version on privacy (`docs/plans/2026-10-27-signup-email-notify.md`, v2
 
 - Alerts are best-effort: the insert never fails because of an alert, and a lost alert is
   acceptable. The `launch_signups` table is the source of truth; check it weekly.
-- To see who signed up, open the Table Editor. Don't add personal fields to the alert.
+- To see who signed up, open the Table Editor, or the Sign-up dashboard (ADR-0005). Don't add
+  personal fields to the alert.

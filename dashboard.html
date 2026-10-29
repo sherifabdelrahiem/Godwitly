@@ -1,0 +1,210 @@
+<!doctype html>
+<!--
+  Godwitly Sign-up dashboard (private page, English + Arabic).
+
+  The Project owner and the Sign-up viewers they choose sign in with Google
+  here and see every Launch sign-up plus a few figures about them. Nothing on
+  this page can change or delete a Launch sign-up. Only the Project owner sees
+  the Access section, where they add or remove Sign-up viewers.
+
+  This page is linked from nowhere, is not indexed, and only works from its web
+  address (Google sign-in must return to a real address), not from file://
+  (ADR-0005). The plan is docs/plans/2026-10-28-signup-dashboard.md.
+
+  How this page is organised:
+    1. Header      – logo, language switcher, Sign out
+    2. Messages    – one shown at a time: online only, loading, signed out,
+                     no access, error
+    3. Dashboard   – figures, sign-ups per day / week, the Launch sign-ups list
+    4. Access      – Project owner only
+
+  Text: every element with a data-i18n="..." attribute gets its text from
+  js/translations.js (the dash.* keys). The English text written here is the
+  default. js/dashboard.js fills in the figures, the chart and the lists.
+
+  The Content-Security-Policy in _headers allows no inline scripts or styles,
+  so this file has no <script> or <style> blocks, no style="" and no on...=""
+  attributes.
+-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title data-i18n="dash.metaTitle">Sign-up dashboard — Godwitly</title>
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+
+    <!-- Fonts: Rubik + Inter for English, Cairo + IBM Plex Sans Arabic for Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rubik:wght@500;600;700&family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    />
+
+    <!-- The landing page styles first (colours, fonts, buttons), then the dashboard's own -->
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+
+  <body>
+    <!-- Icon library: each <symbol> is drawn later with <svg><use href="#icon-name"></use></svg> -->
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></symbol>
+    </svg>
+
+    <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to main content</a>
+
+    <!-- ===================== 1. HEADER ===================== -->
+    <header class="site-header container dash-header">
+      <img src="assets/images/godwitly-wordmark.svg" alt="Godwitly" class="logo" width="140" height="40" />
+
+      <div class="header-actions dash-header__actions">
+        <!-- Language switcher: two buttons; the pressed one is the current language -->
+        <div class="lang-switch" role="group" data-i18n-aria-label="a11y.language" aria-label="Choose language">
+          <svg class="icon lang-switch__globe" aria-hidden="true"><use href="#icon-globe"></use></svg>
+          <button type="button" class="lang-switch__btn" data-lang="en" lang="en" aria-pressed="true">English</button>
+          <button type="button" class="lang-switch__btn" data-lang="ar" lang="ar" aria-pressed="false">العربية</button>
+        </div>
+
+        <!-- Shown only while someone is signed in -->
+        <button type="button" class="pill pill--outline dash-signout" data-action="sign-out" hidden data-i18n="dash.signOut">Sign out</button>
+      </div>
+    </header>
+
+    <main id="main" class="container dash-main" tabindex="-1">
+      <h1 class="dash-title" data-i18n="dash.title">Sign-up dashboard</h1>
+
+      <!-- ===================== 2. MESSAGES (one at a time) ===================== -->
+      <div class="dash-states" aria-live="polite">
+        <!-- Opened from a file on this computer: Google sign-in cannot work here -->
+        <div id="dash-offline" class="dash-panel" hidden>
+          <p data-i18n="dash.onlineOnly">The Sign-up dashboard only works from its web address. Please open it online, not as a file on this computer.</p>
+        </div>
+
+        <div id="dash-loading" class="dash-panel">
+          <p data-i18n="dash.loading">Loading…</p>
+        </div>
+
+        <div id="dash-signed-out" class="dash-panel" hidden>
+          <p data-i18n="dash.signedOutText">Sign in with the Google account the Project owner added to see Launch sign-ups.</p>
+          <button type="button" class="pill pill--primary dash-panel__button" data-action="sign-in" data-i18n="dash.signIn">Sign in with Google</button>
+        </div>
+
+        <div id="dash-no-access" class="dash-panel" hidden>
+          <p data-i18n="dash.noAccess">Sign-in didn't finish, or this Google account doesn't have access.</p>
+          <button type="button" class="pill pill--outline dash-panel__button" data-action="sign-out" data-i18n="dash.signOut">Sign out</button>
+        </div>
+
+        <div id="dash-error" class="dash-panel dash-panel--error" hidden>
+          <p data-i18n="dash.error">Something went wrong while loading the Sign-up dashboard. Please check your connection and try again.</p>
+          <button type="button" class="pill pill--outline dash-panel__button" data-action="retry" data-i18n="dash.retry">Try again</button>
+        </div>
+      </div>
+
+      <!-- ===================== 3. DASHBOARD ===================== -->
+      <div id="dash-content" hidden>
+        <!-- Figure cards: filled in by js/dashboard.js -->
+        <section class="dash-section" aria-labelledby="dash-figures-heading">
+          <h2 id="dash-figures-heading" class="dash-heading" data-i18n="dash.figuresTitle">Figures</h2>
+          <dl id="dash-cards" class="dash-cards"></dl>
+        </section>
+
+        <!-- Sign-ups per day or per week, as plain HTML bars -->
+        <section class="dash-section dash-box" aria-labelledby="dash-chart-heading">
+          <div class="dash-section__head">
+            <h2 id="dash-chart-heading" class="dash-heading" data-i18n="dash.chartTitle">Sign-ups over time</h2>
+            <div class="dash-toggle" role="group" data-i18n-aria-label="dash.chartGroup" aria-label="Group sign-ups by">
+              <button type="button" class="dash-toggle__btn" data-chart="day" aria-pressed="true" data-i18n="dash.chartDay">Day</button>
+              <button type="button" class="dash-toggle__btn" data-chart="week" aria-pressed="false" data-i18n="dash.chartWeek">Week</button>
+            </div>
+          </div>
+          <p class="dash-note">
+            <span id="dash-chart-note"></span>
+            <strong data-i18n="dash.cairoTime">Times are Cairo time.</strong>
+          </p>
+          <ol id="dash-chart" class="dash-chart"></ol>
+        </section>
+
+        <!-- The Launch sign-ups list: cards on phones, a table from 768px -->
+        <section class="dash-section" aria-labelledby="dash-list-heading">
+          <h2 id="dash-list-heading" class="dash-heading" data-i18n="dash.listTitle">Launch sign-ups</h2>
+
+          <div class="field dash-search">
+            <label for="dash-search" data-i18n="dash.search">Search Launch sign-ups</label>
+            <input id="dash-search" type="search" autocomplete="off" aria-describedby="dash-search-hint" />
+            <p class="field__hint" id="dash-search-hint" data-i18n="dash.searchHint">Searches name, email, phone number, job title and message.</p>
+          </div>
+
+          <!-- "Showing 3 of 10", "no sign-ups yet" or "nothing matches your search" -->
+          <p id="dash-list-status" class="dash-list-status" role="status" aria-live="polite"></p>
+
+          <div id="dash-table-wrap" class="dash-table-wrap">
+            <table class="dash-table">
+              <caption class="dash-visually-hidden" data-i18n="dash.listTitle">Launch sign-ups</caption>
+              <thead>
+                <tr>
+                  <th scope="col" data-i18n="dash.colDate">Date (Cairo time)</th>
+                  <th scope="col" data-i18n="dash.colName">Full name</th>
+                  <th scope="col" data-i18n="dash.colEmail">Email</th>
+                  <th scope="col" data-i18n="dash.colPhone">Phone number</th>
+                  <th scope="col" data-i18n="dash.colJob">Job title</th>
+                  <th scope="col" data-i18n="dash.colLanguage">Language</th>
+                  <th scope="col" data-i18n="dash.colConsent">Consent</th>
+                  <th scope="col" class="dash-col-message" data-i18n="dash.colMessage">Message</th>
+                </tr>
+              </thead>
+              <tbody id="dash-rows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===================== 4. ACCESS (Project owner only) ===================== -->
+        <!-- Hiding this section is only for convenience: the database refuses these
+             changes for anyone who is not the Project owner. -->
+        <section id="dash-access" class="dash-section dash-box dash-access" aria-labelledby="dash-access-heading" hidden>
+          <h2 id="dash-access-heading" class="dash-heading" data-i18n="dash.accessTitle">Access</h2>
+          <p class="dash-access__intro" data-i18n="dash.accessIntro">Choose who may see Launch sign-ups. Only you, the Project owner, can see this section.</p>
+          <p class="dash-reminder" data-i18n="dash.accessReminder">Only add people working on Godwitly's launch.</p>
+
+          <form id="dash-access-form" class="dash-access__form" novalidate>
+            <div class="field">
+              <label for="dash-viewer-email" data-i18n="dash.accessEmail">Google address</label>
+              <div class="dash-access__row">
+                <input
+                  id="dash-viewer-email"
+                  name="viewer_email"
+                  type="email"
+                  dir="ltr"
+                  autocomplete="off"
+                  maxlength="254"
+                  required
+                  aria-describedby="dash-viewer-hint"
+                />
+                <button type="submit" class="pill pill--primary dash-access__add" data-i18n="dash.accessAdd">Add Sign-up viewer</button>
+              </div>
+              <p class="field__hint" id="dash-viewer-hint" data-i18n="dash.accessHint">Type the address exactly as it appears in the person's Google account (dots included).</p>
+            </div>
+          </form>
+
+          <!-- Added / already a viewer / invalid address / failed / removed -->
+          <p id="dash-access-status" class="dash-access__status" role="status" aria-live="polite"></p>
+
+          <h3 class="dash-subheading" data-i18n="dash.accessListTitle">Who has access</h3>
+          <ul id="dash-viewers" class="dash-viewers"></ul>
+        </section>
+      </div>
+    </main>
+
+    <!-- translations.js first (the text), then config.js (the Supabase address),
+         then the official Supabase library at a fixed version, then the dashboard -->
+    <script src="js/translations.js"></script>
+    <script src="js/config.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"
+      integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>
