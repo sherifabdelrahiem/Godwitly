@@ -31,8 +31,9 @@
   direction corrects it.
 - **Translation keys.** `en` and `ar` both have 165 keys, the same set.
 - **Keys used in HTML.** All `data-i18n*` keys in `index.html` (97) and `dashboard.html` (39)
-  exist. A naive pattern also matches the placeholder `data-i18n="..."` in each page's
-  header comment, so a check must skip comments or require a namespaced key.
+  exist. A plain text search also matches the placeholder `data-i18n="..."` in each page's
+  header comment; a check should ignore HTML comments structurally, not exempt that
+  placeholder (PO correction, 2026-10-30).
 - **Keys used in JavaScript.** No key is built from a template or string concatenation.
   Keys reach `t()` as string literals, directly, through ternaries (`t(over ? "a" : "b")`)
   or through data (`FIELDS[…].message`, `statusMessage`, `ACCESS_ERRORS`, the figures
@@ -40,7 +41,10 @@
   taken from the translation keys: `meta a11y nav hero products engage learn resilience
   cards why cta form error footer dash`) exists in both languages: 41 in `js/dashboard.js`,
   13 in `js/form.js`, 2 in `js/script.js`, none elsewhere. Every translation key is
-  referenced somewhere as such a literal or a `data-i18n*` value.
+  referenced somewhere as such a literal or a `data-i18n*` value. This describes today's
+  code only. It is not yet a rule for finding references: a scan for key-shaped strings
+  can miss a reference or mistake an unrelated string for a key (PO correction,
+  2026-10-30).
 - **Browser tools.** The Chrome extension can't open `file://` pages; `resize_window` to
   320×700 left the viewport at 1,470px; the extension stopped responding (8 s timeout)
   during the post-deploy check. Headless Chrome `--dump-dom` worked for `file://` and the
@@ -87,12 +91,20 @@ implementation, no external action and no branch deletion.
 ## Open questions for the specs (not decided)
 
 - **Spec A:**
+  - A reliable rule for identifying translation-key references in JavaScript and HTML, so
+    that a future missing key is detected. Detecting unused keys is a separate decision.
+  - The lane. Agent recommendation: Standard, since tests and CI change no personal data,
+    permissions or backend. If the spec adds security-related repository settings (branch
+    protection, workflow permissions, required checks), assess explicitly whether the
+    Critical definition ("security") applies.
+  - The feature branch for the build, and how it receives this retro record (which so far
+    exists only on the local branch `docs/message-counter-retro`). Staying on that branch
+    for the interview is not a build decision.
   - Which checks become required before merge? Making them required is a GitHub
     branch-protection setting, an external action.
   - Its lane: GitHub Actions runs code with repository permissions.
   - Whether the third-party `checkout`/`setup-node` actions count as a tool needing
     approval under Boundaries, and how they're pinned.
-  - Whether the coverage test also flags unused keys.
 - **Spec B:** where each rule lives (`AGENTS.md` or `docs/agents/`), given #7 is
   deferred.
 
