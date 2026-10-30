@@ -172,6 +172,70 @@ The internal email the Project owner receives for each new launch sign-up. It ca
 personal data.
 _Avoid_: notification, notify email
 
+### Crash course
+
+**Crash course**:
+The Claude Crash Course for Beginners: a free, self-paced Godwitly guide that teaches
+complete beginners to use Claude and Claude Code. It is not a Learn Programme: there is no
+enrolment, tracking or Final exam.
+Arabic: دليل كلود للمبتدئين (the agreed Arabic title, not a word-for-word translation)
+_Avoid_: Programme, course on its own, training; Arabic: كورس، برنامج
+
+**Crash courses**:
+The site's section for Crash courses; the header, mobile menu and footer link to it. Until
+a second Crash course exists, the link opens the Claude Crash Course for Beginners hub.
+Arabic: الدورات المكثّفة (the site's Modern Standard Arabic; not the title of a single Crash
+course)
+_Avoid_: Courses, Programmes, Learn (a product name); Arabic: كورسات، برامج
+
+**Lesson**:
+One part of the Crash course with a single outcome the Course taker can check. Lessons are
+numbered from 1 and are not tied to days.
+Arabic: درس
+_Avoid_: Domain, module, day, unit
+
+**Section**:
+One headed part inside a Lesson, such as "Chat vs Code". Lessons are not grouped above the
+Lesson level.
+Arabic: جزء من الدرس
+_Avoid_: chapter (a Learn Domain's word to avoid), part, step; Arabic: فصل
+
+**Self-check**:
+A few questions at the end of a Lesson that a Course taker answers to check their own
+understanding. It has no score and counts for nothing.
+Arabic: اختبر نفسك
+_Avoid_: quiz, test, exam, Practice; Arabic: اختبار، امتحان
+
+**Course taker**:
+A person working through the Crash course. Used in docs and specs only; the course pages
+address them as "إنت".
+_Avoid_: Learner (reserved for Learn), student, user, trainee
+
+**Sample business**:
+The fictional business, كافيه المرسى (Al-Marsa Café) in Port Said, whose facts file every
+Crash course example builds on. A Course taker may use their own business instead, with
+permission.
+_Avoid_: demo, the bakery
+
+**Resources**:
+Optional files that go with one Lesson, which the Course taker downloads and uses while
+working, such as the Sample business facts file or a template. A Lesson may have none.
+Arabic: المصادر
+_Avoid_: annex, training material, attachments; Arabic: ملحق، مرفقات
+
+**References**:
+The official pages a Lesson's facts and setup steps come from, linked so a Course taker can
+check them when something looks different.
+Arabic: المراجع
+_Avoid_: sources; Arabic: المصادر (that word means Resources)
+
+**Cheatsheet**:
+An optional one-page summary at the end of a Lesson, for looking things up while working:
+its key terms, the prompts and commands to copy, and its main warnings. It is part of the
+Lesson, not a Resource.
+Arabic: برشامة
+_Avoid_: summary, reference card; Arabic: ملخّص، ورقة مختصرة
+
 ### Access to sign-ups
 
 **Project owner**:
