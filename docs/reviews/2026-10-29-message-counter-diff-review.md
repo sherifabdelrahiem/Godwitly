@@ -18,14 +18,14 @@
 
 | # | Finding | Kind | Outcome |
 |---|---|---|---|
-| S1 | `.visually-hidden` in `css/styles.css` repeats `.dash-visually-hidden` in `css/dashboard.css`; merging them touches the dashboard | Duplicated Code (judgement) | **pending PO decision** |
-| S2 | `findProblems()` keeps its own `[...text].length` helper for name and job title; the Message is trimmed in `readAnswers()` and again in `messageLength()` | Duplicated Code (judgement) | **pending PO decision** (moving other fields is out of scope in spec v1) |
+| S1 | `.visually-hidden` in `css/styles.css` repeats `.dash-visually-hidden` in `css/dashboard.css`; merging them touches the dashboard | Duplicated Code (judgement) | accepted by the PO on 2026-10-30 |
+| S2 | `findProblems()` keeps its own `[...text].length` helper for name and job title; the Message is trimmed in `readAnswers()` and again in `messageLength()` | Duplicated Code (judgement) | accepted by the PO on 2026-10-30 (moving other fields is out of scope in spec v1) |
 | S3 | Counter block unnumbered and missing from the `form.js` header; second `languagechange` listener | structure (judgement) | fixed in `0ac57ea` |
 | S4 | `number` held "left" or "over"; boolean flag argument `announce` | Mysterious Name (judgement) | fixed in `0ac57ea` |
 | S5 | ADR-0006: a new test seam must be agreed in the spec first | check | no defect: spec v1 names the seam (Testing Decisions); confirmed by the Spec reviewer |
 | S6 | Default "Characters left: 1,000" in `index.html` has no `data-i18n` | check | no defect: English is the default text; `form.js` redraws it on load |
 | R1 | Start-up wiring sat under the section 5 banner | structure (judgement) | fixed in `571a9cf` |
-| R2 | `renderMessageCount()` also updates `messageIsOver`, unlike `render()` | judgement | **pending PO decision** |
+| R2 | `renderMessageCount()` also updates `messageIsOver`, unlike `render()` | judgement | accepted by the PO on 2026-10-30 |
 
 ## Spec
 
@@ -33,9 +33,9 @@ Nothing missing, partial or wrong (round 1); no behaviour change from the fixes 
 
 | # | Not asked for | Spec line it supports | Outcome |
 |---|---|---|---|
-| P1 | Extra tests: a flag counts as 2; 1,000 emoji are within the limit | "combined emoji such as flags count as more, exactly as the database does" | **pending PO decision** |
-| P2 | The live region is cleared on a language change | "nothing is announced on other keystrokes" | **pending PO decision** |
-| P3 | New general `.visually-hidden` class | "A polite live announcement…" | **pending PO decision** |
+| P1 | Extra tests: a flag counts as 2; 1,000 emoji are within the limit | "combined emoji such as flags count as more, exactly as the database does" | accepted by the PO on 2026-10-30 |
+| P2 | The live region is cleared on a language change | "nothing is announced on other keystrokes" | accepted by the PO on 2026-10-30 |
+| P3 | New general `.visually-hidden` class | "A polite live announcement…" | accepted by the PO on 2026-10-30 |
 
 ## Tests
 
@@ -58,7 +58,14 @@ Chrome, local server, `f47c8fa`; checks 3–6 re-run on `0ac57ea`.
 | 5 | Language switch with text in the box | pass |
 | 6 | Submit while over: corrected error, box outlined | pass; nothing sent (other fields empty) |
 | 7 | Restored text counted on load | pass after Back (981 for 19 characters); Chrome restored nothing on reload, and the counter showed 1,000 |
-| 8 | VoiceOver | **not run**: needs the PO |
+| 8 | VoiceOver | **not run (untested, not passed)**: the PO deferred it on 2026-10-30; follow-up #29 |
 | 9 | Opens by double-click (`file://`) | pass in headless Chrome (Arabic counter text drawn by the scripts); the Chrome extension can't open `file://` |
 
 No console errors on load.
+
+## PO decisions (2026-10-30)
+
+- "accept 1-4": S1, S2, R2 and P1–P3 accepted as they are.
+- "skip voice over and add it as a follow-up card no need for it now": manual check 8 is
+  deferred to issue #29, so the acceptance check "Manual checks 1–9 pass" is met for 1–7
+  and 9 only.
