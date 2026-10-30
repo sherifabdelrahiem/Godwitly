@@ -104,13 +104,22 @@ Limits:
 
   The workflow sets them to `""`, `false` and `false`.
 
-## Pending until the PR runs on GitHub
+## CI on PR #34
 
-- CI is green on Node 24 and Node 26.
-- The actual check names. Intended: "Checks / node 24" and "Checks / node 26".
-- The exact Node version each run used, taken from the run logs.
+First run: [41087382861](https://github.com/sherifabdelrahiem/Godwitly/actions/runs/41087382861) on `cc14e44`, event `pull_request`, 2026-10-30. **Green on both versions.**
 
-These need the branch pushed and a PR opened, which needs the PO's approval. They will be added to this report as evidence.
+| Job | Result | Node used (from the log) | Source |
+|---|---|---|---|
+| node 24 | success, 40 tests, 40 pass, 0 fail | **v24.22.1** | "Found in cache" (runner tool cache). The newest 24 is 24.22.2, as the spec's "potentially from the runner's tool cache" allows |
+| node 26 | success, 40 tests, 40 pass, 0 fail | **v26.13.0** | downloaded without a token from `actions/node-versions` (release `26.13.0-40806794713`) |
+
+- **Check names.** The check runs GitHub records (`check-runs` API, app `github-actions`) are named **"node 24"** and **"node 26"**. The PR page shows them under the workflow name "Checks", but that display text isn't the check name. So the spec's intended "Checks / node 24" and "Checks / node 26" differ from the actual names, as the Codex gate warned. A required-checks rule (#32) must select "node 24" and "node 26".
+- **Token and settings, from the logs:**
+  - the job token had `Contents: read` and `Metadata: read` only;
+  - checkout ran with `persist-credentials: false`;
+  - setup-node received no token input and `package-manager-cache: false`;
+  - no rate-limit messages appeared.
+- **Every later evidence push re-runs the checks.** The latest run on the PR head is noted in the PR description.
 
 ## Disclosures
 
