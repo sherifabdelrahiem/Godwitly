@@ -24,7 +24,8 @@ address, not by double-click. See "Sign-up dashboard" below.
 | `css/dashboard.css` | Styling for the Sign-up dashboard only. It reuses the `:root` variables. |
 | `js/dashboard.js` | Google sign-in, the Launch sign-ups list, search, figures and Access. |
 | `_headers` | Cloudflare Pages security headers for `/dashboard` and `/dashboard.html` only. |
-| `tests/` | Automated tests for the development workflow: `node --test` (Node 20 or later, no packages). Not part of the site. |
+| `tests/` | Automated tests and project checks for the development workflow: `node --test` (Node 24 or later, no packages). Not part of the site. |
+| `.github/workflows/` | Runs `node --test` on Node 24 and 26 for every pull request into `main`, and reports pass or fail. Not part of the site. |
 | `.agents/skills/` | Agent skills used by the development workflow (MIT; see its `README.md`). Not part of the site. |
 
 ## Common changes

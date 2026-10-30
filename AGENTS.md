@@ -197,7 +197,11 @@ proposed work that enters this Workflow at step 1 or 3.
 - `docs/agents/`: issue tracker, triage label and domain-doc settings read by agent skills.
 - `GLOSSARY.md`: the agreed domain terms in English and Arabic; use them in text, plans
   and issues.
-- `tests/`: `node --test` tests (development only, ADR-0006).
+- `tests/`: `node --test` tests (development only, ADR-0006). `tests/checks.js` holds the
+  project checks: translation parity, translation keys named in the pages and scripts, and
+  JavaScript syntax.
+- `.github/workflows/checks.yml`: the PR checks (see Development commands, Test). A change
+  to it needs a security review and a new gate assessment (spec #31).
 - `.agents/skills/`: the vendored Matt Pocock skills (MIT; see its `README.md`).
   `.claude/skills/` links to them. Update them only by re-installing (see that README).
 
@@ -210,9 +214,10 @@ Use the commands verified for this repository:
   The Sign-up dashboard needs a local server: `python3 -m http.server 8000`, then
   http://localhost:8000/dashboard.html (online only; see README "Sign-up dashboard").
 - Lint: none configured.
-- Test: `node --test` (Node 20 or later; files in `tests/*.test.js`; no packages;
-  development only, ADR-0006). For anything Node can't reach, verify manually in a browser
-  (see Verification).
+- Test: `node --test` (Node 24 or later; files in `tests/*.test.js`; no packages;
+  development only, ADR-0006). CI runs the same command on every pull request into `main`,
+  on Node 24 and 26, and reports pass or fail; it is not required before merge. For
+  anything Node can't reach, verify manually in a browser (see Verification).
 - Build: none. Never push to `main` directly.
 - Deploy: manual. The Cloudflare Pages project `godwitly` is not connected to GitHub, so
   merging to `main` does **not** deploy. Ask the PO first, then copy only the site files
@@ -231,6 +236,9 @@ If a command is unavailable or fails, report that accurately.
 - Update relevant documentation (`README.md`, the spec Issue) when behavior or setup
   changes.
 - All user-facing text goes in `js/translations.js`; update both `en` and `ar` together.
+- A translation key in JavaScript is one complete string, such as `t("form.messageLeft")`,
+  never built from pieces. `tests/checks.js` checks this and lists what it can't detect. A
+  dotted string that isn't a key goes in its exception list, with the reason.
 - Form rules exist in both `js/form.js` (the Message length in `js/message-length.js`) and
   the Supabase migration; change them together.
 - The page must keep working when opened by double-click (`file://`) and on Cloudflare
