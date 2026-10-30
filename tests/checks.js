@@ -58,8 +58,9 @@ function missingKey(where, key, translations) {
 function findHtmlReferenceProblems(html, translations) {
   const problems = [];
   const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-  // Attribute names in any case, after a space (so not text inside another
-  // value); values in double quotes, single quotes or none.
+  // Attribute names in any case, after a space; values in double quotes,
+  // single quotes or none. Text such as title="see data-i18n=x" is still read
+  // as an attribute: that gives an extra failure, never a missed key.
   const attributes = /(?<=\s)(data-i18n(?:-[a-z0-9]+)*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi;
   for (const [, name, double, single, bare] of withoutComments.matchAll(attributes)) {
     const key = double ?? single ?? bare;
@@ -249,7 +250,10 @@ function scanScript(source) {
   - a suffix added with +=: key += ".title";
   - keys that reach the scripts from anywhere else.
   The scanner also reads a "/" straight after ")" as division, so a regular
-  expression there (if (ok) /x/.test(s)) can hide the code after it.
+  expression there (if (ok) /x/.test(s)) can hide the code after it; and it
+  reads a "/" as a regular expression after a keyword-named property written
+  with a space or line break after the dot (obj. do / 2) or as a private name
+  (this.#do / 2), which can hide the code after it too.
   The checks never prove that every key exists.
 */
 const KEY_PREFIX = /^[a-z][a-z0-9]*\.$/; // "dash."
