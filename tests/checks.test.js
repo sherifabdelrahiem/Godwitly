@@ -48,8 +48,8 @@ const SMALL = {
 test("pages: reports a data-i18n key that doesn't exist", () => {
   const html = '<a data-i18n="nav.home">Home</a> <a data-i18n="nav.hmoe">Home</a>';
   assert.deepEqual(findHtmlReferenceProblems(html, SMALL), [
-    'data-i18n="nav.hmoe": no such key in en',
-    'data-i18n="nav.hmoe": no such key in ar',
+    'data-i18n "nav.hmoe": no such key in en',
+    'data-i18n "nav.hmoe": no such key in ar',
   ]);
 });
 
@@ -68,10 +68,10 @@ test("pages: checks every data-i18n-* attribute, including ones added later", ()
   const html =
     '<nav data-i18n-aria-label="a11y.menu"></nav> <input data-i18n-placeholder="a11y.find"> <b data-i18n-title="nav.gone"></b>';
   assert.deepEqual(findHtmlReferenceProblems(html, SMALL), [
-    'data-i18n-placeholder="a11y.find": no such key in en',
-    'data-i18n-placeholder="a11y.find": no such key in ar',
-    'data-i18n-title="nav.gone": no such key in en',
-    'data-i18n-title="nav.gone": no such key in ar',
+    'data-i18n-placeholder "a11y.find": no such key in en',
+    'data-i18n-placeholder "a11y.find": no such key in ar',
+    'data-i18n-title "nav.gone": no such key in en',
+    'data-i18n-title "nav.gone": no such key in ar',
   ]);
 });
 
@@ -195,16 +195,20 @@ test("syntax: checks each file on its own, so a broken file after a good one is 
   }
 });
 
-test("scripts: tells division from a regular expression after ++, --, await, else, throw and yield", () => {
+test("scripts: tells division from a regular expression after ++, --, await, else, throw, yield and do, and after properties with those names", () => {
   const source = [
     'const half = count++ / 2; t("nav.typo1"); const third = 1 / 3;',
     'const left = count-- / 2; t("nav.typo2"); const fifth = 1 / 5;',
     'async function a() { return await /"/.source + t("nav.typo3"); }',
     'if (ok) run(); else /"/.test(s); t("nav.typo4");',
+    'function fail() { throw /"/.source + t("nav.typo5"); }',
+    'function* gen() { yield /"/.source; t("nav.typo6"); }',
+    'do /"/.test(s); while (t("nav.typo7"));',
+    'const ratio = options.do / 2; t("nav.typo8"); const r = options.yield / 3;',
   ].join("\n");
   assert.deepEqual(
     scriptProblems(source).map((problem) => problem.match(/"(nav\.\w+)"/)[1]),
-    ["nav.typo1", "nav.typo2", "nav.typo3", "nav.typo4"],
+    ["nav.typo1", "nav.typo2", "nav.typo3", "nav.typo4", "nav.typo5", "nav.typo6", "nav.typo7", "nav.typo8"],
   );
 });
 
@@ -233,9 +237,30 @@ test("scripts: reports an exception without a reason", () => {
 test("pages: checks single-quoted and unquoted attribute values too", () => {
   const html = "<a data-i18n='nav.one'>x</a> <b data-i18n=nav.two>y</b> <i data-i18n=\"nav.home\">z</i>";
   assert.deepEqual(findHtmlReferenceProblems(html, SMALL), [
-    'data-i18n="nav.one": no such key in en',
-    'data-i18n="nav.one": no such key in ar',
-    'data-i18n="nav.two": no such key in en',
-    'data-i18n="nav.two": no such key in ar',
+    'data-i18n "nav.one": no such key in en',
+    'data-i18n "nav.one": no such key in ar',
+    'data-i18n "nav.two": no such key in en',
+    'data-i18n "nav.two": no such key in ar',
+  ]);
+});
+
+test("scripts: counts the line break that ends an unfinished regular expression", () => {
+  const source = 'x = /ab\n; t("nav.typo");';
+  assert.deepEqual(scriptProblems(source), [
+    'js/x.js:2: "nav.typo" looks like a translation key but there is no such key in en, ar',
+  ]);
+});
+
+test("pages: reads attribute names in any case, with digits, but not text inside other values", () => {
+  const html = [
+    '<a DATA-I18N="nav.one">x</a>',
+    '<b data-i18n-x2="nav.two">y</b>',
+    "<i title='data-i18n=nav.three'>z</i>",
+  ].join("\n");
+  assert.deepEqual(findHtmlReferenceProblems(html, SMALL), [
+    'DATA-I18N "nav.one": no such key in en',
+    'DATA-I18N "nav.one": no such key in ar',
+    'data-i18n-x2 "nav.two": no such key in en',
+    'data-i18n-x2 "nav.two": no such key in ar',
   ]);
 });

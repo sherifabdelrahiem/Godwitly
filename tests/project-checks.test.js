@@ -42,7 +42,7 @@ for (const file of SCRIPTS) {
   });
 }
 
-test("every exception in the script exceptions list still matches its string", () => {
+test("every exception in the script exceptions list has a reason and still matches its string", () => {
   const scripts = Object.fromEntries(SCRIPTS.map((file) => [file, read(file)]));
   assert.deepEqual(findExceptionListProblems(scripts), []);
 });

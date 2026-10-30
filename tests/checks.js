@@ -58,11 +58,12 @@ function missingKey(where, key, translations) {
 function findHtmlReferenceProblems(html, translations) {
   const problems = [];
   const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-  // Values in double quotes, single quotes or none.
-  const attributes = /\b(data-i18n(?:-[a-z]+)*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
+  // Attribute names in any case, after a space (so not text inside another
+  // value); values in double quotes, single quotes or none.
+  const attributes = /(?<=\s)(data-i18n(?:-[a-z0-9]+)*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi;
   for (const [, name, double, single, bare] of withoutComments.matchAll(attributes)) {
     const key = double ?? single ?? bare;
-    problems.push(...missingKey(`${name}="${key}"`, key, translations));
+    problems.push(...missingKey(`${name} "${key}"`, key, translations));
   }
   return problems;
 }
@@ -114,8 +115,9 @@ function scanScript(source) {
     // After ++ or -- a "/" divides: count++ / 2.
     if ((last === "+" || last === "-") && source[lastIndex - 1] === last) return false;
     if (BEFORE_REGEX.includes(last)) return true;
-    const word = source.slice(0, lastIndex + 1).match(/[A-Za-z_$][\w$]*$/);
-    return Boolean(word) && BEFORE_REGEX_WORDS.includes(word[0]);
+    const word = source.slice(0, lastIndex + 1).match(/(\.?)([A-Za-z_$][\w$]*)$/);
+    // A property such as options.do is a name, not the keyword.
+    return Boolean(word) && word[1] !== "." && BEFORE_REGEX_WORDS.includes(word[2]);
   };
   const countLines = (text) => (line += (text.match(/\n/g) || []).length);
 
