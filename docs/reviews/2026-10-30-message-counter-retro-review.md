@@ -15,11 +15,11 @@
 
 | # | Line | Finding | Kind | Correction / evidence | Outcome |
 |---|---|---|---|---|---|
-| S1 | 33 | "All `data-i18n*` keys in `index.html` (97) and `dashboard.html` (39) exist" counts raw text-search hits. Each figure includes the `data-i18n="..."` placeholder in the page's header comment, which isn't a key | wrong fact | Outside HTML comments: **96** references in `index.html` (85 distinct keys) and **38** in `dashboard.html` (36 distinct), all present in both languages. The agent re-checked this (perl strips comments, then grep). The reviewer counted 86 and 37 distinct keys, probably by a different method | open: pending PO |
-| S2 | 42–43 | The JS figures 41, 13 and 2 are distinct literals, while the HTML figures are occurrences. The record doesn't say which | judgement | Occurrences: 47 in `js/dashboard.js`, 15 in `js/form.js`, 2 in `js/script.js` (reviewer's count) | open: pending PO |
-| S3 | 18 | "red first for 4 of them" | wrong fact | **3** of the 7 tests went red first: missing module, trimming, emoji (`2026-10-29-message-counter-diff-review.md`, Tests; PR #30) | open: pending PO |
-| S4 | 105 | "Its lane: GitHub Actions runs code with repository permissions" is left over from before the corrections of `7494af1`, and repeats the corrected lane bullet at lines 96–99 | judgement (duplicated content) | `git diff 3476a6d 7494af1` | open: pending PO |
-| S5 | 122 | "no sign-up was sent": the glossary term is "Launch sign-up" | judgement (glossary) | `GLOSSARY.md`, Launch | open: pending PO |
+| S1 | 33 | "All `data-i18n*` keys in `index.html` (97) and `dashboard.html` (39) exist" counts raw text-search hits. Each figure includes the `data-i18n="..."` placeholder in the page's header comment, which isn't a key | wrong fact | Outside HTML comments: **96** references in `index.html` (85 distinct keys) and **38** in `dashboard.html` (36 distinct), all present in both languages. The agent re-checked this (perl strips comments, then grep). The reviewer counted 86 and 37 distinct keys, probably by a different method | accepted by the PO on 2026-10-30 (correction recorded in this report only) |
+| S2 | 42–43 | The JS figures 41, 13 and 2 are distinct literals, while the HTML figures are occurrences. The record doesn't say which | judgement | Occurrences: 47 in `js/dashboard.js`, 15 in `js/form.js`, 2 in `js/script.js` (reviewer's count) | accepted by the PO on 2026-10-30 |
+| S3 | 18 | "red first for 4 of them" | wrong fact | **3** of the 7 tests went red first: missing module, trimming, emoji (`2026-10-29-message-counter-diff-review.md`, Tests; PR #30) | accepted by the PO on 2026-10-30 (correction recorded in this report only) |
+| S4 | 105 | "Its lane: GitHub Actions runs code with repository permissions" is left over from before the corrections of `7494af1`, and repeats the corrected lane bullet at lines 96–99 | judgement (duplicated content) | `git diff 3476a6d 7494af1` | accepted by the PO on 2026-10-30 |
+| S5 | 122 | "no sign-up was sent": the glossary term is "Launch sign-up" | judgement (glossary) | `GLOSSARY.md`, Launch | accepted by the PO on 2026-10-30 |
 | S6 | — | Secrets and personal data | check | Nothing found (searched for `@`, password, secret, `sb_`, `eyJ`) | no action needed |
 
 ### Fact check
@@ -47,11 +47,11 @@
 
 | # | Finding | Requirement | Outcome |
 |---|---|---|---|
-| P1 | Partial: the record defines only candidates #5, #7 and #8. It never lists what #1–#4 and #6 were, or their order of severity, except through the specs they became | `retro` skill: "Present these candidates to the user, in order of severity" | open: pending PO |
-| P2 | Partial: it never names where the suggestions enter the Workflow. Specs A–C imply step 3, but the record doesn't say so | `AGENTS.md`, Retro: suggestions "enter this Workflow at step 1 or 3" | open: pending PO |
-| P3 | Misleading: the left-over "Its lane" bullet (S4) reads as a second reason for the lane, one the PO didn't give | PO correction: Standard unless security-related repository settings are added | open: pending PO |
-| P4 | Goes beyond what was decided: the open questions assume GitHub Actions (`checkout`/`setup-node`), but the PO decided only to "distinguish CI execution from mandatory merge checks". The agent notes the line sits under "Open questions (not decided)", so it doesn't claim a decision | PO decision 1 | open: pending PO |
-| P5 | Small addition: "Staying on that branch for the interview is not a build decision" adds a little to the PO's branch correction | PO correction on the branch | open: pending PO |
+| P1 | Partial: the record defines only candidates #5, #7 and #8. It never lists what #1–#4 and #6 were, or their order of severity, except through the specs they became | `retro` skill: "Present these candidates to the user, in order of severity" | accepted by the PO on 2026-10-30 |
+| P2 | Partial: it never names where the suggestions enter the Workflow. Specs A–C imply step 3, but the record doesn't say so | `AGENTS.md`, Retro: suggestions "enter this Workflow at step 1 or 3" | accepted by the PO on 2026-10-30 |
+| P3 | Misleading: the left-over "Its lane" bullet (S4) reads as a second reason for the lane, one the PO didn't give | PO correction: Standard unless security-related repository settings are added | accepted by the PO on 2026-10-30 |
+| P4 | Goes beyond what was decided: the open questions assume GitHub Actions (`checkout`/`setup-node`), but the PO decided only to "distinguish CI execution from mandatory merge checks". The agent notes the line sits under "Open questions (not decided)", so it doesn't claim a decision | PO decision 1 | accepted by the PO on 2026-10-30 |
+| P5 | Small addition: "Staying on that branch for the interview is not a build decision" adds a little to the PO's branch correction | PO correction on the branch | accepted by the PO on 2026-10-30 |
 | P6 | Decisions 1–5 and the other corrections are recorded faithfully, and nothing is stated as approved beyond specs | PO decisions, 2026-10-30 | no action needed |
 
 ## Verification limits
@@ -63,3 +63,11 @@
   #30 can.
 - This review covers the record as written on 2026-10-30. The Spec A interview of the same day
   has since answered most of its open questions; the record isn't updated for that.
+
+## PO decisions (2026-10-30)
+
+- S1 and S3 accepted, with their corrections recorded only in this report. S2, S4, S5 and
+  P1–P5 accepted as documented. The retro record stays unchanged, as a historical record.
+- Accepting them doesn't make the unverified claims verified: the verification limits above
+  still apply.
+- P1 and P2 are possible inputs to Spec B; recording them doesn't approve widening its scope.
