@@ -117,6 +117,8 @@ const TRANSLATIONS = {
     "form.phoneHint": "Include your country code, e.g.",
     "form.jobTitle": "Job title",
     "form.message": "Message (optional)",
+    "form.messageLeft": "Characters left: {n}",
+    "form.messageOver": "Over the limit by: {n}",
     "form.consent": "I agree to be contacted about Godwitly's launch.",
     "form.submit": "Notify me",
     "form.sending": "Sending…",
@@ -130,7 +132,7 @@ const TRANSLATIONS = {
     "error.email": "Please enter a valid email address.",
     "error.phone": "Please enter a valid phone number (7–15 digits).",
     "error.jobTitle": "Please enter your job title.",
-    "error.message": "Please keep your message under 1,000 characters.",
+    "error.message": "Please keep your message to 1,000 characters or fewer.",
     "error.consent": "Please tick the box to agree.",
 
     // Footer
@@ -304,6 +306,8 @@ const TRANSLATIONS = {
     "form.phoneHint": "أضف رمز الدولة، مثال:",
     "form.jobTitle": "المسمى الوظيفي",
     "form.message": "رسالة (اختياري)",
+    "form.messageLeft": "الأحرف المتبقية: {n}",
+    "form.messageOver": "زيادة عن الحد: {n}",
     "form.consent": "أوافق على التواصل معي بخصوص إطلاق Godwitly.",
     "form.submit": "أبلغني عند الإطلاق",
     "form.sending": "جارٍ الإرسال…",

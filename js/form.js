@@ -5,6 +5,7 @@
     2. Check them (the same rules the database uses)
     3. Send them to Supabase
     4. Show the result: field errors, "sending", success, or "try again"
+    5. Show the Message's characters-left counter (the same rule as step 2)
 
   All the text comes from js/translations.js, so messages switch language
   together with the rest of the page.
@@ -71,7 +72,7 @@ function findProblems(answers) {
   if (answers.email.length > 254 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(answers.email)) problems.push("email");
   if (!/^\+?[0-9 ()-]{7,20}$/.test(answers.phone) || phoneDigits < 7 || phoneDigits > 15) problems.push("phone");
   if (!lengthBetween(answers.job_title, 2, 100)) problems.push("job_title");
-  if (answers.message !== null && characters(answers.message) > 1000) problems.push("message");
+  if (answers.message !== null && messageLength(answers.message) > MESSAGE_MAX_CHARACTERS) problems.push("message");
   if (!answers.consent) problems.push("consent");
   return problems;
 }
@@ -174,7 +175,42 @@ async function handleSubmit(event) {
   }
 }
 
+/* ---------- 5. Characters-left counter under the Message box ---------- */
+
+const messageBox = document.getElementById("f-message");
+const messageCount = document.getElementById("f-message-count");
+const messageAlert = document.getElementById("f-message-alert");
+let messageIsOver = false;
+
+function renderMessageCount() {
+  const length = messageLength(messageBox.value);
+  messageIsOver = length > MESSAGE_MAX_CHARACTERS;
+  // Characters over the limit, or characters left.
+  const count = messageIsOver ? length - MESSAGE_MAX_CHARACTERS : MESSAGE_MAX_CHARACTERS - length;
+  // English writes 1,000 and Arabic 1000, as in the error messages (Western digits in both).
+  const shown = document.documentElement.lang === "ar" ? String(count) : count.toLocaleString("en-GB");
+  messageCount.textContent = t(messageIsOver ? "form.messageOver" : "form.messageLeft").replace("{n}", shown);
+  messageCount.classList.toggle("is-over", messageIsOver);
+}
+
+// Screen readers hear only going over the limit and coming back under, not every keystroke.
+function handleMessageInput() {
+  const wasOver = messageIsOver;
+  renderMessageCount();
+  if (messageIsOver !== wasOver) messageAlert.textContent = messageCount.textContent;
+}
+
+/* ---------- Start: connect the form and the counter ---------- */
+
 form.addEventListener("submit", handleSubmit);
 retryButton.addEventListener("click", () => form.requestSubmit());
-document.addEventListener("godwitly:languagechange", render);
+messageBox.addEventListener("input", handleMessageInput);
+document.addEventListener("godwitly:languagechange", () => {
+  render();
+  messageAlert.textContent = ""; // don't leave an announcement in the old language
+  renderMessageCount();
+});
+// pageshow: also count text the browser restored after a reload or the Back button.
+window.addEventListener("pageshow", renderMessageCount);
 render();
+renderMessageCount();

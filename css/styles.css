@@ -881,6 +881,16 @@ footer[id] {
   font-size: 13px;
 }
 
+/* Characters-left counter under the Message box: at the end of the line, red once over */
+.field__count {
+  text-align: end;
+}
+
+.field__count.is-over {
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
 .field__error {
   margin-top: 6px;
   color: var(--color-danger);
@@ -910,6 +920,16 @@ footer[id] {
 
 .field__error--check {
   margin-inline-start: 30px;
+}
+
+/* Read by screen readers, not shown on screen */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Hidden from people; only bots fill it in */
