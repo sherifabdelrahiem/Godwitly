@@ -6,8 +6,13 @@
     3. Current year in the footer
 
   Course pages do not load js/script.js, which saves the landing page's language
-  on every visit. The language here is remembered separately, only when the
-  visitor presses a language button.
+  on every visit and expects landing-page elements (the product tabs). The language
+  here is remembered separately, only when the visitor presses a language button.
+
+  The text-swapping and mobile-menu code below is deliberately a small copy of the
+  matching parts of js/script.js: sharing it would mean changing the landing page's
+  script, which spec #36 says must behave exactly as before. If you fix a bug in one
+  copy, check the other.
 */
 
 /* ---------- 1. Language ---------- */
