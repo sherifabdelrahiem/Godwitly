@@ -8,8 +8,11 @@ The PO decided on 2026-10-28 that new work follows the Matt Pocock skills' main 
 (`AGENTS.md`, Workflow). Its `implement` and `tdd` skills build behaviour test-first, so
 they need a way to run tests. The site has no package manager and must open by double-click
 (ADR-0001), so tests use **Node's built-in runner, `node --test`, with no npm packages**.
-Test files live in `tests/*.test.js` and need Node 20 or later. Node is a requirement for
+Test files live in `tests/*.test.js` and need Node 24 or later. Node is a requirement for
 developing the site, never for opening or hosting it.
+
+Updated 2026-10-30 (spec #31): the minimum was raised from Node 20 to Node 24, because Node 20
+reached end-of-life on 2026-04-30.
 
 ## Considered options
 

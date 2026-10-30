@@ -10,6 +10,8 @@
 
   The brand name "Godwitly" and "BCM Hub" stay in Latin letters in Arabic,
   the same way the logo does.
+
+  Loaded as a plain script on the page, and by the checks in tests/ (Node).
 */
 const TRANSLATIONS = {
   en: {
@@ -396,3 +398,6 @@ const TRANSLATIONS = {
     "dash.accessCancel": "إلغاء",
   },
 };
+
+// Node (the tests) reads the exports; the browser ignores this line.
+if (typeof module !== "undefined") module.exports = { TRANSLATIONS };

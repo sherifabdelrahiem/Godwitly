@@ -1,0 +1,35 @@
+# PR checks (spec #31): runs `node --test` on Node 24 and 26 for every pull
+# request into main. It reports pass or fail; it is not required before merge
+# (follow-up #32).
+#
+# Changing this file changes the security scope: the PR needs a security
+# review and a new gate assessment (spec #31, Lane assessment). Only the two
+# actions below are approved, each pinned to a full commit hash.
+name: Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false # report both Node versions, even when one fails
+      matrix:
+        node: ["24", "26"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          token: ""
+          package-manager-cache: false
+      - run: node --test
