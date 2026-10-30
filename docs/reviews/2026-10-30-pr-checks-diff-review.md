@@ -26,7 +26,7 @@
 | S4 | The "missing in which languages" logic was duplicated | Duplicated Code (judgement) | fixed in `ec521e8` (`languagesWithout`) |
 | S5 | The key check listed only the top level of `js/`; the syntax check went recursively | judgement | fixed in `ec521e8` (one recursive listing) |
 | S6 | `AGENTS.md` said "Node 24 and 26 for every PR" twice | writing-for-agents (single source of truth) | fixed in `ec521e8`: the structure entry points to the Test line |
-| S7 | The exception machinery is unused while the list is empty | Speculative Generality (judgement) | **pending PO**. The agent's view: the spec requires it ("One named list… An entry that no longer matches anything fails") |
+| S7 | The exception machinery is unused while the list is empty | Speculative Generality (judgement) | accepted by the PO on 2026-10-30, because the spec requires it ("One named list… An entry that no longer matches anything fails") |
 | R1 | The test named `throw`, `yield` and `do` but didn't cover them | hard (test name) | fixed in `36ef75a` |
 | R2 | The regex line-count fix had no test | hard | fixed in `36ef75a` |
 | R3 | A property named like a keyword (`options.do`) was read as the keyword | judgement | fixed in `36ef75a`. `obj. do` (with a space or line break after the dot) and `this.#do` are documented limits (`9636eb0`) |
@@ -44,12 +44,12 @@ Hash checked in every round. Implemented as specified:
 |---|---|---|---|
 | P1 | Same as S5 | "every string literal … in the site's scripts" | fixed in `ec521e8` |
 | P2 | Single-quoted and unquoted `data-i18n` values were skipped | "the value of every `data-i18n` and every `data-i18n-*` attribute" | fixed in `ec521e8` |
-| P3 | `fail-fast: false` in the matrix (not asked for; it makes both versions report) | "CI is green on Node 24 and Node 26" | **pending PO** |
-| P4 | A one-line note in the `js/translations.js` header ("Loaded … by the checks in tests/") | "the same guarded export line" | **pending PO** |
-| P5 | Example tests beyond the listed set: regex quotes, templates with no slot, an exception limited to its own file, the limits test, the regression tests | Testing Decisions | **pending PO** |
+| P3 | `fail-fast: false` in the matrix (not asked for; it makes both versions report) | "CI is green on Node 24 and Node 26" | accepted by the PO on 2026-10-30 |
+| P4 | A one-line note in the `js/translations.js` header ("Loaded … by the checks in tests/") | "the same guarded export line" | accepted by the PO on 2026-10-30 |
+| P5 | Example tests beyond the listed set: regex quotes, templates with no slot, an exception limited to its own file, the limits test, the regression tests | Testing Decisions | accepted by the PO on 2026-10-30 |
 | P6 | An exception also silenced R1–R3 for its string | "for dotted strings that aren't translation keys" | fixed in `ec521e8` |
 | P7 | An exception's `reason` was never checked | "Each entry gives the exact string, the file and a one-line reason" | fixed in `ec521e8` |
-| R6 | The spec's "Documented limits" names 2; the checker now lists 9, including the scanner limits. This is consistent with "It never claims to catch every dynamic key", and `AGENTS.md` points to the checker's list | Implementation Decisions, Documented limits | **pending PO**: accept the difference, or a v3 of the spec |
+| R6 | The spec's "Documented limits" names 2; the checker now lists 9, including the scanner limits. This is consistent with "It never claims to catch every dynamic key", and `AGENTS.md` points to the checker's list | Implementation Decisions, Documented limits | accepted by the PO on 2026-10-30: the expanded limits stay, and #31 stays at v2 |
 
 ## Tests
 
@@ -117,3 +117,12 @@ These need the branch pushed and a PR opened, which needs the PO's approval. The
 - **Local runtime:** every local run used Node 25.9.0, which is end-of-life. The supported-version evidence will be the CI runs on 24 and 26.
 - **Red runs:** the example tests prove the checker catches each kind of problem, and they run in CI too. The green runs prove CI runs and reports. Nobody watches a red run on GitHub. That rests on `node --test` exiting non-zero when a test fails (seen locally during the red steps) and on GitHub failing a step that exits non-zero.
 - **Unauthenticated downloads:** with `token: ''`, setup-node's download may occasionally hit GitHub's rate limit. That would be a setup failure, not a test result. If it happens on a real PR, it is recorded as a finding (spec v2).
+
+## PO decisions (2026-10-30)
+
+- P3, P4 and P5 accepted as they are.
+- S7 accepted, because the spec requires the exception machinery.
+- R6 accepted: the checker's expanded documented limits stay, and #31 stays at v2 (no new
+  version, no gate re-run).
+- Push `feat/pr-checks` and open the PR with `Refs #31` approved. Merging, deploying and
+  closing #31 are not approved.
