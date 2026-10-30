@@ -7,7 +7,7 @@ const {
   findParityProblems,
   findHtmlReferenceProblems,
   findScriptReferenceProblems,
-  findStaleExceptions,
+  findExceptionListProblems,
   findSyntaxProblems,
 } = require("./checks.js");
 const { TRANSLATIONS } = require("../js/translations.js");
@@ -26,11 +26,15 @@ for (const page of ["index.html", "dashboard.html"]) {
   });
 }
 
+// Every .js file in a folder, at any depth, found again on each run.
+const listScripts = (folder) =>
+  fs
+    .readdirSync(path.join(ROOT, folder), { recursive: true })
+    .filter((name) => name.endsWith(".js"))
+    .map((name) => path.join(folder, name));
+
 // The site's scripts, except the translations themselves.
-const SCRIPTS = fs
-  .readdirSync(path.join(ROOT, "js"))
-  .filter((name) => name.endsWith(".js") && name !== "translations.js")
-  .map((name) => `js/${name}`);
+const SCRIPTS = listScripts("js").filter((file) => file !== path.join("js", "translations.js"));
 
 for (const file of SCRIPTS) {
   test(`every translation key named in ${file} exists in both languages`, () => {
@@ -40,18 +44,11 @@ for (const file of SCRIPTS) {
 
 test("every exception in the script exceptions list still matches its string", () => {
   const scripts = Object.fromEntries(SCRIPTS.map((file) => [file, read(file)]));
-  assert.deepEqual(findStaleExceptions(scripts), []);
+  assert.deepEqual(findExceptionListProblems(scripts), []);
 });
 
-// Every project JavaScript file, found again on each run: all .js files in js/
-// and tests/, at any depth. Vendored skills and the Deno Edge Function are
-// outside these folders.
-const listScripts = (folder) =>
-  fs
-    .readdirSync(path.join(ROOT, folder), { recursive: true })
-    .filter((name) => name.endsWith(".js"))
-    .map((name) => path.join(folder, name));
-
+// Every project JavaScript file: all .js files in js/ and tests/. Vendored
+// skills and the Deno Edge Function are outside these folders.
 test("every project JavaScript file parses", () => {
   const files = [...listScripts("js"), ...listScripts("tests")];
   assert.ok(files.includes(path.join("js", "form.js")) && files.includes(path.join("tests", "checks.js")));

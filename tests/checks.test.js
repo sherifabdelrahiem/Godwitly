@@ -8,7 +8,7 @@ const {
   findParityProblems,
   findHtmlReferenceProblems,
   findScriptReferenceProblems,
-  findStaleExceptions,
+  findExceptionListProblems,
   findSyntaxProblems,
 } = require("./checks.js");
 
@@ -158,16 +158,24 @@ test("scripts: reports an exception that no longer matches anything", () => {
     { text: "old.js", file: "js/x.js", reason: "removed since" },
     { text: "config.js", file: "js/gone.js", reason: "file deleted" },
   ];
-  assert.deepEqual(findStaleExceptions(scripts, exceptions), [
+  assert.deepEqual(findExceptionListProblems(scripts, exceptions), [
     'exception "old.js" in js/x.js matches nothing; remove it',
     'exception "config.js" in js/gone.js matches nothing; remove it',
   ]);
 });
 
-// Limits (spec #31): keys built with no dotted piece aren't detected. This
-// test records that, so nobody claims the checker catches every dynamic key.
-test("scripts: documented limit, keys joined without a dotted piece pass unnoticed", () => {
-  const source = ['t([ns, "title"].join("."));', "t(ns + sep + name);"].join("\n");
+// Limits (spec #31): these ways of building a key aren't detected (see the
+// Limits list in checks.js). This test records that, so nobody claims the
+// checker catches every dynamic key.
+test("scripts: documented limits, these built keys pass unnoticed", () => {
+  const source = [
+    't([ns, "title"].join("."));',
+    "t(ns + sep + name);",
+    't(ns + "." + name);',
+    "t(`${ns}.${name}`);",
+    'const p = "nav."; t(p + name);',
+    'key += ".title";',
+  ].join("\n");
   assert.deepEqual(scriptProblems(source), []);
 });
 
@@ -185,4 +193,49 @@ test("syntax: checks each file on its own, so a broken file after a good one is 
   } finally {
     fs.rmSync(folder, { recursive: true, force: true });
   }
+});
+
+test("scripts: tells division from a regular expression after ++, --, await, else, throw and yield", () => {
+  const source = [
+    'const half = count++ / 2; t("nav.typo1"); const third = 1 / 3;',
+    'const left = count-- / 2; t("nav.typo2"); const fifth = 1 / 5;',
+    'async function a() { return await /"/.source + t("nav.typo3"); }',
+    'if (ok) run(); else /"/.test(s); t("nav.typo4");',
+  ].join("\n");
+  assert.deepEqual(
+    scriptProblems(source).map((problem) => problem.match(/"(nav\.\w+)"/)[1]),
+    ["nav.typo1", "nav.typo2", "nav.typo3", "nav.typo4"],
+  );
+});
+
+test("scripts: counts lines after a backslash line break in a template or string", () => {
+  const source = 'const s = `a\\\n b`;\nconst q = "c\\\nd";\nt("nav.typo");';
+  assert.deepEqual(scriptProblems(source), [
+    'js/x.js:5: "nav.typo" looks like a translation key but there is no such key in en, ar',
+  ]);
+});
+
+test("scripts: an exception lifts only the key check, never R1-R3", () => {
+  const exceptions = [{ text: "dash.", file: "js/x.js", reason: "trying to hide a built key" }];
+  assert.deepEqual(scriptProblems('t("dash." + name);', exceptions), [
+    'js/x.js:1: key built from pieces (R1): "dash." followed by +',
+  ]);
+});
+
+test("scripts: reports an exception without a reason", () => {
+  const scripts = { "js/x.js": 'load("config.js");' };
+  const exceptions = [{ text: "config.js", file: "js/x.js", reason: "  " }];
+  assert.deepEqual(findExceptionListProblems(scripts, exceptions), [
+    'exception "config.js" in js/x.js has no reason; add one',
+  ]);
+});
+
+test("pages: checks single-quoted and unquoted attribute values too", () => {
+  const html = "<a data-i18n='nav.one'>x</a> <b data-i18n=nav.two>y</b> <i data-i18n=\"nav.home\">z</i>";
+  assert.deepEqual(findHtmlReferenceProblems(html, SMALL), [
+    'data-i18n="nav.one": no such key in en',
+    'data-i18n="nav.one": no such key in ar',
+    'data-i18n="nav.two": no such key in en',
+    'data-i18n="nav.two": no such key in ar',
+  ]);
 });

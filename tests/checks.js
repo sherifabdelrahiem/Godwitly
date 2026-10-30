@@ -43,11 +43,14 @@ function findParityProblems(translations) {
   return problems;
 }
 
+// The languages that have no such key.
+function languagesWithout(key, translations) {
+  return Object.keys(translations).filter((language) => !(key in translations[language]));
+}
+
 // Problems for one key named somewhere: it must exist in every language.
 function missingKey(where, key, translations) {
-  return Object.keys(translations)
-    .filter((language) => !(key in translations[language]))
-    .map((language) => `${where}: no such key in ${language}`);
+  return languagesWithout(key, translations).map((language) => `${where}: no such key in ${language}`);
 }
 
 // 2. Pages: every data-i18n and data-i18n-* value is a key. HTML comments
@@ -55,8 +58,10 @@ function missingKey(where, key, translations) {
 function findHtmlReferenceProblems(html, translations) {
   const problems = [];
   const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-  const attributes = /\b(data-i18n(?:-[a-z]+)*)="([^"]*)"/g;
-  for (const [, name, key] of withoutComments.matchAll(attributes)) {
+  // Values in double quotes, single quotes or none.
+  const attributes = /\b(data-i18n(?:-[a-z]+)*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
+  for (const [, name, double, single, bare] of withoutComments.matchAll(attributes)) {
+    const key = double ?? single ?? bare;
     problems.push(...missingKey(`${name}="${key}"`, key, translations));
   }
   return problems;
@@ -68,7 +73,10 @@ const KEY_SHAPE = /^[a-z][a-z0-9]*\.[A-Za-z0-9]+$/;
 
 // After these, a "/" starts a regular expression rather than a division.
 const BEFORE_REGEX = "(,=:[!&|?{};+-*%<>~^";
-const BEFORE_REGEX_WORDS = ["return", "typeof", "case", "in", "of", "void", "delete", "new", "instanceof"];
+const BEFORE_REGEX_WORDS = [
+  "return", "typeof", "case", "in", "of", "void", "delete", "new", "instanceof",
+  "await", "else", "throw", "yield", "do",
+];
 
 /*
   Walks a script once and returns its string pieces, skipping comments and
@@ -101,7 +109,11 @@ function scanScript(source) {
   };
   const codeBefore = () => (lastIndex < 0 ? "" : source[lastIndex]);
   const regexCanStart = () => {
-    if (lastIndex < 0 || BEFORE_REGEX.includes(source[lastIndex])) return true;
+    if (lastIndex < 0) return true;
+    const last = source[lastIndex];
+    // After ++ or -- a "/" divides: count++ / 2.
+    if ((last === "+" || last === "-") && source[lastIndex - 1] === last) return false;
+    if (BEFORE_REGEX.includes(last)) return true;
     const word = source.slice(0, lastIndex + 1).match(/[A-Za-z_$][\w$]*$/);
     return Boolean(word) && BEFORE_REGEX_WORDS.includes(word[0]);
   };
@@ -135,7 +147,10 @@ function scanScript(source) {
       else if (c === "[") inClass = true;
       else if (c === "]") inClass = false;
       else if (c === "/" && !inClass) break;
-      else if (c === "\n") break;
+      else if (c === "\n") {
+        line++;
+        break;
+      }
       i++;
     }
     i++;
@@ -153,6 +168,7 @@ function scanScript(source) {
     i++;
     while (i < source.length && source[i] !== "`") {
       if (source[i] === "\\") {
+        if (source[i + 1] === "\n") line++;
         text += source[i + 1] || "";
         i += 2;
       } else if (source.startsWith("${", i)) {
@@ -224,9 +240,15 @@ function scanScript(source) {
     R1  a prefix such as "dash." followed by +, ${ or .concat(
     R2  ".word" straight after a ${…} slot:   `${ns}.title`
     R3  a ".word" string straight after +:     ns + ".title"
-  Limits, not detected: keys joined with no dotted piece, such as
-  [ns, "title"].join(".") or ns + sep + name, and keys that reach the scripts
-  from anywhere else. The checks never prove that every key exists.
+  Limits, not detected:
+  - keys joined with no dotted piece: [ns, "title"].join("."), ns + sep + name;
+  - a lone "." joining two parts: ns + "." + name, `${ns}.${name}`;
+  - a prefix held in a variable: const p = "nav."; t(p + name);
+  - a suffix added with +=: key += ".title";
+  - keys that reach the scripts from anywhere else.
+  The scanner also reads a "/" straight after ")" as division, so a regular
+  expression there (if (ok) /x/.test(s)) can hide the code after it.
+  The checks never prove that every key exists.
 */
 const KEY_PREFIX = /^[a-z][a-z0-9]*\.$/; // "dash."
 const KEY_SUFFIX = /^\.[A-Za-z]/; // ".title"
@@ -262,11 +284,11 @@ function findScriptReferenceProblems(source, translations, { file, exceptions = 
   const excepted = (text) => exceptions.some((entry) => entry.text === text && entry.file === file);
   for (const piece of scanScript(source)) {
     const { text, line, complete } = piece;
-    if (excepted(text)) continue;
     const built = builtKeyProblem(piece);
     if (built) problems.push(`${file}:${line}: key built from pieces ${built}`);
-    if (!complete || !KEY_SHAPE.test(text)) continue;
-    const missing = Object.keys(translations).filter((language) => !(text in translations[language]));
+    // An exception lifts only this key check, never R1-R3.
+    if (!complete || !KEY_SHAPE.test(text) || excepted(text)) continue;
+    const missing = languagesWithout(text, translations);
     if (missing.length) {
       problems.push(
         `${file}:${line}: "${text}" looks like a translation key but there is no such key in ${missing.join(", ")}`,
@@ -276,15 +298,20 @@ function findScriptReferenceProblems(source, translations, { file, exceptions = 
   return problems;
 }
 
-// An exception whose string no longer appears in its file. `scripts` maps
-// each file name to its source.
-function findStaleExceptions(scripts, exceptions = SCRIPT_EXCEPTIONS) {
-  return exceptions
-    .filter(({ text, file }) => {
-      const source = scripts[file];
-      return source === undefined || !scanScript(source).some((piece) => piece.text === text);
-    })
-    .map(({ text, file }) => `exception "${text}" in ${file} matches nothing; remove it`);
+// The exception list itself: every entry has a reason, and its string still
+// appears in its file. `scripts` maps each file name to its source.
+function findExceptionListProblems(scripts, exceptions = SCRIPT_EXCEPTIONS) {
+  return exceptions.flatMap(({ text, file, reason }) => {
+    const problems = [];
+    if (typeof reason !== "string" || reason.trim() === "") {
+      problems.push(`exception "${text}" in ${file} has no reason; add one`);
+    }
+    const source = scripts[file];
+    if (source === undefined || !scanScript(source).some((piece) => piece.text === text)) {
+      problems.push(`exception "${text}" in ${file} matches nothing; remove it`);
+    }
+    return problems;
+  });
 }
 
 // 4. Syntax: `node --check` on each file separately. Given several files it
@@ -302,6 +329,6 @@ module.exports = {
   findParityProblems,
   findHtmlReferenceProblems,
   findScriptReferenceProblems,
-  findStaleExceptions,
+  findExceptionListProblems,
   findSyntaxProblems,
 };

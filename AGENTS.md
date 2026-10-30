@@ -200,8 +200,8 @@ proposed work that enters this Workflow at step 1 or 3.
 - `tests/`: `node --test` tests (development only, ADR-0006). `tests/checks.js` holds the
   project checks: translation parity, translation keys named in the pages and scripts, and
   JavaScript syntax.
-- `.github/workflows/checks.yml`: runs `node --test` on Node 24 and 26 for every pull request
-  into `main` (spec #31). A change to it needs a security review.
+- `.github/workflows/checks.yml`: the PR checks (see Development commands, Test). A change
+  to it needs a security review and a new gate assessment (spec #31).
 - `.agents/skills/`: the vendored Matt Pocock skills (MIT; see its `README.md`).
   `.claude/skills/` links to them. Update them only by re-installing (see that README).
 
