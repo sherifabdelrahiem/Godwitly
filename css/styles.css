@@ -820,6 +820,15 @@ footer[id] {
   text-align: center;
 }
 
+.site-footer__link {
+  margin-inline-start: 12px;
+  text-decoration: underline;
+}
+
+.site-footer__link:hover {
+  color: var(--color-brand);
+}
+
 /* ---------- 8b. Contact form ---------- */
 .notify-form,
 .form-success {

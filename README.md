@@ -19,6 +19,10 @@ address, not by double-click. See "Sign-up dashboard" below.
 | `css/styles.css` | All styling. Colours and fonts are variables at the top (`:root`). |
 | `js/translations.js` | Every piece of text, in English (`en`) and Arabic (`ar`). |
 | `js/script.js` | Language switcher, mobile menu, product tabs, smooth scrolling. |
+| `crash-course/index.html` | The Crash course hub (Claude Crash Course for Beginners), linked from the landing page as "Crash Courses". |
+| `css/course.css` | Styling for the Crash course pages only. It reuses `css/styles.css` and its `:root` variables. |
+| `js/course.js` | Language switcher, mobile menu and footer year for the Crash course pages. They never load `js/script.js`. |
+| `js/course-language.js` | Which language a Crash course page opens in, what it remembers (under its own name, never the landing page's) and how links carry it. |
 | `assets/images/` | Logo, background landscapes, birds, device and product pictures. |
 | `dashboard.html` | The private Sign-up dashboard page (not linked from the landing page). |
 | `css/dashboard.css` | Styling for the Sign-up dashboard only. It reuses the `:root` variables. |
