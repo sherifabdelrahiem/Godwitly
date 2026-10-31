@@ -1,8 +1,9 @@
 # Diff review: Crash course hub shell (ticket #37)
 
 > Base: `main` at `03e79f9` · Reviewed: `6f5c6cd` (`74a094e` docs, `5d74d86` course language,
-> `6f5c6cd` hub and link) on `feat/crash-course-hub-shell`. `8eacdda` holds the fixes for S3–S5
-> (see "Still to do") · Ticket: #37 of spec #36, **Spec version: v3**, sha256
+> `6f5c6cd` hub and link) on `feat/crash-course-hub-shell`. Round 2 re-reviewed `6f5c6cd..f28f47b`:
+> `8eacdda` (fixes for S3–S5) and `f28f47b` (the `AGENTS.md` fixes for S1 and S2); `c24e8dd` and
+> `57a8b27` are evidence only · Ticket: #37 of spec #36, **Spec version: v3**, sha256
 > `42989dc87878d0d40742fd81691c50026f16e48ba5c69a6ace2ec287cdd0b666` (PO approval recorded on #36,
 > 2026-10-30; the hash was recomputed from the live body before the build and before the review) ·
 > Method: `code-review`, two axes, two parallel subagents (74,826 and 70,445 tokens) · 2026-10-30
@@ -22,8 +23,8 @@
 
 | # | Finding | Kind | Outcome |
 |---|---|---|---|
-| S1 | The deploy command in `AGENTS.md` (`git archive main index.html dashboard.html _headers css js assets`) leaves out `crash-course/`. After a deploy the new landing links would 404 | hard (documentation) | **open, PO decision.** Ticket #46 owns the docs and the first deploy, and nothing is deployed before it. Either add `crash-course` to the command in this branch (a workflow-file change that needs its own review) or leave it for #46. Do not deploy before it is fixed |
-| S2 | `AGENTS.md` "Project structure" does not list the four new files (`crash-course/index.html`, `css/course.css`, `js/course.js`, `js/course-language.js`). `README.md` was updated | hard (documentation) | **open, PO decision**, with S1 |
+| S1 | The deploy command in `AGENTS.md` (`git archive main index.html dashboard.html _headers css js assets`) leaves out `crash-course/`. After a deploy the new landing links would 404 | hard (documentation) | fixed in `f28f47b` at the PO's instruction: the archive now includes `crash-course`. Checked by running it against the branch into a scratch folder (the hub and all its relative references arrive). Against `main` it works only once this branch is merged, which the "from `main`" wording already implies |
+| S2 | `AGENTS.md` "Project structure" does not list the four new files (`crash-course/index.html`, `css/course.css`, `js/course.js`, `js/course-language.js`). `README.md` was updated | hard (documentation) | fixed in `f28f47b` at the PO's instruction: four entries, with the footer year in the `js/course.js` line |
 | S3 | `js/course.js`: the text-swapping and mobile-menu code copies `js/script.js`; the header comment only explained the language part | Duplicated Code (judgement) | fixed in `8eacdda`: the header now says the copy is deliberate (the landing script must stay unchanged, spec #36) and to check both copies when fixing a bug |
 | S4 | The hub footer's "Crash Courses" link points to the current page but had no `aria-current` | judgement | fixed in `8eacdda` |
 | S5 | "Open the guide in Arabic" links to the hub itself (`?lang=ar`); it works only as a language switch | judgement | partly fixed in `8eacdda` (`hreflang="ar"`). It stays a link, as in the approved Figma frame, so it also works without JavaScript. **Open for PO acceptance** |
@@ -72,9 +73,27 @@ Ticket #37 acceptance criteria:
 - **Landing page in English and Arabic at 1024px:** the new fifth menu link was seen at 1440px and 320px, not at 1024px.
 - **Hub on a real phone, and keyboard navigation:** not run.
 
+## Round 2: re-review of `6f5c6cd..f28f47b`
+
+Two subagents (Standards, Spec). The spec hash was rechecked: still `42989dc8…b666` (v3). `node --test`:
+58 pass, 0 fail. `git diff 6f5c6cd...f28f47b -- AGENTS.md README.md` shows two `AGENTS.md` hunks only
+(Project structure, Deploy line); `README.md` is untouched, as the PO asked. `8eacdda` changes a
+comment and two attributes only; no behaviour changed, and `js/script.js`, the landing page and the
+dashboard are untouched.
+
+| # | Finding | Kind | Outcome |
+|---|---|---|---|
+| R1 | This report still listed S1 and S2 as open after `f28f47b` fixed them | hard (evidence out of date) | fixed in this commit |
+| R2 | `AGENTS.md` says "The Lesson pages will live beside it" about files that don't exist yet; it goes stale if the layout changes | judgement | left as it is: it is the wording of the entry the PO approved. **Open for PO acceptance**, or cut it |
+| R3 | `README.md` "Site deploy" still lists "`dashboard.html` and `_headers`" for what the `AGENTS.md` command includes; it now also includes `crash-course` | judgement | left as it is: the PO told the agent to leave `README.md` unchanged for this fix. **Open for PO acceptance**; preferred fix later: drop the list so `AGENTS.md` stays the one source |
+| R4 | The deliberate copy in `js/course.js` (Duplicated Code) | judgement | no change needed: the same finding as S3, mitigated by the comment in `8eacdda` |
+| R5 | `git archive main … crash-course` fails until this branch is merged, because `main` has no `crash-course/` yet | judgement | no change needed: the command is for deploying merged work; do not deploy before the merge |
+
+S5, P1 and P2 are unchanged and still open for PO acceptance.
+
 ## Still to do
 
-- **S1 and S2:** the PO decides: fix in this branch or leave for #46.
-- **P1 and P2, and S5:** the PO accepts or asks for removal.
-- **Re-review:** `8eacdda` changes site files, and S1/S2 would change `AGENTS.md`, so each needs its own review before merge (`AGENTS.md`, Diff review). One re-review after the PO's decisions can cover them all.
+- **Open for the PO:** S5, P1, P2 (keep the "Open the guide in Arabic" button and the "Free guide" eyebrow?), R2 and R3.
 - **Not pushed, no PR opened, no issue closed.** The commits say `Refs #36, #37`.
+- Any further change to code, site files, `AGENTS.md` or the spec needs its own review. A commit that only
+  changes this report needs none.
