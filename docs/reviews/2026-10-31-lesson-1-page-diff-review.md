@@ -126,3 +126,10 @@ At the PO's request the bird grows to up to 330px wide, the gap shrinks to 8px a
 compact (15px text, 12px 16px padding). CSS only; self-checked, **not subagent-reviewed**. `node --test` 101
 pass. Measured in Chrome frames: at 1280px the bird is 330×220 and the box 398×240; at 720px 295×196 and
 353×240; at 320px they stack (160px bird) with no horizontal scroll. Not run: a real phone.
+
+## Round 5: bird aligned with the text (`1ab271e`)
+
+At the PO's request the welcome bird lines up with the text edge: the picture has 19% empty space on its start
+side and 10% on the other (measured from its transparent pixels), and negative margins of that size remove it.
+CSS only; self-checked, **not subagent-reviewed**. `node --test` 101 pass. Looked at in a 1280px Chrome frame
+(Arabic): the bird's edge meets the title and text edge. Not run: English at 1280px by eye, a real phone.
