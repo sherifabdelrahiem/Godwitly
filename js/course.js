@@ -152,7 +152,8 @@ if (lessonNav) {
 
 // Each question is a group of answer buttons. Choosing one shows whether it is right and
 // why; a wrong choice also shows the correct answer and why. Nothing is scored or saved,
-// and choosing again just replaces the feedback. Without this script the explanations
+// and choosing again just replaces the feedback. The feedback box is always on the page
+// (empty until the first choice) so screen readers announce what is put into it. Without this script the explanations
 // stay visible under every answer, so the Lesson still reads.
 document.querySelectorAll(".self-check__item").forEach((item) => {
   const options = [...item.querySelectorAll(".self-check__option")];
@@ -189,7 +190,6 @@ document.querySelectorAll(".self-check__item").forEach((item) => {
     parts.forEach((part) => (part.hidden = false));
     feedback.replaceChildren(...parts);
     feedback.className = "self-check__feedback " + (right ? "is-right" : "is-wrong");
-    feedback.hidden = false;
   }
 
   options.forEach((option) => option.addEventListener("click", () => choose(option)));

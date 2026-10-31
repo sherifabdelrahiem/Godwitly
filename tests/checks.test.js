@@ -698,3 +698,10 @@ test("self-check: every question has at least two options and exactly one correc
   const second = withLinks(selfCheckQuestion(true, false) + selfCheckQuestion(false, false));
   assert.deepEqual(lessonProblems(second), ["Self-check question 2 has no correct option (data-correct=\"true\")"]);
 });
+
+test("self-check: single-quoted attributes are read too", () => {
+  const html = `<div class='self-check__item'><button class='self-check__option' data-correct='false'>a</button><button class='self-check__option' data-correct='false'>b</button></div>`;
+  assert.deepEqual(lessonProblems(withLinks(html)), [
+    'Self-check question 1 has no correct option (data-correct="true")',
+  ]);
+});

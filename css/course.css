@@ -760,6 +760,12 @@ html[dir="rtl"] .callout__bird {
   line-height: 1.8;
 }
 
+.self-check__feedback:empty {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
 .self-check__feedback.is-right {
   border-inline-start-color: var(--color-success);
 }
@@ -781,11 +787,13 @@ html[dir="rtl"] .callout__bird {
 .self-check__feedback.is-right > .self-check__why strong::before,
 .self-check__correct .self-check__why strong::before {
   content: "✓ ";
+  content: "✓ " / "";
   color: var(--color-success);
 }
 
 .self-check__feedback.is-wrong > .self-check__why strong::before {
   content: "✗ ";
+  content: "✗ " / "";
   color: var(--color-danger);
 }
 

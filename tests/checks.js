@@ -583,10 +583,10 @@ function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
 
   // The Self-check: each question has at least two options and exactly one correct one,
   // so the page can always show the right answer.
-  const questions = page.split(/(?=<div\b[^>]*\bclass\s*=\s*"[^"]*\bself-check__item\b)/i).slice(1);
+  const questions = page.split(/(?=<div\b[^>]*\bclass\s*=\s*["'][^"']*\bself-check__item\b)/i).slice(1);
   questions.forEach((question, i) => {
     const options = [...question.matchAll(/<button\b[^>]*\bself-check__option\b[^>]*>/gi)].map(([tag]) => tag);
-    const correct = options.filter((tag) => /\sdata-correct\s*=\s*"true"/i.test(tag)).length;
+    const correct = options.filter((tag) => attributeValue(tag, "data-correct") === "true").length;
     if (options.length < 2) problems.push(`Self-check question ${i + 1} has fewer than two options`);
     else if (correct === 0) problems.push(`Self-check question ${i + 1} has no correct option (data-correct="true")`);
     else if (correct > 1) problems.push(`Self-check question ${i + 1} has more than one correct option`);
