@@ -374,7 +374,7 @@ document.querySelectorAll("[data-checklist]").forEach((list) => {
   const checklist = courseProgress.open(lessonId, boxes.map((box) => box.dataset.item));
   const celebration = document.querySelector("[data-celebration]");
 
-  function showDone() {
+  function showProgress() {
     showCompleteMark(lessonId, checklist.isComplete());
     if (celebration) showCelebration(celebration, checklist.isComplete());
   }
@@ -383,10 +383,10 @@ document.querySelectorAll("[data-checklist]").forEach((list) => {
     box.checked = checklist.isTicked(box.dataset.item);
     box.addEventListener("change", () => {
       checklist.set(box.dataset.item, box.checked);
-      showDone();
+      showProgress();
     });
   });
-  showDone();
+  showProgress();
 });
 
 // The hub has no checklist: each Lesson card asks what its Lesson page saved.

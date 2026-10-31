@@ -296,6 +296,19 @@ test("hub items: a card that lacks or differs from its Lesson page's items is re
   ]);
 });
 
+test("hub items: a repeated identifier on the card does not hide a missing one", () => {
+  const pages = { 1: itemsLesson("a", "b", "c") };
+  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "a a b")), RELEASED, pages), [
+    'Lesson 1\'s hub card lists the items "a a b" but its page has "a b c"',
+  ]);
+});
+
+test("hub items: only the Lesson list's cards count, and data-checklist-items is not read as the checklist", () => {
+  const pages = { 1: `<li data-checklist-items="x">${itemsLesson("a", "b")}` };
+  const sidebarFirst = `<ul><li data-lesson="1">sidebar</li></ul>${itemsHub(itemsCard(1, "a b"))}`;
+  assert.deepEqual(findHubChecklistProblems(sidebarFirst, RELEASED, pages), []);
+});
+
 test("hub items: a released Lesson without a card is reported; unreleased Lessons need no items", () => {
   const pages = { 1: itemsLesson("a") };
   assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(2)), RELEASED, pages), [
