@@ -125,7 +125,7 @@ html[lang="ar"] .course-en-only {
 
 /* "Coming soon": greyed, and not a link */
 .lesson-card--soon {
-  background: #f0eeeb;
+  background: var(--color-page);
   color: var(--color-text-muted);
 }
 
@@ -136,9 +136,13 @@ html[lang="ar"] .course-en-only {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #dcd8d3;
+  background: var(--color-border);
   color: var(--color-text-soft);
   font-weight: 700;
+}
+
+.lesson-card__body {
+  min-width: 0; /* lets long words such as AGENTS.md wrap instead of widening the card */
 }
 
 .lesson-card__title {
@@ -166,7 +170,7 @@ html[lang="ar"] .course-en-only {
 
 .course-badge--soon {
   padding: 4px 12px;
-  background: #e6e2dd;
+  background: var(--color-border);
   color: var(--color-text-soft);
   font-size: 12px;
 }
