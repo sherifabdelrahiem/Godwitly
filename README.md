@@ -20,7 +20,7 @@ address, not by double-click. See "Sign-up dashboard" below.
 | `js/translations.js` | Every piece of text, in English (`en`) and Arabic (`ar`). |
 | `js/script.js` | Language switcher, mobile menu, product tabs, smooth scrolling. |
 | `crash-course/index.html` | The Crash course hub (Claude Crash Course for Beginners), linked from the landing page as "Crash Courses". |
-| `crash-course/lesson-1/index.html` | Lesson 1, built from its approved draft in `docs/course/lesson-1/`. The Lesson text is Arabic; the sidebar, trail and previous/next use translation keys. |
+| `crash-course/lesson-1/index.html` | Lesson 1, built from its approved draft in `docs/course/lesson-1/`. The Lesson text is Arabic; the sidebar, trail and previous/next use translation keys. Its Resource, the Sample business facts file, is `crash-course/lesson-1/resources/cafe-marasy-facts.pdf` (made from `docs/course/lesson-1/resources/cafe-marasy-facts.html`). |
 | `css/course.css` | Styling for the Crash course pages only. It reuses `css/styles.css` and its `:root` variables. |
 | `js/course.js` | Language switcher, mobile menu, the phone Lesson list and footer year for the Crash course pages. They never load `js/script.js`. |
 | `js/course-language.js` | Which language a Crash course page opens in, what it remembers (under its own name, never the landing page's) and how links carry it. |

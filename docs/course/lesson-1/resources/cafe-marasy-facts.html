@@ -1,0 +1,41 @@
+<!doctype html>
+<!--
+  Source of crash-course/lesson-1/resources/cafe-marasy-facts.pdf (spec #52): the Sample
+  business facts file. Make the PDF with headless Chrome:
+  "Google Chrome" --headless=new --no-pdf-header-footer --print-to-pdf=<out>.pdf <this file>
+  The café and its products are fictional.
+-->
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <title>ملف حقائق كافيه المرسى</title>
+    <style>
+      @page { size: A4; margin: 24mm 20mm; }
+      body { font-family: "Geeza Pro", "Noto Sans Arabic", Tahoma, Arial, sans-serif; color: #1e293b; line-height: 1.9; font-size: 14pt; }
+      h1 { color: #2f6f73; font-size: 24pt; margin: 0 0 4mm; }
+      p { margin: 0 0 6mm; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #94a3b8; padding: 3mm 4mm; text-align: right; }
+      th { background: #e8f0ee; }
+      .note { color: #556070; font-size: 11pt; margin-top: 8mm; }
+    </style>
+  </head>
+  <body>
+    <h1>كافيه المرسى، بورسعيد</h1>
+    <p>ملف الحقائق: منتجات الكافيه وأسعارها، وكل اللي معروف عن كل منتج.</p>
+    <table>
+      <thead>
+        <tr><th>المنتج</th><th>السعر</th><th>اللي معروف عنه</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>قهوة تركي</td><td>٦٥ جنيه</td><td>بن مطحون ناعم، بتتقدّم سادة أو مظبوط.</td></tr>
+        <tr><td>لاتيه</td><td>٨٥ جنيه</td><td>اسبريسو ولبن.</td></tr>
+        <tr><td>شاي بالنعناع</td><td>٤٥ جنيه</td><td>المكوّنات مش مذكورة.</td></tr>
+        <tr><td>كرواسون بالجبنة</td><td>٧٠ جنيه</td><td>عجينة مخبوزة بالزبدة وجبنة.</td></tr>
+        <tr><td>كيكة الشوكولاتة</td><td>٩٠ جنيه</td><td>المكوّنات مش مذكورة.</td></tr>
+        <tr><td>سلطة فواكه</td><td>٧٥ جنيه</td><td>فواكه الموسم.</td></tr>
+      </tbody>
+    </table>
+    <p class="note">الكافيه والمنتجات دي للتدريب في دليل كلود من Godwitly. مش كافيه حقيقي.</p>
+  </body>
+</html>

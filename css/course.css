@@ -624,6 +624,19 @@ html[dir="rtl"] .lesson-mascot {
   color: var(--color-danger);
 }
 
+/* Resources: the file to download. Its bird is wider than the others */
+.callout--resource {
+  border-inline-start-color: var(--color-accent);
+  background: var(--color-white);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-inline-end: 1px solid var(--color-border);
+}
+
+.callout--resource .callout__bird {
+  width: 112px;
+}
+
 .callout__bird {
   flex: none;
   width: 72px;
@@ -635,7 +648,8 @@ html[dir="rtl"] .callout__bird {
 }
 
 @media (max-width: 399px) {
-  .callout__bird {
+  .callout__bird,
+  .callout--resource .callout__bird {
     width: 56px;
   }
 }
@@ -973,7 +987,8 @@ html[lang="ar"] .lesson-nav__toggle {
 }
 
 /* Code boxes: one prompt or command each, with a Copy button (js/course.js). The code is
-   always left to right, even inside an Arabic Lesson. Square corners. */
+   left to right by default, even inside an Arabic Lesson (an Arabic prompt sets dir="rtl" and
+   reads from the right edge). Square corners. */
 .code-box {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -1000,6 +1015,11 @@ html[lang="ar"] .lesson-nav__toggle {
   text-align: left;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+
+/* A prompt written in Arabic reads right to left, from the right edge */
+.code-box__code[dir="rtl"] {
+  text-align: right;
 }
 
 .code-box__copy {

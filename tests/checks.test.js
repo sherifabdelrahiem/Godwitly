@@ -706,7 +706,7 @@ test("self-check: single-quoted attributes are read too", () => {
   ]);
 });
 
-const MASCOT_OF = { think: "mascot-2-thoughtful", confusion: "mascot-3-confused", key: "mascot-4-lightbulb", warning: "mascot-7-attentive" };
+const MASCOT_OF = { think: "mascot-2-thoughtful", confusion: "mascot-3-confused", key: "mascot-4-lightbulb", warning: "mascot-7-attentive", resource: "mascot-8-envelopes" };
 const callout = ({ kind = "key", mascot = MASCOT_OF[kind], alt = "", label = "Label:", bird = true } = {}) =>
   `<div class="callout callout--${kind}" role="note">` +
   (bird ? `<img class="callout__bird" src="../../assets/images/${mascot}.webp" alt="${alt}">` : "") +
@@ -714,7 +714,7 @@ const callout = ({ kind = "key", mascot = MASCOT_OF[kind], alt = "", label = "La
 const between = "<p>Some Lesson text between callouts.</p>";
 
 test("callouts: each of the four kinds with its own mascot, a label and a decorative bird passes", () => {
-  const html = ["think", "confusion", "key", "warning"].map((kind) => callout({ kind })).join(between);
+  const html = ["think", "confusion", "key", "warning", "resource"].map((kind) => callout({ kind })).join(between);
   assert.deepEqual(lessonProblems(withLinks(html)), []);
 });
 
@@ -744,4 +744,18 @@ test("callouts: a callout may have no bird, but two callouts may not follow each
     "callouts 1 and 2 follow each other directly; at most one mascot per screen of reading",
   ]);
   assert.deepEqual(lessonProblems(withLinks(callout({ kind: "think" }) + between + callout({ kind: "key" }))), []);
+});
+
+const codeBox = (inner) => `<div class="code-box"><pre class="code-box__code">${inner}</pre></div>`;
+
+test("code boxes: each holds exactly one non-empty <code>, so its Copy button copies one thing", () => {
+  assert.deepEqual(lessonProblems(withLinks(codeBox("<code>echo hi</code>") + between + codeBox("<code>x</code>"))), []);
+  assert.deepEqual(lessonProblems(withLinks(codeBox("echo hi"))), [
+    "code box 1 must hold exactly one <code> (its Copy button copies that text)",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(codeBox("<code>a</code><code>b</code>"))), [
+    "code box 1 must hold exactly one <code> (its Copy button copies that text)",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(codeBox("<code> \n </code>"))), ["code box 1 is empty"]);
+  assert.deepEqual(lessonProblems(withLinks(codeBox("<code>a</code>") + codeBox("<code></code>"))), ["code box 2 is empty"]);
 });

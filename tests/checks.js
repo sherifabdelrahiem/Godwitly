@@ -424,13 +424,14 @@ function attributeValue(attributes, name) {
   return found ? (found[1] ?? found[2] ?? found[3]) : undefined;
 }
 
-// The four callouts and the mascot file each one shows (spec #36; the Watch out bird is
-// mascot 7, which the PO accepted in place of mascot 6).
+// The callouts and the mascot file each one shows (spec #36; the Watch out bird is
+// mascot 7, which the PO accepted in place of mascot 6; the Resources callout, for a file to download, has mascot 8).
 const CALLOUT_MASCOTS = {
   think: "mascot-2-thoughtful.webp",
   confusion: "mascot-3-confused.webp",
   key: "mascot-4-lightbulb.webp",
   warning: "mascot-7-attentive.webp",
+  resource: "mascot-8-envelopes.webp",
 };
 
 function anchorsIn(html) {
@@ -633,6 +634,16 @@ function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
       }
     }
   });
+
+  // Code boxes: the Copy button copies the box's one <code>, so each box needs exactly one,
+  // with something in it.
+  [...page.matchAll(/<(div|pre)\b[^>]*\bclass\s*=\s*["'][^"']*\bcode-box\b[^"']*["'][^>]*>([\s\S]*?)<\/pre>/gi)].forEach(
+    ([, , inner], i) => {
+      const codes = [...inner.matchAll(/<code\b[^>]*>([\s\S]*?)<\/code>/gi)];
+      if (codes.length !== 1) problems.push(`code box ${i + 1} must hold exactly one <code> (its Copy button copies that text)`);
+      else if (codes[0][1].replace(/<[^>]*>/g, "").trim() === "") problems.push(`code box ${i + 1} is empty`);
+    },
+  );
 
   // Links. Findings are collected in a set so a link repeated on the page is reported once.
   //  - nothing may link to a Lesson page that is not released yet;
