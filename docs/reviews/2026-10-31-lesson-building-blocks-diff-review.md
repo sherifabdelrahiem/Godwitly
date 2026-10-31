@@ -37,19 +37,21 @@
 | 2 | Check that `course.copied` / `course.copyFailed` are seen by the keys check | No change needed: the check passes with the keys in place |
 | 3 | `tests/samples/` not in `AGENTS.md` structure | Fixed in `4167a21` |
 | 4 | Sample page uses inline `style` | No change needed (development only, `noindex`) |
-| 5 | `h1` clamp assumes the current Lesson 1 title length; a longer later title with `nowrap` could overflow | **Open for the PO**: revisit when Lessons 2–9 are built |
+| 5 | `h1` clamp assumes the current Lesson 1 title length; a longer later title with `nowrap` could overflow | **Accepted by the PO, 2026-10-31**; revisit the title when each Lesson is built |
 
 ## Spec
 
 | # | Finding | Outcome |
 |---|---|---|
 | 1 | Mascot mirroring in RTL possibly lost | No change needed: `html[dir="rtl"] .callout__bird` is in `css/course.css` |
-| 2 | "At most one mascot per screen" only checked as "no two callouts in a row" | **Open for the PO**: the rest is by eye (documented in the check) |
-| 3 | Mascot 6 in ticket/spec text, 7 in code | Open for the PO: Changes note on the spec if wanted |
-| 4 | Ticket says "against v1" | Open for the PO: ticket wording only |
+| 2 | "At most one mascot per screen" only checked as "no two callouts in a row" | Accepted by the PO, 2026-10-31: the rest is by eye (documented in the check) |
+| 3 | Mascot 6 in ticket/spec text, 7 in code | Accepted by the PO, 2026-10-31: Changes note on the spec if wanted |
+| 4 | Ticket says "against v1" | Accepted by the PO, 2026-10-31: ticket wording only |
 | 5 | `h1` change outside #40 | Recorded under Scope |
-| 6 | Print button and its keys not asked for | Open for the PO: kept so the برشامة can be printed by mouse |
-| 7 | Tests allow a callout with no bird | Open for the PO: kept as a looser rule |
+| 6 | Print button and its keys not asked for | Accepted by the PO, 2026-10-31: kept so the برشامة can be printed by mouse |
+| 7 | Tests allow a callout with no bird | Accepted by the PO, 2026-10-31: kept as a looser rule |
 | 8 | Tab arrow keys used the page direction, but the Lesson text is always right to left | Fixed in `4167a21` (uses the tabs' own direction) |
 
-Findings marked "Open for the PO" are not accepted yet; nothing is marked accepted without the PO's say.
+The PO accepted the findings above on 2026-10-31 in the session.
+
+Later change (PO request, after the review): table cells are vertically centred (`vertical-align: middle` in `css/course.css`) so tool names sit in the middle of their rows. This CSS-only change needs its own re-review before merge.
