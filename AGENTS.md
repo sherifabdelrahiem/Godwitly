@@ -198,7 +198,7 @@ proposed work that enters this Workflow at step 1 or 3.
 - `supabase/migrations/`: SQL migrations (the `launch_signups` table, its rules, the
   `notify_signup` trigger, and the Sign-up dashboard's viewers list, Auth hook and read
   policy).
-- `assets/images/`: logo, favicon, backgrounds, illustrations and the six course mascots
+- `assets/images/`: logo, favicon, backgrounds, illustrations and the seven course mascots
   (`mascot-*.webp`, web-sized).
 - `docs/reviews/`: review reports (Codex gates, diff reviews, test logs).
 - `docs/plans/`: approved plans from before the spec-Issue workflow (history).
