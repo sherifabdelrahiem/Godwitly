@@ -184,6 +184,13 @@ proposed work that enters this Workflow at step 1 or 3.
 - `css/dashboard.css`: dashboard-only styling; reuses the `:root` variables.
 - `js/dashboard.js`: dashboard sign-in, Launch sign-ups list, search, figures and Access.
 - `_headers`: Cloudflare Pages security headers (CSP) for the dashboard only.
+- `crash-course/index.html`: the Crash course hub (Claude Crash Course for Beginners), linked
+  from the landing page as "Crash Courses". The Lesson pages will live beside it.
+- `css/course.css`: Crash course pages only; reuses the `:root` variables.
+- `js/course.js`: language switcher, mobile menu and footer year for the Crash course pages;
+  they never load `js/script.js`.
+- `js/course-language.js`: which language a Crash course page opens in, what it remembers
+  and how links carry it; tested in `tests/course-language.test.js`.
 - `supabase/functions/`: Edge Functions; `notify-signup` sends the owner an alert-only
   email.
 - `supabase/migrations/`: SQL migrations (the `launch_signups` table, its rules, the
@@ -222,7 +229,7 @@ Use the commands verified for this repository:
 - Deploy: manual. The Cloudflare Pages project `godwitly` is not connected to GitHub, so
   merging to `main` does **not** deploy. Ask the PO first, then copy only the site files
   from `main` into an empty folder and upload them:
-  `git archive main index.html dashboard.html _headers css js assets | tar -x -C <empty-folder>`, then
+  `git archive main index.html dashboard.html _headers css js assets crash-course | tar -x -C <empty-folder>`, then
   `npx wrangler@4.153.0 pages deploy <empty-folder> --project-name godwitly --branch main
   --commit-hash "$(git rev-parse main)"`. Check https://godwitly.pages.dev afterwards.
 
