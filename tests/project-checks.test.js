@@ -20,7 +20,7 @@ test("English and Arabic translations match", () => {
   assert.deepEqual(findParityProblems(TRANSLATIONS), []);
 });
 
-for (const page of ["index.html", "dashboard.html"]) {
+for (const page of ["index.html", "dashboard.html", "crash-course/index.html"]) {
   test(`every translation key named in ${page} exists in both languages`, () => {
     assert.deepEqual(findHtmlReferenceProblems(read(page), TRANSLATIONS), []);
   });

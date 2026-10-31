@@ -1,0 +1,63 @@
+/*
+  Styles for the Crash course pages (spec #36). They load after css/styles.css and
+  reuse its :root variables, header, buttons and footer. Nothing here is used by the
+  landing page or the Sign-up dashboard.
+*/
+
+/* The hub's hero: the landing page's landscape and flock behind the title */
+.course-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 380px;
+  overflow: hidden;
+}
+
+.course-hero__content {
+  position: relative;
+  padding-block: 56px;
+}
+
+.course-hero__title {
+  margin-top: 8px;
+}
+
+.course-hero .hero__intro,
+html[lang="ar"] .course-hero .hero__intro {
+  max-width: 40rem;
+}
+
+/* "Available in Arabic": a small pill, like the product tags */
+.course-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--color-learn-bg);
+  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Only English visitors see the "Available in Arabic" row */
+html[lang="ar"] .course-en-only {
+  display: none;
+}
+
+/* The page you are on, in the menus */
+.main-nav a.is-current,
+.mobile-menu a.is-current {
+  color: var(--color-brand);
+  font-weight: 600;
+}
+
+/* Wider screens: a taller hero, like the landing page's */
+@media (min-width: 1024px) {
+  .course-hero {
+    min-height: 440px;
+  }
+
+  .course-hero__content {
+    padding-block: 72px;
+  }
+}

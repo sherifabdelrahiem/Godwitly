@@ -1,0 +1,129 @@
+<!doctype html>
+<!--
+  Crash course hub: the front page of the Claude Crash Course for Beginners (spec #36).
+
+  Text: every element with a data-i18n="..." attribute gets its text from
+  ../js/translations.js, like the landing page. The English text written here
+  is the default that shows if JavaScript is turned off. The page opens in
+  Arabic unless the address says ?lang=en or the visitor chose English on a
+  course page before (js/course-language.js).
+
+  Course pages do not load js/script.js: it saves the landing page's language
+  on every visit. They load js/course.js instead.
+-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="course.metaTitle">Claude Crash Course for Beginners — Godwitly</title>
+    <meta
+      name="description"
+      data-i18n-content="course.metaDescription"
+      content="A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step. The Lessons are in Arabic."
+    />
+    <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml" />
+
+    <!-- Fonts: the same as the landing page -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rubik:wght@500;600;700&family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    />
+
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/course.css" />
+  </head>
+
+  <body id="top">
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" /></symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></symbol>
+    </svg>
+
+    <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to main content</a>
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="site-header container">
+      <a href="../index.html" class="logo-link" data-i18n-aria-label="a11y.home" aria-label="Godwitly home">
+        <img src="../assets/images/godwitly-wordmark.svg" alt="Godwitly" class="logo" width="140" height="40" />
+      </a>
+
+      <nav class="main-nav" data-i18n-aria-label="a11y.mainNav" aria-label="Main">
+        <a href="../index.html#products" data-i18n="nav.products">Products</a>
+        <a href="../index.html#why-godwitly" data-i18n="nav.why">Why Godwitly</a>
+        <a href="../index.html#about" data-i18n="nav.about">About</a>
+        <a href="../index.html#contact" data-i18n="nav.contact">Get notified</a>
+        <a href="index.html" data-course-link aria-current="page" class="is-current" data-i18n="nav.crashCourses">Crash Courses</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" data-i18n-aria-label="a11y.language" aria-label="Choose language">
+          <svg class="icon lang-switch__globe" aria-hidden="true"><use href="#icon-globe"></use></svg>
+          <button type="button" class="lang-switch__btn" data-lang="en" lang="en" aria-pressed="true">English</button>
+          <button type="button" class="lang-switch__btn" data-lang="ar" lang="ar" aria-pressed="false">العربية</button>
+        </div>
+
+        <button
+          type="button"
+          class="menu-button"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          data-i18n-aria-label="a11y.menuOpen"
+          aria-label="Open menu"
+        >
+          <svg class="icon icon--lg menu-button__open" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          <svg class="icon icon--lg menu-button__close" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <div id="mobile-menu" class="mobile-menu" hidden>
+        <nav data-i18n-aria-label="a11y.mainNav" aria-label="Main">
+          <a href="../index.html#products" data-i18n="nav.products">Products</a>
+          <a href="../index.html#why-godwitly" data-i18n="nav.why">Why Godwitly</a>
+          <a href="../index.html#about" data-i18n="nav.about">About</a>
+          <a href="../index.html#contact" data-i18n="nav.contact">Get notified</a>
+          <a href="index.html" data-course-link aria-current="page" class="is-current" data-i18n="nav.crashCourses">Crash Courses</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <!-- ===================== HERO ===================== -->
+      <section class="course-hero" aria-labelledby="course-title">
+        <img src="../assets/images/hero-landscape.webp" alt="" class="hero__background" />
+        <img src="../assets/images/flock.webp" alt="" class="hero__flock" />
+
+        <div class="container course-hero__content">
+          <p class="eyebrow" data-i18n="course.eyebrow">Free guide</p>
+          <h1 id="course-title" class="hero__title course-hero__title" data-i18n="course.title">
+            Claude Crash Course for Beginners
+          </h1>
+          <p class="hero__intro" data-i18n="course.summary">
+            A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step.
+          </p>
+          <!-- English visitors only: the Lessons are in Arabic (ADR-0008) -->
+          <div class="button-row course-en-only">
+            <a href="index.html?lang=ar" hreflang="ar" class="pill pill--primary" data-i18n="course.openArabic">Open the guide in Arabic</a>
+            <span class="course-badge" data-i18n="course.availableArabic">Available in Arabic</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="site-footer">
+      <p class="container">
+        <span data-i18n="footer.text">Godwitly by BCM Hub — learning, engagement and organisational preparedness.</span>
+        <span dir="ltr">© <span id="year">2026</span></span>
+        <a href="index.html" data-course-link aria-current="page" class="site-footer__link" data-i18n="nav.crashCourses">Crash Courses</a>
+      </p>
+    </footer>
+
+    <!-- translations.js must load first, then the language rule, then the page script -->
+    <script src="../js/translations.js"></script>
+    <script src="../js/course-language.js"></script>
+    <script src="../js/course.js"></script>
+  </body>
+</html>

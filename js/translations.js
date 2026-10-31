@@ -32,6 +32,7 @@ const TRANSLATIONS = {
     "nav.why": "Why Godwitly",
     "nav.about": "About",
     "nav.contact": "Get notified",
+    "nav.crashCourses": "Crash Courses",
 
     // Hero
     "hero.line1": "Learn Smarter.",
@@ -137,6 +138,19 @@ const TRANSLATIONS = {
     "error.message": "Please keep your message to 1,000 characters or fewer.",
     "error.consent": "Please tick the box to agree.",
 
+    // Crash course hub (crash-course/index.html). The Lessons themselves are Arabic-only
+    // at first (ADR-0008); the hub shows English visitors a title, a summary and
+    // "Available in Arabic".
+    "course.metaTitle": "Claude Crash Course for Beginners — Godwitly",
+    "course.metaDescription":
+      "A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step. The Lessons are in Arabic.",
+    "course.eyebrow": "Free guide",
+    "course.title": "Claude Crash Course for Beginners",
+    "course.summary":
+      "A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step.",
+    "course.availableArabic": "Available in Arabic",
+    "course.openArabic": "Open the guide in Arabic",
+
     // Footer
     "footer.text": "Godwitly by BCM Hub — learning, engagement and organisational preparedness.",
 
@@ -228,6 +242,7 @@ const TRANSLATIONS = {
     "nav.why": "لماذا Godwitly؟",
     "nav.about": "نبذة عنّا",
     "nav.contact": "احصل على إشعار",
+    "nav.crashCourses": "الدورات المكثّفة",
 
     "hero.line1": "تعلّم بذكاء أكبر.",
     "hero.line2": "تفاعل بفاعلية أكبر.",
@@ -325,6 +340,16 @@ const TRANSLATIONS = {
     "error.jobTitle": "يُرجى إدخال مسماك الوظيفي.",
     "error.message": "يُرجى ألا تتجاوز رسالتك 1000 حرف.",
     "error.consent": "يُرجى تحديد المربع للموافقة.",
+
+    "course.metaTitle": "دليل كلود للمبتدئين — Godwitly",
+    "course.metaDescription":
+      "دليل مجاني يتعلّم منه المبتدئون استخدام Claude وClaude Code خطوة بخطوة وبالسرعة التي تناسبهم.",
+    "course.eyebrow": "دليل مجاني",
+    "course.title": "دليل كلود للمبتدئين",
+    "course.summary":
+      "تعلّم استخدام Claude وClaude Code من الصفر، خطوة بخطوة وبالسرعة التي تناسبك.",
+    "course.availableArabic": "متاح بالعربية",
+    "course.openArabic": "افتح الدليل بالعربية",
 
     "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والاستعداد المؤسسي.",
 
