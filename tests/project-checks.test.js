@@ -9,7 +9,9 @@ const {
   findScriptReferenceProblems,
   findExceptionListProblems,
   findSyntaxProblems,
+  findCourseHubProblems,
 } = require("./checks.js");
+const { LESSONS } = require("./course-lessons.js");
 const { TRANSLATIONS } = require("../js/translations.js");
 
 const ROOT = path.join(__dirname, "..");
@@ -53,4 +55,16 @@ test("every project JavaScript file parses", () => {
   const files = [...listScripts("js"), ...listScripts("tests")];
   assert.ok(files.includes(path.join("js", "form.js")) && files.includes(path.join("tests", "checks.js")));
   assert.deepEqual(findSyntaxProblems(files.map((file) => path.join(ROOT, file))), []);
+});
+
+test("the real hub shows the agreed Lessons, in order, with the agreed availability", () => {
+  assert.deepEqual(findCourseHubProblems(read("crash-course/index.html"), LESSONS), []);
+});
+
+test("every agreed Lesson has a title in both languages", () => {
+  for (const { titleKey } of LESSONS) {
+    for (const language of Object.keys(TRANSLATIONS)) {
+      assert.ok(TRANSLATIONS[language][titleKey], `${titleKey} missing in ${language}`);
+    }
+  }
 });

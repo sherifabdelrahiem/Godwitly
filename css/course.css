@@ -51,6 +51,148 @@ html[lang="ar"] .course-en-only {
   font-weight: 600;
 }
 
+/* "Before you start" and who the course is for */
+.course-facts {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.course-facts__title {
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.course-facts p {
+  margin-top: 8px;
+  color: var(--color-text-soft);
+  line-height: 1.65;
+}
+
+.costs-box {
+  padding: 24px;
+  border-radius: var(--radius-card);
+  background: var(--color-learn-bg);
+}
+
+.costs-box__title {
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.costs-box__list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding-inline-start: 20px;
+  color: var(--color-text-soft);
+  line-height: 1.65;
+}
+
+.course-checked {
+  margin-top: 12px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+/* The two sections each have 64px padding; the second needs no extra space above */
+.course-lessons {
+  padding-top: 0;
+}
+
+/* The nine Lesson cards: one column on phones, three on desktop */
+.lesson-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 32px;
+  padding: 0;
+  list-style: none;
+}
+
+.lesson-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+}
+
+/* "Coming soon": greyed, and not a link */
+.lesson-card--soon {
+  background: #f0eeeb;
+  color: var(--color-text-muted);
+}
+
+.lesson-card__number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #dcd8d3;
+  color: var(--color-text-soft);
+  font-weight: 700;
+}
+
+.lesson-card__title {
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.lesson-card__outcome {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.lesson-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.course-badge--soon {
+  padding: 4px 12px;
+  background: #e6e2dd;
+  color: var(--color-text-soft);
+  font-size: 12px;
+}
+
+html[lang="ar"] .lesson-card__title {
+  font-family: var(--font-arabic-heading);
+}
+
+html[lang="ar"] .course-facts__title,
+html[lang="ar"] .costs-box__title {
+  font-family: var(--font-arabic-heading);
+}
+
+@media (min-width: 640px) {
+  .course-facts,
+  .lesson-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .lesson-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* Wider screens: a taller hero, like the landing page's */
 @media (min-width: 1024px) {
   .course-hero {

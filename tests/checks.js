@@ -331,10 +331,84 @@ function findSyntaxProblems(files) {
   });
 }
 
+// 5. Course hub (spec #36, Seam 1): the hub shows exactly the agreed Lessons, in
+// order, with the agreed availability, and a real last-checked date. `lessons` is
+// the agreed list (tests/course-lessons.js). Limits: this proves the page's
+// structure only, not that the text is accurate or that a linked page exists.
+function isCalendarDate(text) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+  if (!match) return false;
+  const [year, month, day] = match.slice(1).map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
+function findCourseHubProblems(html, lessons) {
+  const problems = [];
+  const page = html.replace(/<!--[\s\S]*?-->/g, "");
+
+  const date = /<time\b[^>]*\sdatetime\s*=\s*"([^"]*)"/i.exec(page);
+  if (!date) problems.push("the hub has no last-checked date (<time datetime>)");
+  else if (!isCalendarDate(date[1])) {
+    problems.push(`the last-checked date "${date[1]}" is not a real calendar date (use YYYY-MM-DD)`);
+  }
+
+  const list = /<ol\b[^>]*class="lesson-list"[^>]*>([\s\S]*?)<\/ol>/i.exec(page);
+  if (!list) {
+    problems.push('the hub has no Lesson list (<ol class="lesson-list">)');
+    return problems;
+  }
+  const cards = [...list[1].matchAll(/<li\b[^>]*data-lesson="(\d+)"[^>]*>([\s\S]*?)<\/li>/gi)].map(
+    ([, number, body]) => ({ number: Number(number), body }),
+  );
+
+  const agreed = lessons.map((lesson) => lesson.number);
+  const shown = cards.map((card) => card.number);
+  agreed.filter((n) => !shown.includes(n)).forEach((n) => problems.push(`Lesson ${n} has no card on the hub`));
+  shown
+    .filter((n) => !agreed.includes(n))
+    .forEach((n) => problems.push(`the hub has a card for Lesson ${n}, which is not in the agreed list`));
+  const shownAgreed = shown.filter((n) => agreed.includes(n));
+  const wantedOrder = agreed.filter((n) => shown.includes(n));
+  if (shownAgreed.join(",") !== wantedOrder.join(",")) {
+    problems.push(`Lesson cards are in the order ${shownAgreed.join(", ")} but should be ${wantedOrder.join(", ")}`);
+  }
+
+  for (const lesson of lessons) {
+    const card = cards.find((entry) => entry.number === lesson.number);
+    if (!card) continue;
+    const title = /<h[1-6]\b[^>]*data-i18n="([^"]*)"/i.exec(card.body); // the heading, not the number
+    if (!title || title[1] !== lesson.titleKey) {
+      problems.push(`Lesson ${lesson.number} uses the title "${title ? title[1] : "none"}" but should use "${lesson.titleKey}"`);
+    }
+    const link = /<a\b([^>]*)>/i.exec(card.body);
+    if (lesson.released) {
+      if (!link) {
+        problems.push(`Lesson ${lesson.number} is released but its card is not a link`);
+        continue;
+      }
+      const href = /href="([^"]*)"/.exec(link[1]);
+      if (!href || href[1] !== lesson.page) {
+        problems.push(`Lesson ${lesson.number} links to "${href ? href[1] : "nothing"}" but its page is "${lesson.page}"`);
+      }
+      if (!/\bdata-course-link\b/.test(link[1])) {
+        problems.push(`Lesson ${lesson.number} links to a course page without data-course-link, so the language would be lost`);
+      }
+    } else {
+      if (link) problems.push(`Lesson ${lesson.number} is not released but its card is a link`);
+      if (!/data-i18n="course\.soon"/.test(card.body)) {
+        problems.push(`Lesson ${lesson.number} is not released but its card does not say "course.soon"`);
+      }
+    }
+  }
+  return problems;
+}
+
 module.exports = {
   findParityProblems,
   findHtmlReferenceProblems,
   findScriptReferenceProblems,
   findExceptionListProblems,
   findSyntaxProblems,
+  findCourseHubProblems,
 };

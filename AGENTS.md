@@ -196,7 +196,8 @@ proposed work that enters this Workflow at step 1 or 3.
 - `supabase/migrations/`: SQL migrations (the `launch_signups` table, its rules, the
   `notify_signup` trigger, and the Sign-up dashboard's viewers list, Auth hook and read
   policy).
-- `assets/images/`: logo, favicon, backgrounds and illustrations.
+- `assets/images/`: logo, favicon, backgrounds, illustrations and the six course mascots
+  (`mascot-*.webp`, web-sized).
 - `docs/reviews/`: review reports (Codex gates, diff reviews, test logs).
 - `docs/plans/`: approved plans from before the spec-Issue workflow (history).
 - `docs/adr/`: architecture decision records; read them before changing the form, the
@@ -205,8 +206,9 @@ proposed work that enters this Workflow at step 1 or 3.
 - `GLOSSARY.md`: the agreed domain terms in English and Arabic; use them in text, plans
   and issues.
 - `tests/`: `node --test` tests (development only, ADR-0006). `tests/checks.js` holds the
-  project checks: translation parity, translation keys named in the pages and scripts, and
-  JavaScript syntax.
+  project checks: translation parity, translation keys named in the pages and scripts,
+  JavaScript syntax, and the Crash course hub's cards. `tests/course-lessons.js` is the agreed
+  list of the nine Lessons those cards must match.
 - `.github/workflows/checks.yml`: the PR checks (see Development commands, Test). A change
   to it needs a security review and a new gate assessment (spec #31).
 - `.agents/skills/`: the vendored Matt Pocock skills (MIT; see its `README.md`).
