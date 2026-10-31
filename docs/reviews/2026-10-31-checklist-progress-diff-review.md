@@ -6,7 +6,7 @@
 - **Spec:** #36, Spec version v3, sha256 `42989dc87878d0d40742fd81691c50026f16e48ba5c69a6ace2ec287cdd0b666`
   (recomputed from the Issue body on 2026-10-31; equals the v3 approval record).
   **Ticket wording:** #41 says "against #36 v1" but its header says v3. This review uses v3; the Issue is not edited (finding S-10).
-- **Status: NOT fully verified.** Three manual checks are pending, one whole-page layout check failed (inherited from #39), see Verification.
+- **Status: NOT fully verified.** Two manual checks are pending (double-click, screen reader), one whole-page layout check failed (inherited from #39), see Verification.
   No publication is authorised: not the push, the PR, nor closing #41.
 - **Tracked files** were clean at bfb500b. Untracked, unrelated and left alone: the `Claude/` folder and 8 PNGs in `assets/images/`.
 - **How it was reviewed:** the first review (32b0ef4), a second over `7064aa4...5f513b1` and a third over `5f513b1...bfb500b`
@@ -53,7 +53,7 @@ Acceptances given in the PO's later message, 2026-10-31 (recorded by the agent; 
 | 320px: Arabic Lesson page; hub in English and Arabic | passed | embedded 320px frame, no horizontal overflow; celebration fits |
 | **320px: English Lesson page** | **failed (whole page)** | 330px content at 320px, caused by `.lesson-mascot` (the intro image, from #39). #41 added nothing that overflows. Disposition: see finding S-12 |
 | Back-button, cache restore (`pageshow` persisted path) | passed | Chrome via tools, 2026-10-31: hub loaded with ✓ shown; Lesson 1 opened, one item unticked; Back. `pageshow` fired with `persisted: true`, the page kept its JavaScript state (a marker set before leaving was still there, so it was not reloaded), and the hub ✓ became hidden. Scope: one run in one browser |
-| Real private window | pending (PO) | steps in the completion report |
+| Real private window | passed (PO-reported) | PO ran the steps in Chrome Incognito on http://localhost:8000 (branch checkout) on 2026-10-31 and reported "test passed". The PO gave no further detail (for example whether the ticks survived the reload); the expected result was: no errors, and ticks kept where storage is allowed. Only Chrome Incognito; Safari and Firefox private modes not tested |
 | Real double-click open in the PO's everyday browser | pending (PO) | steps in the completion report |
 | Screen-reader announcement of the incomplete→complete transition | pending (PO); **unverified** | only the DOM was checked: an always-present empty `role="status"` region that is filled when complete |
 
@@ -82,7 +82,7 @@ PO acceptances recorded 2026-10-31 (5): S-7, S-8, T-5, T-6, T-8 (see above).
 Pending verification / open (3):
 | # | Finding | Status |
 |---|---|---|
-| S-9 | Manual checks: private window, everyday-browser double-click, screen reader | pending, PO |
+| S-9 | Manual checks: private window (passed, PO-reported 2026-10-31), everyday-browser double-click, screen reader | partly pending, PO |
 | S-12 | English Lesson 1 page overflows at 320px (from #39) | open, failed whole-page check. The PO wants it corrected, not waived. See the completion report for whether #36/#41 authorisation covers the fix |
 | S-13 | AGENTS.md "Verification" requires 320px UI checks; this check can't be reported as fully passed while S-12 is open | open, follows S-12 |
 
