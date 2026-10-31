@@ -66,3 +66,13 @@ Chrome: the callout shows the bird mirrored towards the text in Arabic, the link
 gaps to the neighbouring bird callouts are 548px (desktop, screen 801px) and 845px (320px, screen
 640px). The spec (#52) and #36 name four callout kinds, so the PO may want a Changes note; this needs
 its own re-review before merge.
+
+## PO approval and spec amendment
+
+The PO approved the implementation in the session on 2026-10-31. The open findings under Standards
+(the time kept in four places, no Arabic glossary term for the facts file) and the English 330px
+width from #39 were not discussed and stay noted, not accepted. Because the build changed things the
+spec did not describe (the Resources callout and its bird, the three-line prompt callout, the Copy-box
+check), spec #52 was amended to **v2** (sha256
+`40c8d5668f251f95758a63022cb9a917475323a3e7ee435586bd37cd02de5794`) with a Changes line; it needs the
+PO's approval of that hash. Spec #36 lists four callout kinds and was not edited.
