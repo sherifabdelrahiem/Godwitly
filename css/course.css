@@ -1002,6 +1002,11 @@ html[lang="ar"] .lesson-nav__toggle {
   overflow-wrap: anywhere;
 }
 
+/* A prompt written in Arabic reads right to left, from the right edge */
+.code-box__code[dir="rtl"] {
+  text-align: right;
+}
+
 .code-box__copy {
   min-height: 44px;
   padding: 8px 16px;

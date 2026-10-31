@@ -634,6 +634,16 @@ function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
     }
   });
 
+  // Code boxes: the Copy button copies the box's one <code>, so each box needs exactly one,
+  // with something in it.
+  [...page.matchAll(/<(div|pre)\b[^>]*\bclass\s*=\s*["'][^"']*\bcode-box\b[^"']*["'][^>]*>([\s\S]*?)<\/pre>/gi)].forEach(
+    ([, , inner], i) => {
+      const codes = [...inner.matchAll(/<code\b[^>]*>([\s\S]*?)<\/code>/gi)];
+      if (codes.length !== 1) problems.push(`code box ${i + 1} must hold exactly one <code> (its Copy button copies that text)`);
+      else if (codes[0][1].replace(/<[^>]*>/g, "").trim() === "") problems.push(`code box ${i + 1} is empty`);
+    },
+  );
+
   // Links. Findings are collected in a set so a link repeated on the page is reported once.
   //  - nothing may link to a Lesson page that is not released yet;
   //  - a relative link or image must point to a file that exists, resolved from this page;

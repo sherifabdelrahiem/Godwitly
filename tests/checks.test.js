@@ -745,3 +745,17 @@ test("callouts: a callout may have no bird, but two callouts may not follow each
   ]);
   assert.deepEqual(lessonProblems(withLinks(callout({ kind: "think" }) + between + callout({ kind: "key" }))), []);
 });
+
+const codeBox = (inner) => `<div class="code-box"><pre class="code-box__code">${inner}</pre></div>`;
+
+test("code boxes: each holds exactly one non-empty <code>, so its Copy button copies one thing", () => {
+  assert.deepEqual(lessonProblems(withLinks(codeBox("<code>echo hi</code>") + between + codeBox("<code>x</code>"))), []);
+  assert.deepEqual(lessonProblems(withLinks(codeBox("echo hi"))), [
+    "code box 1 must hold exactly one <code> (its Copy button copies that text)",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(codeBox("<code>a</code><code>b</code>"))), [
+    "code box 1 must hold exactly one <code> (its Copy button copies that text)",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(codeBox("<code> \n </code>"))), ["code box 1 is empty"]);
+  assert.deepEqual(lessonProblems(withLinks(codeBox("<code>a</code>") + codeBox("<code></code>"))), ["code box 2 is empty"]);
+});
