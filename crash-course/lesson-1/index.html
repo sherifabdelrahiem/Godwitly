@@ -202,7 +202,8 @@
           </blockquote>
           <p>كل ما توضّح المطلوب وتديله المعلومات اللي محتاجها، يبقى عنده أساس أفضل يساعدك عليه. وكلود ممكن يغلط أو يفهمك بشكل مختلف عن قصدك، علشان كده راجع النتيجة وتأكد من المعلومات قبل ما تعتمد عليها.</p>
           <!-- Callout "فكّر فيها" (mascot 2, thoughtful) — the callout component and its mascot come with ticket #40 -->
-          <blockquote class="callout-plain">
+          <blockquote class="callout-plain callout--bird">
+          <img class="callout__bird" src="../../assets/images/mascot-2-thoughtful.webp" alt="" width="640" height="600" loading="lazy" />
           <p><strong>فكّر فيها:</strong> لو عندك فكرة لمشروع، إيه المعلومات اللي محتاج تجهّزها عشان تشرحها لكلود بوضوح؟</p>
           </blockquote>
           </section>
@@ -213,7 +214,8 @@
           <p>يعني لو طلبت منه يعمل صفحة، يقدر يشتغل على ملفاتها جوه فولدر المشروع. وبعدها تقدر تطلب منه يعدّل الألوان، أو يكبّر الكتابة، أو يصلّح مشكلة في شكل الصفحة على الموبايل.</p>
           <p>إنت بتشرح المطلوب وبتراجع النتيجة، وكلود كود بيساعدك في التنفيذ. وقبل ما توافق على خطوة بيطلب إذنك فيها، فاقرا هو ناوي يعمل إيه.</p>
           <!-- Callout "لخبطة شائعة" (mascot 3, confused) — the callout component and its mascot come with ticket #40 -->
-          <blockquote class="callout-plain">
+          <blockquote class="callout-plain callout--bird">
+          <img class="callout__bird" src="../../assets/images/mascot-3-confused.webp" alt="" width="640" height="426" loading="lazy" />
           <p><strong>لخبطة شائعة:</strong> المحادثة مع كلود بتساعدك تفهم وتكتب وتفكّر. كلود كود كمان يقدر يشتغل على ملفات المشروع حسب الصلاحيات اللي إنت بتديهاله.</p>
           </blockquote>
           <h3>إيه هو Plan mode؟</h3>
@@ -344,29 +346,59 @@
           <section class="lesson-part lesson-section" id="self-check" lang="ar" dir="rtl">
           <h2>اختبر نفسك</h2>
           <p>اختار إجابة واحدة لكل سؤال. تقدر تغيّر إجابتك وتحاول تاني؛ الأسئلة من غير درجات.</p>
-          <div class="self-check__item">
-          <p class="self-check__q"><strong>١. عايز كلود يعدّل ملفات صفحة جوه فولدر مشروعك بنفسه. تستخدم إيه؟</strong></p>
+          <div class="self-check__item" role="group" aria-labelledby="self-check-q1">
+          <p class="self-check__q" id="self-check-q1"><strong>١. عايز كلود يعدّل ملفات صفحة جوه فولدر مشروعك بنفسه. تستخدم إيه؟</strong></p>
           <ul class="self-check__options">
-          <li>المحادثة العادية مع كلود بس: غلط. المحادثة بتشرح وتكتب لك الكود، لكن تعديل الملفات جوه فولدر المشروع هو شغل كلود كود.</li>
-          <li>كلود كود: صح. كلود كود يقدر يقرا ملفات المشروع ويعدّلها حسب الصلاحيات اللي إنت بتديهاله.</li>
-          <li>Skill لوحدها: غلط. الـSkill بتوجّه كلود في طريقة الشغل، لكنها مش هي اللي بتفتح الملفات وتعدّلها.</li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="false"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">المحادثة العادية مع كلود بس</span></button>
+          <span class="self-check__why"><strong>غلط.</strong> المحادثة بتشرح وتكتب لك الكود، لكن تعديل الملفات جوه فولدر المشروع هو شغل كلود كود.</span>
+          </li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="true"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">كلود كود</span></button>
+          <span class="self-check__why"><strong>صح.</strong> كلود كود يقدر يقرا ملفات المشروع ويعدّلها حسب الصلاحيات اللي إنت بتديهاله.</span>
+          </li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="false"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">Skill لوحدها</span></button>
+          <span class="self-check__why"><strong>غلط.</strong> الـSkill بتوجّه كلود في طريقة الشغل، لكنها مش هي اللي بتفتح الملفات وتعدّلها.</span>
+          </li>
           </ul>
+          <div class="self-check__feedback" role="status" aria-live="polite" hidden></div>
           </div>
-          <div class="self-check__item">
-          <p class="self-check__q"><strong>٢. كلود كود طلب إذنك قبل ما ينفّذ خطوة. تعمل إيه؟</strong></p>
+          <div class="self-check__item" role="group" aria-labelledby="self-check-q2">
+          <p class="self-check__q" id="self-check-q2"><strong>٢. كلود كود طلب إذنك قبل ما ينفّذ خطوة. تعمل إيه؟</strong></p>
           <ul class="self-check__options">
-          <li>أوافق على طول عشان أكمّل بسرعة: غلط. الموافقة من غير قراءة ممكن تخلّي حاجة تتغيّر وإنت مش فاهمها.</li>
-          <li>أقرا هو ناوي يعمل إيه، وبعدين أقرر: صح. إنت اللي بتراجع، وبتوافق بس على اللي فاهمه.</li>
-          <li>أقفل البرنامج وأبدأ من الأول: غلط. مش لازم. اقرا الخطوة، ولو مش فاهمها اسأله يشرحها لك.</li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="false"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">أوافق على طول عشان أكمّل بسرعة</span></button>
+          <span class="self-check__why"><strong>غلط.</strong> الموافقة من غير قراءة ممكن تخلّي حاجة تتغيّر وإنت مش فاهمها.</span>
+          </li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="true"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">أقرا هو ناوي يعمل إيه، وبعدين أقرر</span></button>
+          <span class="self-check__why"><strong>صح.</strong> إنت اللي بتراجع، وبتوافق بس على اللي فاهمه.</span>
+          </li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="false"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">أقفل البرنامج وأبدأ من الأول</span></button>
+          <span class="self-check__why"><strong>غلط.</strong> مش لازم. اقرا الخطوة، ولو مش فاهمها اسأله يشرحها لك.</span>
+          </li>
           </ul>
+          <div class="self-check__feedback" role="status" aria-live="polite" hidden></div>
           </div>
-          <div class="self-check__item">
-          <p class="self-check__q"><strong>٣. إيه هي الـSkill؟</strong></p>
+          <div class="self-check__item" role="group" aria-labelledby="self-check-q3">
+          <p class="self-check__q" id="self-check-q3"><strong>٣. إيه هي الـSkill؟</strong></p>
           <ul class="self-check__options">
-          <li>برنامج بتنزّله بدل كلود: غلط. الـSkill مش بديل عن كلود، دي تعليمات بتوجّهه.</li>
-          <li>مجموعة تعليمات بتوجّه كلود في نوع معيّن من الشغل: صح. وممكن كمان تضم ملفات أو أدوات تساعده.</li>
-          <li>ضمان إن النتيجة هتطلع صح: غلط. الـSkill بتوجّه الشغل، لكن لسه لازم تراجع النتيجة.</li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="false"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">برنامج بتنزّله بدل كلود</span></button>
+          <span class="self-check__why"><strong>غلط.</strong> الـSkill مش بديل عن كلود، دي تعليمات بتوجّهه.</span>
+          </li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="true"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">مجموعة تعليمات بتوجّه كلود في نوع معيّن من الشغل</span></button>
+          <span class="self-check__why"><strong>صح.</strong> وممكن كمان تضم ملفات أو أدوات تساعده.</span>
+          </li>
+          <li>
+          <button type="button" class="self-check__option" data-correct="false"><span class="self-check__marker" aria-hidden="true"></span><span class="self-check__text">ضمان إن النتيجة هتطلع صح</span></button>
+          <span class="self-check__why"><strong>غلط.</strong> الـSkill بتوجّه الشغل، لكن لسه لازم تراجع النتيجة.</span>
+          </li>
           </ul>
+          <div class="self-check__feedback" role="status" aria-live="polite" hidden></div>
           </div>
           </section>
           <section class="lesson-part lesson-section" id="references" lang="ar" dir="rtl">

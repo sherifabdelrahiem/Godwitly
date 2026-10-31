@@ -222,6 +222,7 @@ const TRANSLATIONS = {
     "course.pager.hub": "Back to the guide",
     "course.pager.prev": "Previous",
     "course.pager.next": "Next",
+    "course.selfCheck.correctAnswer": "The correct answer:",
 
     // Footer
     "footer.text": "Godwitly by BCM Hub — learning, engagement and organisational preparedness.",
@@ -492,6 +493,7 @@ const TRANSLATIONS = {
     "course.pager.hub": "العودة إلى الدليل",
     "course.pager.prev": "السابق",
     "course.pager.next": "التالي",
+    "course.selfCheck.correctAnswer": "الإجابة الصحيحة:",
 
     "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والاستعداد المؤسسي.",
 

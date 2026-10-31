@@ -448,9 +448,26 @@ html[dir="ltr"] .lesson-trail li + li::before {
   margin-top: 10px;
 }
 
+/* Bullets: a small terracotta diamond, the brand colour, instead of the browser's dot */
 .lesson-part ul:not(.checklist):not(.self-check__options) {
-  padding-inline-start: 24px;
-  list-style: disc;
+  padding: 0;
+  list-style: none;
+}
+
+.lesson-part ul:not(.checklist):not(.self-check__options) > li {
+  position: relative;
+  padding-inline-start: 26px;
+}
+
+.lesson-part ul:not(.checklist):not(.self-check__options) > li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 6px;
+  top: 0.78em;
+  width: 8px;
+  height: 8px;
+  background: var(--color-brand);
+  transform: rotate(45deg);
 }
 
 .lesson-part li + li {
@@ -508,12 +525,12 @@ html[dir="rtl"] .lesson-mascot {
   margin: 0;
 }
 
-/* Plain until ticket #40 builds the callout component */
+/* Square corners. Callouts and quotes stay simple until ticket #40 builds the full component */
 .callout-plain,
 .lesson-quote {
   margin-inline: 0;
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius: 0;
   border-inline-start: 4px solid var(--color-accent);
   background: var(--color-learn-bg);
 }
@@ -526,6 +543,29 @@ html[dir="rtl"] .lesson-mascot {
 .callout-plain p,
 .lesson-quote p {
   margin: 0;
+}
+
+/* A callout with its bird (decorative; mirrored in Arabic like the other mascots) */
+.callout--bird {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.callout__bird {
+  flex: none;
+  width: 72px;
+  height: auto;
+}
+
+html[dir="rtl"] .callout__bird {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 399px) {
+  .callout__bird {
+    width: 56px;
+  }
 }
 
 /* Tables: three columns are tight at 320px, so each row is stacked there */
@@ -618,11 +658,12 @@ html[dir="rtl"] .lesson-mascot {
   accent-color: var(--color-brand);
 }
 
-/* Self-check: plain text until ticket #40 */
+/* Self-check: choose an answer, see why (js/course.js). Square corners. Without the script
+   the explanations stay under each answer. */
 .self-check__item {
-  padding: 12px 16px;
+  padding: 16px;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 0;
   background: var(--color-white);
 }
 
@@ -632,10 +673,120 @@ html[dir="rtl"] .lesson-mascot {
 
 .self-check__options {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.self-check__option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  background: var(--color-page);
+  color: var(--color-text);
+  font: inherit;
+  line-height: 1.7;
+  text-align: start;
+  cursor: default;
+}
+
+.self-check__item--enhanced .self-check__option {
+  cursor: pointer;
+}
+
+.self-check__item--enhanced .self-check__option:hover {
+  border-color: var(--color-accent);
+}
+
+.self-check__marker {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 6px;
+  border: 2px solid var(--color-accent);
+  background: var(--color-white);
+}
+
+.self-check__option.is-right {
+  border: 2px solid var(--color-success);
+}
+
+.self-check__option.is-right .self-check__marker {
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+.self-check__option.is-wrong {
+  border: 2px solid var(--color-danger);
+}
+
+.self-check__option.is-wrong .self-check__marker {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+}
+
+/* After a wrong choice the right answer is outlined too */
+.self-check__option.is-answer {
+  border: 2px dashed var(--color-success);
+}
+
+.self-check__option.is-answer .self-check__marker {
+  border-color: var(--color-success);
+}
+
+.self-check__why {
+  display: block;
+  margin-top: 4px;
+  padding-inline: 14px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.self-check__why[hidden] {
+  display: none;
+}
+
+.self-check__feedback {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-inline-start: 4px solid var(--color-border);
+  background: var(--color-page);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.self-check__feedback.is-right {
+  border-inline-start-color: var(--color-success);
+}
+
+.self-check__feedback.is-wrong {
+  border-inline-start-color: var(--color-danger);
+}
+
+.self-check__feedback .self-check__why {
+  margin: 0;
+  padding: 0;
+}
+
+.self-check__feedback .self-check__correct {
   margin-top: 8px;
-  padding-inline-start: 24px;
-  list-style: disc;
+}
+
+/* The verdict word is also marked with a sign, so colour is not the only signal */
+.self-check__feedback.is-right > .self-check__why strong::before,
+.self-check__correct .self-check__why strong::before {
+  content: "✓ ";
+  color: var(--color-success);
+}
+
+.self-check__feedback.is-wrong > .self-check__why strong::before {
+  content: "✗ ";
+  color: var(--color-danger);
 }
 
 /* Previous / next */

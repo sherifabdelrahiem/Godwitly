@@ -4,7 +4,8 @@
     1. Language (English <-> Arabic), chosen by js/course-language.js
     2. Mobile menu (open / close)
     3. The Lesson list on Lesson pages (open / close on phones)
-    4. Current year in the footer
+    4. The Self-check: choose an answer, see why it is right or wrong
+    5. Current year in the footer
 
   Course pages do not load js/script.js, which saves the landing page's language
   on every visit and expects landing-page elements (the product tabs). The language
@@ -147,7 +148,54 @@ if (lessonNav) {
   });
 }
 
-/* ---------- 4. Footer year + start ---------- */
+/* ---------- 4. Self-check (Lesson pages only) ---------- */
+
+// Each question is a group of answer buttons. Choosing one shows whether it is right and
+// why; a wrong choice also shows the correct answer and why. Nothing is scored or saved,
+// and choosing again just replaces the feedback. Without this script the explanations
+// stay visible under every answer, so the Lesson still reads.
+document.querySelectorAll(".self-check__item").forEach((item) => {
+  const options = [...item.querySelectorAll(".self-check__option")];
+  const feedback = item.querySelector(".self-check__feedback");
+  const whyOf = (option) => option.parentElement.querySelector(".self-check__why");
+  const textOf = (option) => option.querySelector(".self-check__text").textContent;
+
+  item.classList.add("self-check__item--enhanced");
+  item.querySelectorAll(".self-check__why").forEach((why) => (why.hidden = true));
+
+  function choose(chosen) {
+    const answer = options.find((option) => option.dataset.correct === "true");
+    const right = chosen === answer;
+
+    options.forEach((option) => {
+      option.setAttribute("aria-pressed", String(option === chosen));
+      option.classList.toggle("is-right", option === chosen && right);
+      option.classList.toggle("is-wrong", option === chosen && !right);
+      option.classList.toggle("is-answer", option === answer && !right);
+    });
+
+    const parts = [whyOf(chosen).cloneNode(true)];
+    if (!right) {
+      const label = document.createElement("strong");
+      label.dataset.i18n = "course.selfCheck.correctAnswer";
+      label.textContent = TRANSLATIONS[courseLanguage.current()]["course.selfCheck.correctAnswer"];
+      const correct = document.createElement("p");
+      correct.className = "self-check__correct";
+      const answerWhy = whyOf(answer).cloneNode(true);
+      answerWhy.hidden = false;
+      correct.append(label, " ", textOf(answer), " ", answerWhy);
+      parts.push(correct);
+    }
+    parts.forEach((part) => (part.hidden = false));
+    feedback.replaceChildren(...parts);
+    feedback.className = "self-check__feedback " + (right ? "is-right" : "is-wrong");
+    feedback.hidden = false;
+  }
+
+  options.forEach((option) => option.addEventListener("click", () => choose(option)));
+});
+
+/* ---------- 5. Footer year + start ---------- */
 
 document.getElementById("year").textContent = new Date().getFullYear();
 applyLanguage(courseLanguage.current());

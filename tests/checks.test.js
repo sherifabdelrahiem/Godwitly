@@ -677,3 +677,24 @@ test("links: single-quoted and unquoted addresses are read too", () => {
     'the image "../../assets/missing.webp" points to assets/missing.webp, which does not exist',
   ]);
 });
+
+const selfCheckQuestion = (...correct) =>
+  `<div class="self-check__item">${correct
+    .map((value) => `<button type="button" class="self-check__option" data-correct="${value}">Option</button>`)
+    .join("")}</div>`;
+
+test("self-check: every question has at least two options and exactly one correct one", () => {
+  const good = withLinks(selfCheckQuestion(false, true, false) + selfCheckQuestion(true, false));
+  assert.deepEqual(lessonProblems(good), []);
+  assert.deepEqual(lessonProblems(withLinks(selfCheckQuestion(false, false))), [
+    "Self-check question 1 has no correct option (data-correct=\"true\")",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(selfCheckQuestion(true, true, false))), [
+    "Self-check question 1 has more than one correct option",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(selfCheckQuestion(true))), [
+    "Self-check question 1 has fewer than two options",
+  ]);
+  const second = withLinks(selfCheckQuestion(true, false) + selfCheckQuestion(false, false));
+  assert.deepEqual(lessonProblems(second), ["Self-check question 2 has no correct option (data-correct=\"true\")"]);
+});
