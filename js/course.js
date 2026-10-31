@@ -359,6 +359,8 @@ function showCelebration(region, complete) {
   bird.src = region.dataset.bird;
   bird.alt = "";
   const line = document.createElement("p");
+  // The Lesson section is right to left, but the line follows the page's language.
+  line.dir = "auto";
   const words = document.createElement("strong");
   words.dataset.i18n = "course.celebration";
   words.textContent = TRANSLATIONS[courseLanguage.current()]["course.celebration"];
