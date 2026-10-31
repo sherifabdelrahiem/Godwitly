@@ -534,6 +534,13 @@ html[dir="rtl"] .lesson-mascot {
   transform: scaleX(-1);
 }
 
+/* The Lesson text is right to left in both languages, but the picture is only mirrored in Arabic:
+   in English its 19% of empty space is on the opposite side, so the two pull-backs swap. Without
+   this the bird's wing ran past the screen edge (10px at 320px) and the page scrolled sideways. */
+html:not([dir="rtl"]) .lesson-mascot {
+  margin-inline: calc(var(--bird-width) * -0.1) calc(var(--bird-width) * -0.19);
+}
+
 /* Goal, time, what you need, last checked */
 .lesson-facts {
   display: grid;
