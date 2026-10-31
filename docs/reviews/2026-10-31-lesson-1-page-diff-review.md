@@ -78,3 +78,36 @@ an example test and a real-file test; nothing describes how Godwitly itself is b
 - The PO accepts or rejects P5 and P6, and checks `file://`.
 - Nothing is pushed, no PR is open, no issue is closed (commits say `Refs #36, #39`). Nothing is deployed.
 - The PO's decision on the S2 shared-include question can wait until Lesson 2.
+
+## Round 2: PO-requested changes (`6e01152..a3a4453`, fixes in `a2cecfb`)
+
+After seeing the page, the PO asked (2026-10-31) for: designed brand bullets, square corners on the
+blockquote, questions and answers, an answerable Self-check (feedback; a wrong answer also shows the
+correct answer and why), and birds 1–3 in the Lesson where needed. The PO chose to keep the sidebar right
+in Arabic and left in English, and to build the Self-check inside #39 instead of #40. Two subagents
+(Standards 68,017 and Spec 68,420 tokens) reviewed `a3a4453`. `node --test`: 101 pass, 0 fail. The spec
+hash and the draft hash were rechecked and are unchanged. Page text vs the draft: compared again, no
+differences (the Self-check answers are now split into the answer and its explanation, same words).
+
+| # | Finding | Kind | Outcome |
+|---|---|---|---|
+| R1 | The feedback box started `hidden`, so screen readers may stay silent when it fills | Standards (judgement) | fixed in `a2cecfb`: the box stays on the page, empty until the first choice |
+| R2 | The CSS ✓/✗ signs could be read aloud before the verdict word | Standards (judgement) | fixed in `a2cecfb`: empty alt text on the generated content |
+| R3 | The Self-check rule read only double-quoted attributes | Standards (judgement) | fixed in `a2cecfb`, test-first |
+| R4 | The comments on callouts 2 and 3 said they wait for #40 | Spec (stale text) | fixed in `a2cecfb` |
+| R5 | Answers are `aria-pressed` toggle buttons, not a radio group | Standards (judgement) | no change needed for now; a radio group would announce "1 of 3". **For PO acceptance** |
+| R6 | The "The correct answer:" label is English in English mode inside the Arabic Self-check | Standards (judgement) | no change needed: it is a shared label with a translation key, in both languages |
+| R7 | Revealing the correct answer on a wrong choice is more than the spec's "shows whether it's right and an explanation" | Spec | **for PO acceptance**: it does not conflict with "no score, nothing saved, retryable". It is the PO's request; the spec's Changes list is not edited (the body is frozen); this report records it |
+| R8 | "At most one mascot per screen" is not checked automatically | Spec | manual: mascot 1 opens the Lesson and birds 2 and 3 sit in callouts in different Sections; at 320px no two were visible together in the views checked, but the whole page was not scrolled |
+| R9 | Success green on white is about 3.8:1 | Standards (judgement) | no change needed: used for borders and the sign beside bold text, never alone |
+
+Manual checks run in Chrome (local server): Arabic, a wrong answer shows its own explanation, then "The
+correct answer:" with the answer and why; choosing the correct answer shows the right feedback; choosing
+again replaces it; switching to English re-labels "The correct answer:"; nothing is written to local
+storage; bullets are brand-colour diamonds; callouts, the quote and the Self-check have square corners (0
+rounded elements measured); birds 2 and 3 appear in their callouts, mirrored in Arabic; at 320px (Arabic and
+English) no horizontal scroll and the birds shrink to 56px. Not run: a real screen reader, real key presses,
+Safari/Firefox, `file://`.
+
+**Open (not changed):** "the title written in English in the sidebar" is not clear yet (see the chat). Any
+change that makes shared text English-only would change the approved spec and needs v4.
