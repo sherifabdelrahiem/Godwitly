@@ -624,6 +624,19 @@ html[dir="rtl"] .lesson-mascot {
   color: var(--color-danger);
 }
 
+/* Resources: the file to download. Its bird is wider than the others */
+.callout--resource {
+  border-inline-start-color: var(--color-accent);
+  background: var(--color-white);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-inline-end: 1px solid var(--color-border);
+}
+
+.callout--resource .callout__bird {
+  width: 112px;
+}
+
 .callout__bird {
   flex: none;
   width: 72px;
@@ -635,7 +648,8 @@ html[dir="rtl"] .callout__bird {
 }
 
 @media (max-width: 399px) {
-  .callout__bird {
+  .callout__bird,
+  .callout--resource .callout__bird {
     width: 56px;
   }
 }

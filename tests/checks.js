@@ -424,13 +424,14 @@ function attributeValue(attributes, name) {
   return found ? (found[1] ?? found[2] ?? found[3]) : undefined;
 }
 
-// The four callouts and the mascot file each one shows (spec #36; the Watch out bird is
-// mascot 7, which the PO accepted in place of mascot 6).
+// The callouts and the mascot file each one shows (spec #36; the Watch out bird is
+// mascot 7, which the PO accepted in place of mascot 6; the Resources callout, for a file to download, has mascot 8).
 const CALLOUT_MASCOTS = {
   think: "mascot-2-thoughtful.webp",
   confusion: "mascot-3-confused.webp",
   key: "mascot-4-lightbulb.webp",
   warning: "mascot-7-attentive.webp",
+  resource: "mascot-8-envelopes.webp",
 };
 
 function anchorsIn(html) {

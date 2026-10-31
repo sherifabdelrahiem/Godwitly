@@ -54,3 +54,15 @@ The «فكرة مهمة» callout now shows its three parts on separate lines, a
 Lesson 1 draft. The rules example now also shows what not to do («ومتخمّنش لو مكوّنات منتج مش مذكورة»). Text-only change; `node --test` 105 pass; checked in Chrome (Arabic, desktop): the
 three lines render under the label, and the gaps between bird callouts are unchanged (593px). This
 needs its own re-review before merge.
+
+## Later change 2 (PO request, after the review)
+
+The facts file link now sits in a new **Resources callout** (kind `resource`, label «المصادر:») with a
+new bird, `assets/images/mascot-8-envelopes.webp` (the envelopes bird; 640px wide, transparent,
+61 KB, converted from the PNG the PO supplied; the PNG stays untracked like the other sources). The
+callout kind is for any Lesson's downloadable Resource. The callout check now knows the kind
+(test-first: the loop over the callout kinds went red, then green); `node --test` 105 pass. Checked in
+Chrome: the callout shows the bird mirrored towards the text in Arabic, the link points to the PDF;
+gaps to the neighbouring bird callouts are 548px (desktop, screen 801px) and 845px (320px, screen
+640px). The spec (#52) and #36 name four callout kinds, so the PO may want a Changes note; this needs
+its own re-review before merge.

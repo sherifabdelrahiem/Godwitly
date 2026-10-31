@@ -706,7 +706,7 @@ test("self-check: single-quoted attributes are read too", () => {
   ]);
 });
 
-const MASCOT_OF = { think: "mascot-2-thoughtful", confusion: "mascot-3-confused", key: "mascot-4-lightbulb", warning: "mascot-7-attentive" };
+const MASCOT_OF = { think: "mascot-2-thoughtful", confusion: "mascot-3-confused", key: "mascot-4-lightbulb", warning: "mascot-7-attentive", resource: "mascot-8-envelopes" };
 const callout = ({ kind = "key", mascot = MASCOT_OF[kind], alt = "", label = "Label:", bird = true } = {}) =>
   `<div class="callout callout--${kind}" role="note">` +
   (bird ? `<img class="callout__bird" src="../../assets/images/${mascot}.webp" alt="${alt}">` : "") +
@@ -714,7 +714,7 @@ const callout = ({ kind = "key", mascot = MASCOT_OF[kind], alt = "", label = "La
 const between = "<p>Some Lesson text between callouts.</p>";
 
 test("callouts: each of the four kinds with its own mascot, a label and a decorative bird passes", () => {
-  const html = ["think", "confusion", "key", "warning"].map((kind) => callout({ kind })).join(between);
+  const html = ["think", "confusion", "key", "warning", "resource"].map((kind) => callout({ kind })).join(between);
   assert.deepEqual(lessonProblems(withLinks(html)), []);
 });
 
