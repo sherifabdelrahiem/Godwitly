@@ -51,6 +51,6 @@ No finding is marked accepted by the PO yet.
 
 The «فكرة مهمة» callout now shows its three parts on separate lines, and the first part is renamed from
 «تمهّد المكان» to «تشرح السياق» (also in Self-check question 5's explanation), on the page and in the
-Lesson 1 draft. Text-only change; `node --test` 105 pass; checked in Chrome (Arabic, desktop): the
+Lesson 1 draft. The rules example now also shows what not to do («ومتخمّنش لو مكوّنات منتج مش مذكورة»). Text-only change; `node --test` 105 pass; checked in Chrome (Arabic, desktop): the
 three lines render under the label, and the gaps between bird callouts are unchanged (593px). This
 needs its own re-review before merge.
