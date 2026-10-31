@@ -133,3 +133,13 @@ At the PO's request the welcome bird lines up with the text edge: the picture ha
 side and 10% on the other (measured from its transparent pixels), and negative margins of that size remove it.
 CSS only; self-checked, **not subagent-reviewed**. `node --test` 101 pass. Looked at in a 1280px Chrome frame
 (Arabic): the bird's edge meets the title and text edge. Not run: English at 1280px by eye, a real phone.
+
+## Round 6: attentive reminder bird in "Watch out" (`850e841`)
+
+At the PO's request a new bird, `mascot-7-attentive.webp` (640px, WebP with transparency, 37 KB; the PNG
+original stays untracked), sits in the "خلّي بالك" callout. **For PO acceptance:** spec #36 v3 names the
+startled bird (mascot 6) for "Watch out"; this replaces it for Lesson 1, so the six-mascot list in the spec
+no longer matches (the spec body is frozen; this report records the change). README and AGENTS.md now say
+seven mascots. The callout keeps its plain look; the danger border comes with #40. Self-checked, **not
+subagent-reviewed**; `node --test` 101 pass; looked at in Chrome (Arabic): the bird shows at 72px, mirrored.
+Not run: English, 320px by eye for this bird (same 56px rule as the other callout birds).
