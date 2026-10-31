@@ -1,0 +1,406 @@
+<!doctype html>
+<!--
+  Lesson 1 of the Claude Crash Course for Beginners (spec #36, ticket #39).
+
+  The Lesson text is the PO-approved draft (docs/course/lesson-1/claude-introduction.md)
+  and is Arabic, right to left, whatever language the shared parts show (ADR-0008); it is
+  not in js/translations.js. Everything else (header, sidebar labels, trail, pager, notice)
+  gets its text from ../../js/translations.js through data-i18n, like the hub.
+
+  The callouts, code boxes, tabs, Self-check and checklist behaviour are built later
+  (tickets #40 and #41); until then they appear as plain text.
+-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="course.lesson1.metaTitle">Welcome: Claude, Claude Code and Skills — Godwitly</title>
+    <link rel="icon" href="../../assets/images/favicon.svg" type="image/svg+xml" />
+
+    <!-- Fonts: the same as the landing page -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rubik:wght@500;600;700&family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    />
+
+    <link rel="stylesheet" href="../../css/styles.css" />
+    <link rel="stylesheet" href="../../css/course.css" />
+  </head>
+
+  <body id="top">
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" /></symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+    </svg>
+
+    <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to main content</a>
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="site-header container">
+      <a href="../../index.html" class="logo-link" data-i18n-aria-label="a11y.home" aria-label="Godwitly home">
+        <img src="../../assets/images/godwitly-wordmark.svg" alt="Godwitly" class="logo" width="140" height="40" />
+      </a>
+
+      <nav class="main-nav" data-i18n-aria-label="a11y.mainNav" aria-label="Main">
+        <a href="../../index.html#products" data-i18n="nav.products">Products</a>
+        <a href="../../index.html#why-godwitly" data-i18n="nav.why">Why Godwitly</a>
+        <a href="../../index.html#about" data-i18n="nav.about">About</a>
+        <a href="../../index.html#contact" data-i18n="nav.contact">Get notified</a>
+        <a href="../index.html" data-course-link class="is-current" data-i18n="nav.crashCourses">Crash Courses</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" data-i18n-aria-label="a11y.language" aria-label="Choose language">
+          <svg class="icon lang-switch__globe" aria-hidden="true"><use href="#icon-globe"></use></svg>
+          <button type="button" class="lang-switch__btn" data-lang="en" lang="en" aria-pressed="true">English</button>
+          <button type="button" class="lang-switch__btn" data-lang="ar" lang="ar" aria-pressed="false">العربية</button>
+        </div>
+
+        <button
+          type="button"
+          class="menu-button"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          data-i18n-aria-label="a11y.menuOpen"
+          aria-label="Open menu"
+        >
+          <svg class="icon icon--lg menu-button__open" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          <svg class="icon icon--lg menu-button__close" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <div id="mobile-menu" class="mobile-menu" hidden>
+        <nav data-i18n-aria-label="a11y.mainNav" aria-label="Main">
+          <a href="../../index.html#products" data-i18n="nav.products">Products</a>
+          <a href="../../index.html#why-godwitly" data-i18n="nav.why">Why Godwitly</a>
+          <a href="../../index.html#about" data-i18n="nav.about">About</a>
+          <a href="../../index.html#contact" data-i18n="nav.contact">Get notified</a>
+          <a href="../index.html" data-course-link class="is-current" data-i18n="nav.crashCourses">Crash Courses</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <div class="container lesson-layout">
+        <!-- ===================== SIDEBAR: all nine Lessons ===================== -->
+        <aside class="lesson-sidebar">
+          <nav class="lesson-nav" data-lesson-nav data-i18n-aria-label="course.lessons.label" aria-label="The nine Lessons">
+            <button type="button" class="lesson-nav__toggle" aria-expanded="false" aria-controls="lesson-nav-panel">
+              <span data-i18n="course.nav.button">Lessons</span>
+              <svg class="icon lesson-nav__chevron" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+            </button>
+            <div id="lesson-nav-panel" class="lesson-nav__panel">
+              <ol class="lesson-nav__list">
+                <li class="lesson-nav__item lesson-nav__item--current" data-lesson="1">
+                <a class="lesson-nav__link" href="../lesson-1/index.html" data-course-link aria-current="page">
+                <span class="lesson-nav__number" data-i18n="course.lesson1.number">1</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson1.title">Welcome</span>
+                <!-- Shown by the progress script (ticket #41) when the whole checklist is ticked -->
+                <span class="lesson-nav__done" data-complete-mark hidden><span aria-hidden="true">✓</span> <span class="visually-hidden" data-i18n="course.done">Done</span></span>
+                </a>
+                <ul class="lesson-nav__sections" data-i18n-aria-label="course.nav.sections" aria-label="In this Lesson">
+                <li><a href="#what-claude-does"><span lang="ar" dir="rtl">كلود يقدر يساعدك في إيه؟</span></a></li>
+                <li><a href="#claude-vs-code"><span lang="ar" dir="rtl">إيه الفرق بين كلود وكلود كود؟</span></a></li>
+                <li><a href="#ways-to-use"><span lang="ar" dir="rtl">إزاي ممكن تستخدم كلود؟</span></a></li>
+                <li><a href="#skills"><span lang="ar" dir="rtl">إيه هي Claude Skills وإزاي بتساعدك؟</span></a></li>
+                <li><a href="#build-alone"><span lang="ar" dir="rtl">هل كلود لوحده يقدر يساعدك تبني مشروع؟</span></a></li>
+                <li><a href="#tools"><span lang="ar" dir="rtl">الأدوات اللي بتساعدك تبني المشروع وتنشره</span></a></li>
+                <li><a href="#done-when"><span lang="ar" dir="rtl">تكون خلّصت لما…</span></a></li>
+                <li><a href="#self-check"><span lang="ar" dir="rtl">اختبر نفسك</span></a></li>
+                <li><a href="#references"><span lang="ar" dir="rtl">المراجع</span></a></li>
+                </ul>
+                </li>
+                <li class="lesson-nav__item lesson-nav__item--soon" data-lesson="2">
+                <span class="lesson-nav__number" data-i18n="course.lesson2.number">2</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson2.title">Lesson 2</span>
+                <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+                </li>
+                <li class="lesson-nav__item lesson-nav__item--soon" data-lesson="3">
+                <span class="lesson-nav__number" data-i18n="course.lesson3.number">3</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson3.title">Lesson 3</span>
+                <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+                </li>
+                <li class="lesson-nav__item lesson-nav__item--soon" data-lesson="4">
+                <span class="lesson-nav__number" data-i18n="course.lesson4.number">4</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson4.title">Lesson 4</span>
+                <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+                </li>
+                <li class="lesson-nav__item lesson-nav__item--soon" data-lesson="5">
+                <span class="lesson-nav__number" data-i18n="course.lesson5.number">5</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson5.title">Lesson 5</span>
+                <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+                </li>
+                <li class="lesson-nav__item lesson-nav__item--soon" data-lesson="6">
+                <span class="lesson-nav__number" data-i18n="course.lesson6.number">6</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson6.title">Lesson 6</span>
+                <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+                </li>
+                <li class="lesson-nav__item lesson-nav__item--soon" data-lesson="7">
+                <span class="lesson-nav__number" data-i18n="course.lesson7.number">7</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson7.title">Lesson 7</span>
+                <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+                </li>
+                <li class="lesson-nav__item lesson-nav__item--soon" data-lesson="8">
+                <span class="lesson-nav__number" data-i18n="course.lesson8.number">8</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson8.title">Lesson 8</span>
+                <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+                </li>
+                <li class="lesson-nav__item lesson-nav__item--soon" data-lesson="9">
+                <span class="lesson-nav__number" data-i18n="course.lesson9.number">9</span>
+                <span class="lesson-nav__title" data-i18n="course.lesson9.title">Lesson 9</span>
+                <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+                </li>
+              </ol>
+            </div>
+          </nav>
+        </aside>
+
+        <article class="lesson">
+          <!-- ===================== TRAIL ===================== -->
+          <nav class="lesson-trail" data-i18n-aria-label="course.trail.label" aria-label="Breadcrumb">
+            <ol>
+              <li><a href="../index.html" data-course-link data-i18n="course.trail.guide">Claude guide</a></li>
+              <li aria-current="page"><span data-i18n="course.lessonWord">Lesson</span> <span data-i18n="course.lesson1.number">1</span></li>
+            </ol>
+          </nav>
+
+          <!-- English visitors only: the Lesson text is Arabic (ADR-0008) -->
+          <p class="lesson-notice course-en-only" data-i18n="course.lesson.arabicNotice">This Lesson is available in Arabic.</p>
+
+          <!-- ===================== LESSON TEXT (Arabic) ===================== -->
+          <div class="lesson-part lesson-intro" lang="ar" dir="rtl">
+            <h1>أهلًا بيك: كلود وكلود كود والـSkills</h1>
+            <!-- Mascot 1 (welcoming) opens the Lesson; decorative, mirrored in Arabic by the CSS (spec #36 v3) -->
+            <img class="lesson-mascot" src="../../assets/images/mascot-1-welcoming.webp" alt="" width="640" height="426" />
+            <dl class="lesson-facts">
+            <div><dt>هدف الدرس:</dt> <dd>تتعرّف على كلود وكلود كود والـSkills، وتفهم دور الأدوات اللي ممكن تستخدمها في مشروعك.</dd></div>
+            <div><dt>الوقت المتوقع:</dt> <dd>حوالي ١٥ دقيقة.</dd></div>
+            <div><dt>قبل ما تبدأ:</dt> <dd>مش محتاج خبرة في البرمجة أو حسابات عشان تقرا الدرس ده. هتعرف إزاي تجهّز حساباتك في الدرس الجاي.</dd></div>
+            <div><dt>آخر مراجعة:</dt> <dd><time datetime="2026-10-31">٣١ أكتوبر ٢٠٢٦</time></dd></div>
+            </dl>
+            <p><strong><a href="https://claude.ai/">كلود (Claude)</a></strong> هو مساعد ذكاء اصطناعي من شركة اسمها <strong><a href="https://www.anthropic.com/">Anthropic</a></strong>. بتتكلم معاه بلغة عادية، بالعربي أو بالإنجليزي، وتشرح له إنت محتاج إيه، وهو يساعدك فيه.</p>
+            <p>مش لازم تكون مبرمج عشان تستخدمه. ممكن تطلب منه يشرح لك حاجة مش فاهمها، يساعدك تكتب رسالة، أو يرتّب أفكارك.</p>
+          </div>
+
+          <section class="lesson-part lesson-section" id="what-claude-does" lang="ar" dir="rtl">
+          <h2>كلود يقدر يساعدك في إيه؟</h2>
+          <ul>
+          <li><strong>الشرح والتبسيط:</strong> يشرح لك موضوع صعب بكلام سهل وأمثلة تناسبك.</li>
+          <li><strong>الكتابة والمراجعة:</strong> يساعدك تكتب مقال أو إيميل أو منشور، وتراجع الصياغة وتحسّنها.</li>
+          <li><strong>التلخيص:</strong> يلخّص لك نص طويل ويطلع منه الأفكار الأساسية.</li>
+          <li><strong>ترتيب الأفكار:</strong> يساعدك تحوّل أفكار متفرّقة لخطة أو خطوات واضحة.</li>
+          <li><strong>تحليل المعلومات:</strong> يساعدك تفهم معلومات وتقارن بينها وتطلع منها بملاحظات.</li>
+          <li><strong>البرمجة:</strong> يكتب كود، ويشرحه، ويساعدك تكتشف الأخطاء وتصلّحها.</li>
+          </ul>
+          <p>مثلًا، لو عندك كافيه زي كافيه المرسى في بورسعيد، ممكن تقول له:</p>
+          <blockquote class="lesson-quote">
+          <p>«دي معلومات الكافيه والمنتجات اللي بنقدمها. ساعدني أكتب تعريف بسيط يفهمه الزبون، من غير ما تضيف معلومات من عندك.»</p>
+          </blockquote>
+          <p>كل ما توضّح المطلوب وتديله المعلومات اللي محتاجها، يبقى عنده أساس أفضل يساعدك عليه. وكلود ممكن يغلط أو يفهمك بشكل مختلف عن قصدك، علشان كده راجع النتيجة وتأكد من المعلومات قبل ما تعتمد عليها.</p>
+          <!-- Callout "فكّر فيها" (mascot 2, thoughtful) — the callout component and its mascot come with ticket #40 -->
+          <blockquote class="callout-plain">
+          <p><strong>فكّر فيها:</strong> لو عندك فكرة لمشروع، إيه المعلومات اللي محتاج تجهّزها عشان تشرحها لكلود بوضوح؟</p>
+          </blockquote>
+          </section>
+          <section class="lesson-part lesson-section" id="claude-vs-code" lang="ar" dir="rtl">
+          <h2>إيه الفرق بين كلود وكلود كود؟</h2>
+          <p>لما تستخدم <strong>كلود في المحادثة</strong>، بتكتب له طلب، وهو يرد عليك بشرح أو نص أو اقتراح. ممكن مثلًا تطلب منه يشرح لك إزاي تعمل صفحة ويب أو يكتب لك الكود بتاعها.</p>
+          <p>أما <strong><a href="https://code.claude.com/docs/en/overview">كلود كود (Claude Code)</a></strong>، فهو أداة مخصّصة للشغل على المشاريع البرمجية. يقدر يقرا ملفات المشروع، وينشئ ملفات جديدة، ويعدّل الملفات الموجودة، ويشغّل أوامر تساعده ينفّذ المهمة ويتحقق منها، حسب الصلاحيات اللي إنت بتديهاله.</p>
+          <p>يعني لو طلبت منه يعمل صفحة، يقدر يشتغل على ملفاتها جوه فولدر المشروع. وبعدها تقدر تطلب منه يعدّل الألوان، أو يكبّر الكتابة، أو يصلّح مشكلة في شكل الصفحة على الموبايل.</p>
+          <p>إنت بتشرح المطلوب وبتراجع النتيجة، وكلود كود بيساعدك في التنفيذ. وقبل ما توافق على خطوة بيطلب إذنك فيها، فاقرا هو ناوي يعمل إيه.</p>
+          <!-- Callout "لخبطة شائعة" (mascot 3, confused) — the callout component and its mascot come with ticket #40 -->
+          <blockquote class="callout-plain">
+          <p><strong>لخبطة شائعة:</strong> المحادثة مع كلود بتساعدك تفهم وتكتب وتفكّر. كلود كود كمان يقدر يشتغل على ملفات المشروع حسب الصلاحيات اللي إنت بتديهاله.</p>
+          </blockquote>
+          <h3>إيه هو Plan mode؟</h3>
+          <p><strong>Plan mode</strong> أو وضع التخطيط بيخلّيك تطلب من كلود يفكّر في خطوات الشغل ويعرض لك خطة تراجعها قبل التنفيذ. وبكده تلاقي أي سوء فهم بدري، قبل ما أي ملف يتغيّر، وتوافق على خطة إنت فاهمها. هتجرّبه بالتفصيل في درس لاحق.</p>
+          <!-- Callout "خلّي بالك" (mascot 6, startled; danger border) — the callout component and its mascot come with ticket #40 -->
+          <blockquote class="callout-plain">
+          <p><strong>خلّي بالك:</strong> راجع اقتراحات كلود وتأكد إنك فاهم التغيير المطلوب قبل ما توافق عليه. الصلاحيات بتختلف حسب وضع التشغيل اللي إنت مختاره.</p>
+          </blockquote>
+          </section>
+          <section class="lesson-part lesson-section" id="ways-to-use" lang="ar" dir="rtl">
+          <h2>إزاي ممكن تستخدم كلود؟</h2>
+          <p>في أكتر من طريقة تستخدم بيها كلود، حسب طبيعة شغلك والمكان اللي بترتاح تشتغل فيه.</p>
+          <h3>من الموقع الرسمي على المتصفح</h3>
+          <p>تقدر تفتح <a href="https://claude.ai/">الموقع الرسمي لكلود</a> من متصفح زي <strong><a href="https://www.google.com/chrome/">Google Chrome</a></strong>، وتسجّل دخولك وتبدأ محادثة وتكتب طلبك.</p>
+          <p><strong>المتصفح</strong> هو البرنامج اللي بتفتح بيه المواقع على الإنترنت. Google Chrome مثال عليه، وزيه <a href="https://www.apple.com/safari/">Safari</a> و<a href="https://www.microsoft.com/edge">Microsoft Edge</a>. في الطريقة دي بتستخدم كلود من الموقع، من غير ما تثبّت تطبيق كلود على جهازك.</p>
+          <h3>من تطبيق Claude Desktop</h3>
+          <p><strong><a href="https://claude.com/download">Claude Desktop</a></strong> هو تطبيق كلود اللي بتثبّته على الكمبيوتر، وتفتحه زي أي برنامج عندك. تقدر تنزّله للماك أو لويندوز من <a href="https://claude.com/download">صفحة التحميل الرسمية</a>.</p>
+          <p>تقدر تستخدمه للمحادثة مع كلود، وكمان فيه جزء مخصّص للشغل باستخدام كلود كود. يعني تطبيق الكمبيوتر بيجمع لك طرق الشغل مع كلود في واجهة واحدة، والخصائص المتاحة بتعتمد على حسابك وخطتك.</p>
+          <p>في الدليل ده هتستخدم <strong>Claude Desktop</strong>، وتحديدًا قسم <strong>Code</strong> لما تبدأ تشتغل على المشروع. هتعرف إزاي تجهّزه في الدرس الجاي.</p>
+          <h3>طرق تانية لاستخدام كلود كود</h3>
+          <p>ممكن تستخدم كلود كود من <strong>نافذة الأوامر</strong>، وهي مكان بتكتب فيه تعليمات للجهاز لتشغيل البرامج أو التعامل مع الملفات. على الماك اسم التطبيق <a href="https://support.apple.com/guide/terminal/welcome/mac"><strong>Terminal</strong></a>، وعلى ويندوز ممكن تستخدم <a href="https://learn.microsoft.com/powershell/"><strong>PowerShell</strong></a> من نافذته أو جوه تطبيق <a href="https://learn.microsoft.com/windows/terminal/"><strong>Windows Terminal</strong></a>.</p>
+          <p>وممكن تستخدمه جوه <strong><a href="https://code.visualstudio.com/">Visual Studio Code (VS Code)</a></strong> أو <strong><a href="https://cursor.com/">Cursor</a></strong>؛ ودي برامج بتساعدك تفتح ملفات المشروع وتعدّلها. Cursor فيه كمان أدوات ذكاء اصطناعي مدمجة. تقدر تضيف كلود كود للبرنامج عن طريق <strong>Extension</strong>، وهي إضافة بتثبّتها عشان تضيف له وظيفة جديدة.</p>
+          <p>مش محتاج تستخدم الطرق دي عشان تكمّل الدليل؛ هتشتغل من قسم Code في Claude Desktop.</p>
+          </section>
+          <section class="lesson-part lesson-section" id="skills" lang="ar" dir="rtl">
+          <h2>إيه هي Claude Skills وإزاي بتساعدك؟</h2>
+          <p><strong>الـSkill</strong> هي مجموعة تعليمات منظّمة بتوجّه كلود وهو بيشتغل على مهمة معيّنة. ممكن كمان تضم ملفات مرجعية أو أدوات تساعده ينفّذ المهمة. فكّر فيها كأنها دليل شغل بيشرح له خطوات أو قواعد يتبعها لما تحتاج نوعًا معيّنًا من المساعدة.</p>
+          <p>مثلًا، ممكن تستخدم Skill تساعدك تفكّر في المشروع وترتّب متطلباته قبل التنفيذ، أو واحدة توجّه كلود وهو بيصمّم واجهة الموقع. وفي كل الأحوال، راجع النتيجة وتأكد إنها مناسبة لاحتياجاتك.</p>
+          <p>من الأمثلة اللي هتقابلها:</p>
+          <div class="lesson-table">
+          <table role="table">
+          <thead role="rowgroup"><tr role="row">
+          <th role="columnheader" scope="col">الاسم</th>
+          <th role="columnheader" scope="col">بيساعدك في إيه؟</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+          <tr role="row">
+          <td role="cell" data-label="الاسم"><strong><a href="https://github.com/mattpocock/skills">Matt Pocock Skills</a></strong></td>
+          <td role="cell" data-label="بيساعدك في إيه؟">مجموعة Skills لمراحل مختلفة من الشغل على المشاريع، زي توضيح الفكرة، والتخطيط، ومراجعة الكود. بتختار منها حسب المهمة اللي بتشتغل عليها.</td>
+          </tr>
+          <tr role="row">
+          <td role="cell" data-label="الاسم"><strong><a href="https://impeccable.style/">Impeccable</a></strong></td>
+          <td role="cell" data-label="بيساعدك في إيه؟">بيساعد في تصميم واجهات المواقع والتطبيقات ومراجعتها وتحسين تفاصيلها، زي الألوان وترتيب العناصر وشكل الصفحة.</td>
+          </tr>
+          <tr role="row">
+          <td role="cell" data-label="الاسم"><strong><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">UI UX Pro Max</a></strong></td>
+          <td role="cell" data-label="بيساعدك في إيه؟">Skill بتساعد في تصميم واجهة المستخدم وتجربة استخدامها، وبتقدّم إرشادات وأفكار عن الألوان والخطوط وترتيب العناصر حسب نوع المشروع.</td>
+          </tr>
+          </tbody>
+          </table>
+          </div>
+          <p><strong>واجهة المستخدم (UI)</strong> هي الحاجات اللي الشخص بيشوفها وبيتفاعل معاها، زي الأزرار والقوائم والألوان. أما <strong>تجربة المستخدم (UX)</strong> فهي مدى سهولة ووضوح استخدام الموقع أو التطبيق بالنسبة للشخص.</p>
+          <!-- Callout "فكرة مهمة" (mascot 4, lightbulb; teal) — the callout component and its mascot come with ticket #40 -->
+          <blockquote class="callout-plain">
+          <p><strong>فكرة مهمة:</strong> الـSkill بتوجّه طريقة الشغل، لكن إنت لسه اللي بتراجع النتيجة وبتقرر إذا كانت مناسبة لمشروعك.</p>
+          </blockquote>
+          </section>
+          <section class="lesson-part lesson-section" id="build-alone" lang="ar" dir="rtl">
+          <h2>هل كلود لوحده يقدر يساعدك تبني مشروع؟</h2>
+          <p>كلود يقدر يساعدك تعمل مشروع صغير وبسيط، زي صفحة هبوط أو صفحة تعرّف الناس بيك وبالخدمات اللي بتقدمها. ممكن تطلب منه ينشئ الصفحة ويعدّل شكلها ومحتواها، وتشوف النتيجة على جهازك.</p>
+          <p>لكن حسب احتياجات المشروع، ممكن تحتاج أدوات وخدمات إضافية. مثلًا، لو عايز الناس تفتح الصفحة على الإنترنت، هتحتاج مكان تنشرها عليه. ولو عايز تستقبل رسائل من الزوار وتحفظها، هتحتاج مكان مناسب لحفظ البيانات.</p>
+          <p>وكمان لو المشروع هيكبر وهتحدّثه مع الوقت، أدوات حفظ نسخ الشغل ومتابعة التغييرات هتساعدك تنظّمه وترجع لنسخة سابقة لو احتجت. وفي مشاريع تانية ممكن تحتاج خدمات زي تسجيل دخول المستخدمين أو إرسال الإيميلات.</p>
+          <p>كلود يقدر يساعدك تجهّز المشروع وتربطه بالأدوات دي، لكن كل أداة ليها دورها. خلّينا نتعرّف على أمثلة للأدوات دي.</p>
+          </section>
+          <section class="lesson-part lesson-section" id="tools" lang="ar" dir="rtl">
+          <h2>الأدوات اللي بتساعدك تبني المشروع وتنشره</h2>
+          <h3>الأدوات الأساسية</h3>
+          <div class="lesson-table">
+          <table role="table">
+          <thead role="rowgroup"><tr role="row">
+          <th role="columnheader" scope="col">الأداة</th>
+          <th role="columnheader" scope="col">هي إيه؟</th>
+          <th role="columnheader" scope="col">فايدتها في مشروعك</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+          <tr role="row">
+          <td role="cell" data-label="الأداة"><strong><a href="https://github.com/">GitHub</a></strong></td>
+          <td role="cell" data-label="هي إيه؟">موقع بتحفظ وتنظّم عليه ملفات المشروع. كل مشروع ليه مكان اسمه <strong>Repository</strong>، أو <strong>Repo</strong> اختصارًا.</td>
+          <td role="cell" data-label="فايدتها في مشروعك">بيخلّيك تحتفظ بنسخة من شغلك على الإنترنت، وتتابع التغييرات، وتربط المشروع بخدمة تنشر الموقع.</td>
+          </tr>
+          <tr role="row">
+          <td role="cell" data-label="الأداة"><strong><a href="https://support.claude.com/en/articles/12012173-get-started-with-claude-in-chrome">Claude in Chrome</a></strong></td>
+          <td role="cell" data-label="هي إيه؟">إضافة بتثبّتها على متصفح Google Chrome عشان كلود يقدر يساعدك أثناء تصفّح المواقع.</td>
+          <td role="cell" data-label="فايدتها في مشروعك">بتساعد كلود يقرا الصفحات ويتفاعل معاها، وممكن تستخدمها مع كلود كود عشان تجرّب الموقع في المتصفح وتتحقق من شغله.</td>
+          </tr>
+          </tbody>
+          </table>
+          </div>
+          <h3>أدوات بتختارها حسب المشروع</h3>
+          <p>الأدوات دي لكل واحدة منها وظيفة مختلفة، وبتختار اللي تحتاجه منها حسب المشروع والخدمات اللي عايز توفّرها فيه.</p>
+          <div class="lesson-table">
+          <table role="table">
+          <thead role="rowgroup"><tr role="row">
+          <th role="columnheader" scope="col">الأداة</th>
+          <th role="columnheader" scope="col">هي إيه؟</th>
+          <th role="columnheader" scope="col">فايدتها في مشروعك</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+          <tr role="row">
+          <td role="cell" data-label="الأداة"><strong><a href="https://railway.com/">Railway</a></strong></td>
+          <td role="cell" data-label="هي إيه؟">خدمة بتشغّل المشاريع على أجهزة متصلة بالإنترنت، اسمها سيرفرات.</td>
+          <td role="cell" data-label="فايدتها في مشروعك">بتساعدك تشغّل أجزاء من المشاريع الأكبر اللي محتاجة سيرفر.</td>
+          </tr>
+          <tr role="row">
+          <td role="cell" data-label="الأداة"><strong><a href="https://clerk.com/">Clerk</a></strong></td>
+          <td role="cell" data-label="هي إيه؟">خدمة بتساعدك تضيف تسجيل الدخول وإدارة حسابات المستخدمين للمشروع.</td>
+          <td role="cell" data-label="فايدتها في مشروعك">بتخلّي المستخدمين يقدروا يعملوا حسابات ويسجّلوا دخول.</td>
+          </tr>
+          <tr role="row">
+          <td role="cell" data-label="الأداة"><strong><a href="https://www.brevo.com/">Brevo</a></strong></td>
+          <td role="cell" data-label="هي إيه؟">خدمة لإرسال وإدارة الإيميلات.</td>
+          <td role="cell" data-label="فايدتها في مشروعك">ممكن تستخدمها عشان الموقع يبعت إيميلات للمستخدمين.</td>
+          </tr>
+          </tbody>
+          </table>
+          </div>
+          </section>
+          <section class="lesson-part lesson-section" id="done-when" lang="ar" dir="rtl">
+          <h2>تكون خلّصت لما…</h2>
+          <ul class="checklist" data-checklist="lesson-1">
+          <li><label><input type="checkbox" data-item="explain-claude-help" /> <span>تقدر تشرح بكلامك كلود بيساعد في إيه، وإمتى تحتاج تراجع إجابته.</span></label></li>
+          <li><label><input type="checkbox" data-item="chat-vs-code" /> <span>تقدر توضّح الفرق بين المحادثة مع كلود والشغل باستخدام كلود كود.</span></label></li>
+          <li><label><input type="checkbox" data-item="plan-mode" /> <span>تقدر توضّح يعني إيه Plan mode وليه بتراجع الخطة قبل التنفيذ.</span></label></li>
+          <li><label><input type="checkbox" data-item="skill-example" /> <span>تقدر تشرح ببساطة يعني إيه Skill، وتذكر مثالًا لأداة ممكن يحتاجها المشروع.</span></label></li>
+          </ul>
+          <!-- The celebration (mascot 5) and saved ticks come with ticket #41 -->
+          </section>
+          <section class="lesson-part lesson-section" id="self-check" lang="ar" dir="rtl">
+          <h2>اختبر نفسك</h2>
+          <p>اختار إجابة واحدة لكل سؤال. تقدر تغيّر إجابتك وتحاول تاني؛ الأسئلة من غير درجات.</p>
+          <div class="self-check__item">
+          <p class="self-check__q"><strong>١. عايز كلود يعدّل ملفات صفحة جوه فولدر مشروعك بنفسه. تستخدم إيه؟</strong></p>
+          <ul class="self-check__options">
+          <li>المحادثة العادية مع كلود بس: غلط. المحادثة بتشرح وتكتب لك الكود، لكن تعديل الملفات جوه فولدر المشروع هو شغل كلود كود.</li>
+          <li>كلود كود: صح. كلود كود يقدر يقرا ملفات المشروع ويعدّلها حسب الصلاحيات اللي إنت بتديهاله.</li>
+          <li>Skill لوحدها: غلط. الـSkill بتوجّه كلود في طريقة الشغل، لكنها مش هي اللي بتفتح الملفات وتعدّلها.</li>
+          </ul>
+          </div>
+          <div class="self-check__item">
+          <p class="self-check__q"><strong>٢. كلود كود طلب إذنك قبل ما ينفّذ خطوة. تعمل إيه؟</strong></p>
+          <ul class="self-check__options">
+          <li>أوافق على طول عشان أكمّل بسرعة: غلط. الموافقة من غير قراءة ممكن تخلّي حاجة تتغيّر وإنت مش فاهمها.</li>
+          <li>أقرا هو ناوي يعمل إيه، وبعدين أقرر: صح. إنت اللي بتراجع، وبتوافق بس على اللي فاهمه.</li>
+          <li>أقفل البرنامج وأبدأ من الأول: غلط. مش لازم. اقرا الخطوة، ولو مش فاهمها اسأله يشرحها لك.</li>
+          </ul>
+          </div>
+          <div class="self-check__item">
+          <p class="self-check__q"><strong>٣. إيه هي الـSkill؟</strong></p>
+          <ul class="self-check__options">
+          <li>برنامج بتنزّله بدل كلود: غلط. الـSkill مش بديل عن كلود، دي تعليمات بتوجّهه.</li>
+          <li>مجموعة تعليمات بتوجّه كلود في نوع معيّن من الشغل: صح. وممكن كمان تضم ملفات أو أدوات تساعده.</li>
+          <li>ضمان إن النتيجة هتطلع صح: غلط. الـSkill بتوجّه الشغل، لكن لسه لازم تراجع النتيجة.</li>
+          </ul>
+          </div>
+          </section>
+          <section class="lesson-part lesson-section" id="references" lang="ar" dir="rtl">
+          <h2>المراجع</h2>
+          <p><a href="https://platform.claude.com/docs/en/overview">تعريف كلود وإمكانياته</a>، <a href="https://support.claude.com/en/articles/14553517-claude-code-common-developer-use-cases">استخدامات كلود كود</a>، <a href="https://support.claude.com/en/articles/8114491-get-started-with-claude">طرق بدء استخدام كلود</a>، <a href="https://academy.claude.com/tutorials/navigating-the-claude-desktop-app">كلود كود في تطبيق الكمبيوتر</a>، <a href="https://code.claude.com/docs/en/vs-code">استخدام كلود كود داخل VS Code وCursor</a>.</p>
+          </section>
+
+          <!-- ===================== PREVIOUS / NEXT ===================== -->
+          <nav class="lesson-pager" data-lesson-pager data-i18n-aria-label="course.pager.label" aria-label="Previous and next">
+            <a class="lesson-pager__link" data-pager="hub" href="../index.html" data-course-link>
+              <span class="lesson-pager__label" data-i18n="course.pager.hub">Back to the guide</span>
+            </a>
+            <!-- Lesson 2 has no page yet: the text "Lesson 2 coming soon", not a link -->
+            <span class="lesson-pager__link lesson-pager__link--soon" data-pager="soon">
+              <span data-i18n="course.lessonWord">Lesson</span> <span data-i18n="course.lesson2.number">2</span>
+              <span class="course-badge course-badge--soon" data-i18n="course.soon">Coming soon</span>
+            </span>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="site-footer">
+      <p class="container">
+        <span data-i18n="footer.text">Godwitly by BCM Hub — learning, engagement and organisational preparedness.</span>
+        <span dir="ltr">© <span id="year">2026</span></span>
+        <a href="../index.html" data-course-link class="site-footer__link" data-i18n="nav.crashCourses">Crash Courses</a>
+      </p>
+    </footer>
+
+    <!-- translations.js must load first, then the language rule, then the page script -->
+    <script src="../../js/translations.js"></script>
+    <script src="../../js/course-language.js"></script>
+    <script src="../../js/course.js"></script>
+  </body>
+</html>

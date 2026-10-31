@@ -10,6 +10,7 @@ const {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
+  findCourseLessonProblems,
 } = require("./checks.js");
 const { LESSONS } = require("./course-lessons.js");
 const { TRANSLATIONS } = require("../js/translations.js");
@@ -22,7 +23,10 @@ test("English and Arabic translations match", () => {
   assert.deepEqual(findParityProblems(TRANSLATIONS), []);
 });
 
-for (const page of ["index.html", "dashboard.html", "crash-course/index.html"]) {
+// The hub and every Lesson that is released (its page exists).
+const RELEASED_PAGES = LESSONS.filter((lesson) => lesson.released).map((lesson) => `crash-course/${lesson.page}`);
+
+for (const page of ["index.html", "dashboard.html", "crash-course/index.html", ...RELEASED_PAGES]) {
   test(`every translation key named in ${page} exists in both languages`, () => {
     assert.deepEqual(findHtmlReferenceProblems(read(page), TRANSLATIONS), []);
   });
@@ -68,3 +72,14 @@ test("every agreed Lesson has a title in both languages", () => {
     }
   }
 });
+
+for (const { number, page } of LESSONS.filter((lesson) => lesson.released)) {
+  test(`the real Lesson ${number} page passes the Lesson page rules`, () => {
+    const file = `crash-course/${page}`;
+    const exists = (target) => fs.existsSync(path.join(ROOT, target));
+    assert.deepEqual(
+      findCourseLessonProblems(read(file), { file, courseDir: "crash-course", lessons: LESSONS, exists }),
+      [],
+    );
+  });
+}

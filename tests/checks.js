@@ -7,6 +7,7 @@
   Development only: the site never loads this file.
 */
 const { spawnSync } = require("node:child_process");
+const path = require("node:path");
 
 // The {name} parts of a text, sorted, e.g. "{n}" or "{shown}, {total}".
 function placeholders(text) {
@@ -404,6 +405,216 @@ function findCourseHubProblems(html, lessons) {
   return problems;
 }
 
+// 6. Course Lesson page (spec #36, Seam 1; ticket #39). `file` is the page's path from the
+// project root, `courseDir` the Crash course folder, `lessons` the agreed list and `exists`
+// says whether a project-relative file is there. Limits: this proves the page's structure
+// and that local files exist, not that external References still work or that the text is
+// accurate or matches its approved draft.
+const OUTSIDE_LINK = /^([a-z][a-z0-9+.-]*:|\/\/)/i;
+
+// The project-relative path a relative link points to, without its query or #hash.
+function resolveLink(file, href) {
+  const target = href.split("#")[0].split("?")[0];
+  return path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
+}
+
+function anchorsIn(html) {
+  return [...html.matchAll(/<a\b([^>]*)>/gi)].map(([, attributes]) => ({
+    attributes,
+    href: (/\shref\s*=\s*"([^"]*)"/i.exec(attributes) || [])[1],
+  }));
+}
+
+function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
+  const problems = [];
+  const page = html.replace(/<!--[\s\S]*?-->/g, "");
+  const pageOf = (lesson) => path.posix.join(courseDir, lesson.page);
+  const current = lessons.find((lesson) => pageOf(lesson) === file);
+  if (!current) return [`${file} is not one of the agreed Lesson pages`];
+
+  // The sidebar: every agreed Lesson, in order, with the agreed availability.
+  const nav = /<nav\b[^>]*\bdata-lesson-nav\b[^>]*>([\s\S]*?)<\/nav>/i.exec(page);
+  if (!nav) {
+    problems.push("the Lesson page has no sidebar (<nav data-lesson-nav>)");
+  } else {
+    const starts = [...nav[1].matchAll(/<li\b[^>]*\bdata-lesson="(\d+)"[^>]*>/gi)];
+    const entries = starts.map((start, i) => ({
+      number: Number(start[1]),
+      body: nav[1].slice(start.index + start[0].length, i + 1 < starts.length ? starts[i + 1].index : undefined),
+    }));
+    const agreed = lessons.map((lesson) => lesson.number);
+    const shown = entries.map((entry) => entry.number);
+    agreed.filter((n) => !shown.includes(n)).forEach((n) => problems.push(`Lesson ${n} is not in the sidebar`));
+    shown
+      .filter((n) => !agreed.includes(n))
+      .forEach((n) => problems.push(`the sidebar has Lesson ${n}, which is not in the agreed list`));
+    const shownAgreed = shown.filter((n) => agreed.includes(n));
+    const wantedOrder = agreed.filter((n) => shown.includes(n));
+    if (shownAgreed.join(",") !== wantedOrder.join(",")) {
+      problems.push(`sidebar Lessons are in the order ${shownAgreed.join(", ")} but should be ${wantedOrder.join(", ")}`);
+    }
+
+    const ids = new Set([...page.matchAll(/\sid\s*=\s*"([^"]*)"/gi)].map(([, id]) => id));
+    for (const lesson of lessons) {
+      const entry = entries.find((candidate) => candidate.number === lesson.number);
+      if (!entry) continue;
+      const title = /data-i18n="(course\.lesson\d+\.title)"/.exec(entry.body);
+      if (!title || title[1] !== lesson.titleKey) {
+        problems.push(
+          `Lesson ${lesson.number} uses the sidebar title "${title ? title[1] : "none"}" but should use "${lesson.titleKey}"`,
+        );
+      }
+      const link = /<a\b([^>]*)>/i.exec(entry.body);
+      const href = link && /href="([^"]*)"/.exec(link[1]);
+      if (lesson.released) {
+        if (!link) {
+          problems.push(`Lesson ${lesson.number} is released but its sidebar entry is not a link`);
+        } else if (!href || resolveLink(file, href[1]) !== pageOf(lesson)) {
+          problems.push(
+            `Lesson ${lesson.number} links to "${href ? href[1] : "nothing"}" in the sidebar, which is not its page "${pageOf(lesson)}"`,
+          );
+        }
+      } else {
+        if (link) problems.push(`Lesson ${lesson.number} is not released but the sidebar links to it`);
+        if (!/data-i18n="course\.soon"/.test(entry.body)) {
+          problems.push(`Lesson ${lesson.number} is not released but its sidebar entry does not say "course.soon"`);
+        }
+      }
+      if (lesson === current) {
+        if (!link || !/\baria-current="page"/.test(link[1])) {
+          problems.push(`Lesson ${lesson.number} is the current Lesson but its sidebar entry is not marked aria-current="page"`);
+        }
+        const sections = [...entry.body.matchAll(/<ul\b[\s\S]*?<\/ul>/gi)].flatMap(([list]) => anchorsIn(list));
+        if (!sections.length) {
+          problems.push(`Lesson ${lesson.number} is the current Lesson but its sidebar entry does not list its Sections`);
+        }
+        sections
+          .filter(({ href: target }) => target && target.startsWith("#") && !ids.has(target.slice(1)))
+          .forEach(({ href: target }) => problems.push(`the sidebar Section link "${target}" points to nothing on the page`));
+      }
+    }
+  }
+
+  // The previous/next pager and its boundary rules. Items are marked data-pager="hub",
+  // "prev", "next" or "soon" (the non-link text for a Lesson that is not released).
+  const pager = /<nav\b[^>]*\bdata-lesson-pager\b[^>]*>([\s\S]*?)<\/nav>/i.exec(page);
+  if (!pager) {
+    problems.push("the Lesson page has no previous/next pager (<nav data-lesson-pager>)");
+  } else {
+    const items = anchorsIn(pager[1]).map(({ attributes, href }) => ({
+      kind: (/\sdata-pager="([^"]*)"/.exec(attributes) || [])[1],
+      href,
+    }));
+    const linksTo = (kind, target) =>
+      items.some((item) => item.kind === kind && item.href !== undefined && resolveLink(file, item.href) === target);
+    const hasHubLink = linksTo("hub", path.posix.join(courseDir, "index.html"));
+    const previous = lessons.find((lesson) => lesson.number === current.number - 1);
+    const next = lessons.find((lesson) => lesson.number === current.number + 1);
+    if (!previous) {
+      if (!hasHubLink) problems.push('the pager has no link back to the hub in place of "previous"');
+    } else if (!linksTo("prev", pageOf(previous))) {
+      problems.push(`Lesson ${current.number} has no "previous" link to Lesson ${previous.number}`);
+    }
+    if (next && next.released) {
+      if (!linksTo("next", pageOf(next))) {
+        problems.push(`Lesson ${current.number} has no "next" link to Lesson ${next.number}`);
+      }
+    } else if (next) {
+      if (items.some((item) => item.kind === "next")) {
+        problems.push(`Lesson ${next.number} is not released, so "next" must be the coming-soon text, not a link`);
+      }
+      if (!/\sdata-pager="soon"/.test(pager[1])) {
+        problems.push(`the pager does not say that Lesson ${next.number} is coming soon (data-pager="soon")`);
+      }
+      if (previous && !hasHubLink) {
+        problems.push(`Lesson ${next.number} is not released, so the pager needs a link back to the hub`);
+      }
+    }
+  }
+
+  // The last-checked date: a real calendar date in machine-readable form.
+  const date = /<time\b[^>]*\sdatetime\s*=\s*"([^"]*)"/i.exec(page);
+  if (!date) problems.push("the Lesson page has no last-checked date (<time datetime>)");
+  else if (!isCalendarDate(date[1])) {
+    problems.push(`the last-checked date "${date[1]}" is not a real calendar date (use YYYY-MM-DD)`);
+  }
+
+  // The Lesson text is Arabic, right to left, whatever language the shared parts show.
+  const parts = [...page.matchAll(/<([a-z0-9]+)\b([^>]*\sclass\s*=\s*"[^"]*\blesson-part\b[^"]*"[^>]*)>/gi)];
+  if (!parts.length) problems.push('the Lesson page has no Lesson content (class="lesson-part")');
+  for (const [, tag, attributes] of parts) {
+    if (!/\slang\s*=\s*"ar"/i.test(attributes) || !/\sdir\s*=\s*"rtl"/i.test(attributes)) {
+      const id = /\sid\s*=\s*"([^"]*)"/i.exec(attributes);
+      problems.push(`a Lesson part (<${tag}${id ? ` id="${id[1]}"` : ""}>) is not marked lang="ar" dir="rtl"`);
+    }
+  }
+
+  // English visitors are told the Lesson is available in Arabic.
+  if (!/data-i18n="course\.lesson\.arabicNotice"/.test(page)) {
+    problems.push(
+      'the Lesson page has no "available in Arabic" notice for English (data-i18n="course.lesson.arabicNotice")',
+    );
+  }
+
+  // The "You're done when" checklist: every item has an identifier, unique in the Lesson.
+  // Ticks are saved against these identifiers (ticket #41), so they must not repeat.
+  const checklist = /<(ul|ol)\b[^>]*\sdata-checklist\b[^>]*>([\s\S]*?)<\/\1>/i.exec(page);
+  if (!checklist) {
+    problems.push('the Lesson page has no "You\'re done when" checklist (data-checklist)');
+  } else {
+    const boxes = [...checklist[2].matchAll(/<input\b[^>]*\stype\s*=\s*"checkbox"[^>]*>/gi)];
+    if (!boxes.length) problems.push("the checklist has no items");
+    const seen = new Set();
+    const repeated = new Set();
+    boxes.forEach(([box], i) => {
+      const id = (/\sdata-item\s*=\s*"([^"]*)"/i.exec(box) || [])[1];
+      if (!id || id.trim() === "") problems.push(`checklist item ${i + 1} has no identifier (data-item)`);
+      else if (seen.has(id)) repeated.add(id);
+      else seen.add(id);
+    });
+    repeated.forEach((id) => problems.push(`the checklist identifier "${id}" is used more than once`));
+  }
+
+  // Links. Findings are collected in a set so a link repeated on the page is reported once.
+  //  - nothing may link to a Lesson page that is not released yet;
+  //  - a relative link or image must point to a file that exists, resolved from this page;
+  //  - an external link must be a complete, well-formed https:// address;
+  //  - a link to another course page must carry the language (data-course-link).
+  const linkProblems = new Set();
+  const isHttps = (href) => {
+    try {
+      const url = new URL(href);
+      return /^https:\/\/[^\s]+$/.test(href) && url.protocol === "https:" && url.hostname.includes(".");
+    } catch (error) {
+      return false;
+    }
+  };
+  for (const { attributes, href } of anchorsIn(page)) {
+    if (!href || href.startsWith("#")) continue;
+    if (OUTSIDE_LINK.test(href)) {
+      if (!isHttps(href)) linkProblems.add(`the link "${href}" is not a complete https:// address`);
+      continue;
+    }
+    const target = resolveLink(file, href);
+    const lesson = lessons.find((candidate) => pageOf(candidate) === target);
+    if (lesson && !lesson.released) {
+      linkProblems.add(`the Lesson page links to Lesson ${lesson.number}, which is not released`);
+      continue;
+    }
+    if (!exists(target)) linkProblems.add(`the link "${href}" points to ${target}, which does not exist`);
+    if (target.startsWith(courseDir + "/") && target.endsWith(".html") && !/\sdata-course-link\b/.test(attributes)) {
+      linkProblems.add(`the link "${href}" goes to a course page without data-course-link, so the language would be lost`);
+    }
+  }
+  for (const [, src] of page.matchAll(/<img\b[^>]*\ssrc\s*=\s*"([^"]*)"/gi)) {
+    if (!src || OUTSIDE_LINK.test(src)) continue;
+    const target = resolveLink(file, src);
+    if (!exists(target)) linkProblems.add(`the image "${src}" points to ${target}, which does not exist`);
+  }
+  problems.push(...linkProblems);
+  return problems;
+}
+
 module.exports = {
   findParityProblems,
   findHtmlReferenceProblems,
@@ -411,4 +622,5 @@ module.exports = {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
+  findCourseLessonProblems,
 };

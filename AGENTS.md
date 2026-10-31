@@ -185,9 +185,11 @@ proposed work that enters this Workflow at step 1 or 3.
 - `js/dashboard.js`: dashboard sign-in, Launch sign-ups list, search, figures and Access.
 - `_headers`: Cloudflare Pages security headers (CSP) for the dashboard only.
 - `crash-course/index.html`: the Crash course hub (Claude Crash Course for Beginners), linked
-  from the landing page as "Crash Courses". The Lesson pages will live beside it.
+  from the landing page as "Crash Courses". Each released Lesson has its own page in a
+  `crash-course/lesson-N/` folder (Lesson 1 so far), built from its approved draft in
+  `docs/course/lesson-N/`.
 - `css/course.css`: Crash course pages only; reuses the `:root` variables.
-- `js/course.js`: language switcher, mobile menu and footer year for the Crash course pages;
+- `js/course.js`: language switcher, mobile menu, the phone Lesson list and footer year for the Crash course pages;
   they never load `js/script.js`.
 - `js/course-language.js`: which language a Crash course page opens in, what it remembers
   and how links carry it; tested in `tests/course-language.test.js`.
@@ -207,8 +209,8 @@ proposed work that enters this Workflow at step 1 or 3.
   and issues.
 - `tests/`: `node --test` tests (development only, ADR-0006). `tests/checks.js` holds the
   project checks: translation parity, translation keys named in the pages and scripts,
-  JavaScript syntax, and the Crash course hub's cards. `tests/course-lessons.js` is the agreed
-  list of the nine Lessons those cards must match.
+  JavaScript syntax, the Crash course hub's cards and the Lesson pages' rules.
+  `tests/course-lessons.js` is the agreed list of the nine Lessons those pages must match.
 - `.github/workflows/checks.yml`: the PR checks (see Development commands, Test). A change
   to it needs a security review and a new gate assessment (spec #31).
 - `.agents/skills/`: the vendored Matt Pocock skills (MIT; see its `README.md`).

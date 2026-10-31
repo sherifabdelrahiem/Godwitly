@@ -6,11 +6,11 @@
   released: true  = the Lesson has a page and its card is a link.
   released: false = shown as "قريبًا" and not a link.
 
-  Staging (tickets #38-#46): every Lesson stays false until its own ticket adds the
-  page and flips it. The Release 1 end state, in spec #36, is Lessons 1-5 released.
+  Staging (tickets #38-#46): a Lesson stays false until its own ticket adds the page and
+  flips it (Lesson 1: #39). The Release 1 end state, in spec #36, is Lessons 1-5 released.
 */
 const LESSONS = [
-  { number: 1, titleKey: "course.lesson1.title", released: false, page: "lesson-1/index.html" },
+  { number: 1, titleKey: "course.lesson1.title", released: true,  page: "lesson-1/index.html" },
   { number: 2, titleKey: "course.lesson2.title", released: false, page: "lesson-2/index.html" },
   { number: 3, titleKey: "course.lesson3.title", released: false, page: "lesson-3/index.html" },
   { number: 4, titleKey: "course.lesson4.title", released: false, page: "lesson-4/index.html" },

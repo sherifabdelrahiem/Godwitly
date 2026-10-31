@@ -11,6 +11,7 @@ const {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
+  findCourseLessonProblems,
 } = require("./checks.js");
 
 test("parity: reports a key that only one language has", () => {
@@ -365,4 +366,300 @@ test("hub: reads the title from the card's heading, not from other text before i
   const [one, two, three] = goodCards();
   const withNumber = two.replace("<h3", '<span data-i18n="course.lesson2.number">2</span><h3');
   assert.deepEqual(findCourseHubProblems(hubPage([one, withNumber, three]), LIST), []);
+});
+
+// ---- Course check, Lesson page rules (spec #36, Seam 1; ticket #39) ----
+// A good Lesson page is built from small parts here, then each test breaks one part.
+
+const COURSE_DIR = "crash-course";
+const LESSON_LIST = [
+  { number: 1, titleKey: "course.lesson1.title", released: true, page: "lesson-1/index.html" },
+  { number: 2, titleKey: "course.lesson2.title", released: false, page: "lesson-2/index.html" },
+  { number: 3, titleKey: "course.lesson3.title", released: false, page: "lesson-3/index.html" },
+];
+const lessonFile = (n) => `${COURSE_DIR}/lesson-${n}/index.html`;
+
+const sidebarEntry = (lesson, current) =>
+  lesson.released
+    ? `<li data-lesson="${lesson.number}"><a href="../lesson-${lesson.number}/index.html" data-course-link${
+        current ? ' aria-current="page"' : ""
+      }><span data-i18n="${lesson.titleKey}">Title</span></a>${
+        current ? '<ul><li><a href="#intro">Intro</a></li></ul>' : ""
+      }</li>`
+    : `<li data-lesson="${lesson.number}"><span data-i18n="${lesson.titleKey}">Title</span><span data-i18n="course.soon">Soon</span></li>`;
+const sidebarOf = (entries) => `<nav data-lesson-nav><ol>${entries.join("")}</ol></nav>`;
+const goodSidebar = (list, n) => sidebarOf(list.map((lesson) => sidebarEntry(lesson, lesson.number === n)));
+
+const pagerLink = (kind, href) => `<a data-pager="${kind}" href="${href}" data-course-link>Link</a>`;
+const goodPager = (list, n) => {
+  const items = [n === 1 ? pagerLink("hub", "../index.html") : pagerLink("prev", `../lesson-${n - 1}/index.html`)];
+  const next = list.find((lesson) => lesson.number === n + 1);
+  if (next && next.released) items.push(pagerLink("next", `../lesson-${next.number}/index.html`));
+  else if (next) {
+    items.push('<span data-pager="soon">Soon</span>');
+    if (n !== 1) items.push(pagerLink("hub", "../index.html"));
+  }
+  return `<nav data-lesson-pager>${items.join("")}</nav>`;
+};
+
+const goodMain = () =>
+  '<main><p class="course-en-only" data-i18n="course.lesson.arabicNotice">Available in Arabic</p>' +
+  '<div id="intro" class="lesson-part" lang="ar" dir="rtl"><h1>Title</h1><time datetime="2026-10-31">31 October</time></div>' +
+  '<section class="lesson-part" lang="ar" dir="rtl"><ul data-checklist="lesson-1">' +
+  '<li><label><input type="checkbox" data-item="explain-claude"> One</label></li>' +
+  '<li><label><input type="checkbox" data-item="chat-or-code"> Two</label></li></ul></section></main>';
+
+const lessonPage = ({
+  list = LESSON_LIST,
+  n = 1,
+  sidebar = goodSidebar(list, n),
+  pager = goodPager(list, n),
+  main = goodMain(),
+} = {}) => `<body>${sidebar}${main}${pager}</body>`;
+const lessonProblems = (html, { n = 1, list = LESSON_LIST, exists = () => true } = {}) =>
+  findCourseLessonProblems(html, { file: lessonFile(n), courseDir: COURSE_DIR, lessons: list, exists });
+
+test("lesson page: a sidebar with the agreed Lessons passes", () => {
+  assert.deepEqual(lessonProblems(lessonPage()), []);
+});
+
+test("lesson page: reports a page that is not one of the agreed Lesson pages", () => {
+  assert.deepEqual(lessonProblems(lessonPage(), { n: 9 }), [
+    "crash-course/lesson-9/index.html is not one of the agreed Lesson pages",
+  ]);
+});
+
+test("lesson page: reports a page with no sidebar", () => {
+  const html = lessonPage({ sidebar: "" });
+  assert.deepEqual(lessonProblems(html), ["the Lesson page has no sidebar (<nav data-lesson-nav>)"]);
+});
+
+test("lesson page: reports a missing, extra or misordered Lesson in the sidebar", () => {
+  const entries = LESSON_LIST.map((lesson) => sidebarEntry(lesson, lesson.number === 1));
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([entries[0], entries[2]]) })), [
+    "Lesson 2 is not in the sidebar",
+  ]);
+  const extra = sidebarEntry({ number: 4, titleKey: "course.lesson4.title", released: false }, false);
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([...entries, extra]) })), [
+    "the sidebar has Lesson 4, which is not in the agreed list",
+  ]);
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([entries[0], entries[2], entries[1]]) })), [
+    "sidebar Lessons are in the order 1, 3, 2 but should be 1, 2, 3",
+  ]);
+});
+
+test("lesson page: reports an unreleased Lesson shown as a link, or without the coming-soon label", () => {
+  const entries = LESSON_LIST.map((lesson) => sidebarEntry(lesson, lesson.number === 1));
+  const linked = entries[1].replace(/<span data-i18n="course.lesson2.title">Title<\/span>/, (title) => `<a href="../lesson-2/index.html" data-course-link>${title}</a>`);
+  const html = lessonPage({ sidebar: sidebarOf([entries[0], linked, entries[2]]) });
+  assert.deepEqual(lessonProblems(html), [
+    "Lesson 2 is not released but the sidebar links to it",
+    "the Lesson page links to Lesson 2, which is not released",
+  ]);
+  const bare = '<li data-lesson="2"><span data-i18n="course.lesson2.title">Title</span></li>';
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([entries[0], bare, entries[2]]) })), [
+    'Lesson 2 is not released but its sidebar entry does not say "course.soon"',
+  ]);
+});
+
+test("lesson page: reports a released Lesson that is not a link to its page", () => {
+  const entries = LESSON_LIST.map((lesson) => sidebarEntry(lesson, lesson.number === 1));
+  const asText = '<li data-lesson="1"><span data-i18n="course.lesson1.title">Title</span></li>';
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([asText, entries[1], entries[2]]) })), [
+    "Lesson 1 is released but its sidebar entry is not a link",
+    "Lesson 1 is the current Lesson but its sidebar entry is not marked aria-current=\"page\"",
+    "Lesson 1 is the current Lesson but its sidebar entry does not list its Sections",
+  ]);
+  const wrong = entries[0].replace('href="../lesson-1/index.html"', 'href="../lesson-2/index.html"');
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([wrong, entries[1], entries[2]]) })), [
+    'Lesson 1 links to "../lesson-2/index.html" in the sidebar, which is not its page "crash-course/lesson-1/index.html"',
+    "the Lesson page links to Lesson 2, which is not released",
+  ]);
+});
+
+test("lesson page: reports a wrong title key or a current Lesson that is not marked or expanded", () => {
+  const entries = LESSON_LIST.map((lesson) => sidebarEntry(lesson, lesson.number === 1));
+  const wrongTitle = entries[1].replace("course.lesson2.title", "course.lesson3.title");
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([entries[0], wrongTitle, entries[2]]) })), [
+    'Lesson 2 uses the sidebar title "course.lesson3.title" but should use "course.lesson2.title"',
+  ]);
+  const plain = entries[0].replace(' aria-current="page"', "").replace(/<ul>.*<\/ul>/, "");
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([plain, entries[1], entries[2]]) })), [
+    "Lesson 1 is the current Lesson but its sidebar entry is not marked aria-current=\"page\"",
+    "Lesson 1 is the current Lesson but its sidebar entry does not list its Sections",
+  ]);
+});
+
+test("lesson page: reports a sidebar Section link that points to no heading on the page", () => {
+  const entries = LESSON_LIST.map((lesson) => sidebarEntry(lesson, lesson.number === 1));
+  const broken = entries[0].replace('href="#intro"', 'href="#nowhere"');
+  assert.deepEqual(lessonProblems(lessonPage({ sidebar: sidebarOf([broken, entries[1], entries[2]]) })), [
+    'the sidebar Section link "#nowhere" points to nothing on the page',
+  ]);
+});
+
+const READY = LESSON_LIST.map((lesson) => ({ ...lesson, released: lesson.number <= 2 })); // Lessons 1-2 released
+const ALL_READY = LESSON_LIST.map((lesson) => ({ ...lesson, released: true }));
+
+test("pager: follows the boundary rules for the first, a middle and the last Lesson", () => {
+  assert.deepEqual(lessonProblems(lessonPage({ list: READY, n: 2 }), { n: 2, list: READY }), []);
+  assert.deepEqual(lessonProblems(lessonPage({ list: ALL_READY, n: 2 }), { n: 2, list: ALL_READY }), []);
+  assert.deepEqual(lessonProblems(lessonPage({ list: ALL_READY, n: 3 }), { n: 3, list: ALL_READY }), []);
+});
+
+test("pager: reports a page with no pager", () => {
+  assert.deepEqual(lessonProblems(lessonPage({ pager: "" })), [
+    "the Lesson page has no previous/next pager (<nav data-lesson-pager>)",
+  ]);
+});
+
+test("pager: Lesson 1 needs a link back to the hub in place of previous", () => {
+  const none = lessonPage({ pager: '<nav data-lesson-pager><span data-pager="soon">Soon</span></nav>' });
+  assert.deepEqual(lessonProblems(none), ['the pager has no link back to the hub in place of "previous"']);
+  const wrong = lessonPage({
+    pager: `<nav data-lesson-pager>${pagerLink("hub", "../lesson-2/index.html")}<span data-pager="soon">Soon</span></nav>`,
+  });
+  assert.deepEqual(lessonProblems(wrong), [
+    'the pager has no link back to the hub in place of "previous"',
+    "the Lesson page links to Lesson 2, which is not released",
+  ]);
+});
+
+test("pager: a later Lesson needs a previous link to the Lesson before it", () => {
+  const none = lessonPage({
+    list: READY,
+    n: 2,
+    pager: `<nav data-lesson-pager><span data-pager="soon">Soon</span>${pagerLink("hub", "../index.html")}</nav>`,
+  });
+  assert.deepEqual(lessonProblems(none, { n: 2, list: READY }), ['Lesson 2 has no "previous" link to Lesson 1']);
+  const wrong = lessonPage({
+    list: READY,
+    n: 2,
+    pager: `<nav data-lesson-pager>${pagerLink("prev", "../index.html")}<span data-pager="soon">Soon</span>${pagerLink("hub", "../index.html")}</nav>`,
+  });
+  assert.deepEqual(lessonProblems(wrong, { n: 2, list: READY }), ['Lesson 2 has no "previous" link to Lesson 1']);
+});
+
+test("pager: a next Lesson that is released must be a link to it", () => {
+  const none = lessonPage({ list: ALL_READY, n: 1, pager: `<nav data-lesson-pager>${pagerLink("hub", "../index.html")}</nav>` });
+  assert.deepEqual(lessonProblems(none, { list: ALL_READY }), ['Lesson 1 has no "next" link to Lesson 2']);
+});
+
+test("pager: a next Lesson that is not released is the non-link coming-soon text, and the hub link stays", () => {
+  const asLink = lessonPage({ pager: `<nav data-lesson-pager>${pagerLink("hub", "../index.html")}${pagerLink("next", "../lesson-2/index.html")}</nav>` });
+  assert.deepEqual(lessonProblems(asLink), [
+    'Lesson 2 is not released, so "next" must be the coming-soon text, not a link',
+    'the pager does not say that Lesson 2 is coming soon (data-pager="soon")',
+    "the Lesson page links to Lesson 2, which is not released",
+  ]);
+  const noHub = lessonPage({ list: READY, n: 2, pager: `<nav data-lesson-pager>${pagerLink("prev", "../lesson-1/index.html")}<span data-pager="soon">Soon</span></nav>` });
+  assert.deepEqual(lessonProblems(noHub, { n: 2, list: READY }), ['Lesson 3 is not released, so the pager needs a link back to the hub']);
+});
+
+test("lesson date: reports a missing or invalid last-checked date", () => {
+  const noDate = goodMain().replace(/<time[^>]*>.*?<\/time>/, "");
+  assert.deepEqual(lessonProblems(lessonPage({ main: noDate })), [
+    "the Lesson page has no last-checked date (<time datetime>)",
+  ]);
+  const invalid = goodMain().replace("2026-10-31", "2026-02-30");
+  assert.deepEqual(lessonProblems(lessonPage({ main: invalid })), [
+    'the last-checked date "2026-02-30" is not a real calendar date (use YYYY-MM-DD)',
+  ]);
+  const wordy = goodMain().replace("2026-10-31", "31 October");
+  assert.deepEqual(lessonProblems(lessonPage({ main: wordy })), [
+    'the last-checked date "31 October" is not a real calendar date (use YYYY-MM-DD)',
+  ]);
+});
+
+test("lesson content: every Lesson part is marked lang=ar and dir=rtl", () => {
+  const noLang = goodMain().replace(' lang="ar"', "");
+  assert.deepEqual(lessonProblems(lessonPage({ main: noLang })), [
+    'a Lesson part (<div id="intro">) is not marked lang="ar" dir="rtl"',
+  ]);
+  const noDir = goodMain().replace(' dir="rtl"', "");
+  assert.deepEqual(lessonProblems(lessonPage({ main: noDir })), [
+    'a Lesson part (<div id="intro">) is not marked lang="ar" dir="rtl"',
+  ]);
+  const wrongLang = goodMain().replace('lang="ar"', 'lang="en"');
+  assert.deepEqual(lessonProblems(lessonPage({ main: wrongLang })), [
+    'a Lesson part (<div id="intro">) is not marked lang="ar" dir="rtl"',
+  ]);
+});
+
+test("lesson content: reports a page with no Lesson content parts", () => {
+  const none = goodMain().replaceAll(' class="lesson-part"', "");
+  assert.deepEqual(lessonProblems(lessonPage({ main: none })), [
+    'the Lesson page has no Lesson content (class="lesson-part")',
+  ]);
+});
+
+test("lesson notice: English visitors are told the Lesson is available in Arabic", () => {
+  const none = goodMain().replace(' data-i18n="course.lesson.arabicNotice"', "");
+  assert.deepEqual(lessonProblems(lessonPage({ main: none })), [
+    'the Lesson page has no "available in Arabic" notice for English (data-i18n="course.lesson.arabicNotice")',
+  ]);
+});
+
+test("checklist: reports a page with no checklist, or an empty one", () => {
+  const none = goodMain().replace(/<section[\s\S]*<\/section>/, "");
+  assert.deepEqual(lessonProblems(lessonPage({ main: none })), [
+    'the Lesson page has no "You\'re done when" checklist (data-checklist)',
+  ]);
+  const empty = goodMain().replace(/<li>[\s\S]*<\/li>/, "");
+  assert.deepEqual(lessonProblems(lessonPage({ main: empty })), ["the checklist has no items"]);
+});
+
+test("checklist: every item has an identifier, unique within the Lesson", () => {
+  const missing = goodMain().replace(' data-item="chat-or-code"', "");
+  assert.deepEqual(lessonProblems(lessonPage({ main: missing })), ["checklist item 2 has no identifier (data-item)"]);
+  const blank = goodMain().replace('data-item="chat-or-code"', 'data-item=""');
+  assert.deepEqual(lessonProblems(lessonPage({ main: blank })), ["checklist item 2 has no identifier (data-item)"]);
+  const repeated = goodMain().replace('data-item="chat-or-code"', 'data-item="explain-claude"');
+  assert.deepEqual(lessonProblems(lessonPage({ main: repeated })), [
+    'the checklist identifier "explain-claude" is used more than once',
+  ]);
+});
+
+const withLinks = (html) => lessonPage({ main: goodMain().replace("</main>", `${html}</main>`) });
+
+test("links: every Resource link points to a file that exists, resolved from the page", () => {
+  const html = withLinks('<a href="resources/facts.md">Facts</a><a href="resources/menu.md?x=1#top">Menu</a>');
+  const seen = [];
+  const exists = (target) => {
+    seen.push(target);
+    return target !== "crash-course/lesson-1/resources/facts.md";
+  };
+  assert.deepEqual(lessonProblems(html, { exists }), [
+    'the link "resources/facts.md" points to crash-course/lesson-1/resources/facts.md, which does not exist',
+  ]);
+  assert.ok(seen.includes("crash-course/lesson-1/resources/menu.md"), "query and #hash are dropped before the file is looked up");
+});
+
+test("links: a page link or image that goes up and out of the Lesson folder is resolved too", () => {
+  const html = withLinks('<img src="../../assets/images/mascot.webp" alt="">');
+  const exists = (target) => target !== "assets/images/mascot.webp";
+  assert.deepEqual(lessonProblems(html, { exists }), [
+    'the image "../../assets/images/mascot.webp" points to assets/images/mascot.webp, which does not exist',
+  ]);
+});
+
+test("links: every external Reference is a complete, well-formed https:// address", () => {
+  const good = withLinks('<a href="https://code.claude.com/docs/en/overview">Docs</a>');
+  assert.deepEqual(lessonProblems(good), []);
+  for (const bad of ["http://example.com/", "https://", "https:example.com", "//example.com/", "mailto:a@example.com", "https://exam ple.com/", "https://localhost/"]) {
+    assert.deepEqual(lessonProblems(withLinks(`<a href="${bad}">x</a>`)), [
+      `the link "${bad}" is not a complete https:// address`,
+    ]);
+  }
+});
+
+test("links: a link to a course page carries the language (data-course-link); other links need not", () => {
+  const plain = withLinks('<a href="../index.html#lessons">Hub</a>');
+  assert.deepEqual(lessonProblems(plain), [
+    'the link "../index.html#lessons" goes to a course page without data-course-link, so the language would be lost',
+  ]);
+  const fine = withLinks(
+    '<a href="../index.html#lessons" data-course-link>Hub</a><a href="#intro">Top</a><a href="../../index.html#products">Landing</a>',
+  );
+  assert.deepEqual(lessonProblems(fine), []);
 });
