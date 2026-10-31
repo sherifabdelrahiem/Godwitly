@@ -99,7 +99,7 @@ test("an item added to a finished Lesson makes it incomplete, on the Lesson page
 });
 
 test("missing or damaged saved data reads as nothing ticked", () => {
-  const key = "godwitly.course.progress.lesson-1";
+  const key = "godwitly-course-progress-lesson-1";
   const damaged = ["not json", "null", "42", '"text"', "[]", '{"ticked":"a"}', '{"ticked":[1,null,{}]}', ""];
   for (const saved of damaged) {
     const progress = createCourseProgress(fakeStorage({ [key]: saved }));
@@ -111,7 +111,7 @@ test("missing or damaged saved data reads as nothing ticked", () => {
 });
 
 test("a damaged item list never makes a Lesson complete on the hub", () => {
-  const key = "godwitly.course.progress.lesson-1";
+  const key = "godwitly-course-progress-lesson-1";
   const storage = fakeStorage({ [key]: '{"ticked":["a"],"items":"a"}' });
   assert.equal(createCourseProgress(storage).isLessonComplete("lesson-1"), false);
 });

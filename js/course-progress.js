@@ -9,10 +9,10 @@
 
   Loaded as a plain script on the course pages, and by the tests in tests/ (Node).
 */
-const COURSE_PROGRESS_KEY_PREFIX = "godwitly.course.progress.";
+const COURSE_PROGRESS_KEY_PREFIX = "godwitly-course-progress-";
 
 // Keeps only the text entries of a saved list; anything else reads as an empty list.
-function savedList(value) {
+function textEntries(value) {
   return Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
 }
 
@@ -24,7 +24,7 @@ function createCourseProgress(storage) {
       if (raw === null) return null;
       const saved = JSON.parse(raw);
       if (saved === null || typeof saved !== "object" || Array.isArray(saved)) return null;
-      return { ticked: savedList(saved.ticked), items: savedList(saved.items) };
+      return { ticked: textEntries(saved.ticked), items: textEntries(saved.items) };
     } catch (error) {
       return null;
     }

@@ -354,7 +354,7 @@ document.querySelectorAll("[data-checklist]").forEach((list) => {
   const checklist = courseProgress.open(lessonId, boxes.map((box) => box.dataset.item));
   const celebration = document.querySelector("[data-celebration]");
 
-  function show() {
+  function showDone() {
     showCompleteMark(lessonId, checklist.isComplete());
     if (celebration) celebration.hidden = !checklist.isComplete();
   }
@@ -363,17 +363,25 @@ document.querySelectorAll("[data-checklist]").forEach((list) => {
     box.checked = checklist.isTicked(box.dataset.item);
     box.addEventListener("change", () => {
       checklist.set(box.dataset.item, box.checked);
-      show();
+      showDone();
     });
   });
-  show();
+  showDone();
 });
 
 // The hub has no checklist: each Lesson card asks what its Lesson page saved.
-if (!document.querySelector("[data-checklist]")) {
+function showHubMarks() {
   document.querySelectorAll(".lesson-card[data-lesson]").forEach((card) => {
     const lessonId = "lesson-" + card.dataset.lesson;
     showCompleteMark(lessonId, courseProgress.isLessonComplete(lessonId));
+  });
+}
+
+if (!document.querySelector("[data-checklist]")) {
+  showHubMarks();
+  // Coming back with the browser's Back button can show the hub from memory: ask again.
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) showHubMarks();
   });
 }
 
