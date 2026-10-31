@@ -119,3 +119,10 @@ stack below that. A markup wrapper and about 25 lines of CSS; self-checked, **no
 `node --test` 101 pass. Checked in Chrome: a 1280px-wide frame shows one row, the bird at the start side
 (right in Arabic); a 320px frame stacks them with no horizontal scroll (page width 316 of 316) in Arabic and
 English. Not run: English at 1280px, a real phone.
+
+## Round 4: bigger bird, tighter row (`033555d`)
+
+At the PO's request the bird grows to up to 330px wide, the gap shrinks to 8px and the facts box is more
+compact (15px text, 12px 16px padding). CSS only; self-checked, **not subagent-reviewed**. `node --test` 101
+pass. Measured in Chrome frames: at 1280px the bird is 330×220 and the box 398×240; at 720px 295×196 and
+353×240; at 320px they stack (160px bird) with no horizontal scroll. Not run: a real phone.
