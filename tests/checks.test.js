@@ -10,6 +10,7 @@ const {
   findScriptReferenceProblems,
   findExceptionListProblems,
   findSyntaxProblems,
+  findCourseHubProblems,
 } = require("./checks.js");
 
 test("parity: reports a key that only one language has", () => {
@@ -263,4 +264,105 @@ test("pages: reads attribute names in any case, with digits, but not text inside
     'data-i18n-x2 "nav.two": no such key in en',
     'data-i18n-x2 "nav.two": no such key in ar',
   ]);
+});
+
+// ---- Course check, hub rules (spec #36, Seam 1) ----
+
+const LIST = [
+  { number: 1, titleKey: "course.lesson1.title", released: true, page: "lesson-1/index.html" },
+  { number: 2, titleKey: "course.lesson2.title", released: false, page: "lesson-2/index.html" },
+  { number: 3, titleKey: "course.lesson3.title", released: false, page: "lesson-3/index.html" },
+];
+
+const hubCard = (n, { link } = {}) => {
+  const title = `<h3 data-i18n="course.lesson${n}.title">Lesson ${n}</h3>`;
+  const body = link
+    ? `<a href="${link}" data-course-link>${title}</a>`
+    : `${title}<span data-i18n="course.soon">Coming soon</span>`;
+  return `<li class="lesson-card" data-lesson="${n}">${body}</li>`;
+};
+const hubPage = (cards, date = "2026-10-30") =>
+  `<main><time datetime="${date}">30 October 2026</time><ol class="lesson-list">${cards.join("")}</ol></main>`;
+const goodCards = () => [hubCard(1, { link: "lesson-1/index.html" }), hubCard(2), hubCard(3)];
+
+test("hub: the agreed Lessons in order with the agreed availability pass", () => {
+  assert.deepEqual(findCourseHubProblems(hubPage(goodCards()), LIST), []);
+});
+
+test("hub: reports a missing Lesson card", () => {
+  const problems = findCourseHubProblems(hubPage([goodCards()[0], goodCards()[2]]), LIST);
+  assert.deepEqual(problems, ["Lesson 2 has no card on the hub"]);
+});
+
+test("hub: reports cards in the wrong order", () => {
+  const [one, two, three] = goodCards();
+  const problems = findCourseHubProblems(hubPage([two, one, three]), LIST);
+  assert.deepEqual(problems, ["Lesson cards are in the order 2, 1, 3 but should be 1, 2, 3"]);
+});
+
+test("hub: reports a card for a Lesson that is not in the agreed list", () => {
+  const problems = findCourseHubProblems(hubPage([...goodCards(), hubCard(4)]), LIST);
+  assert.deepEqual(problems, ["the hub has a card for Lesson 4, which is not in the agreed list"]);
+});
+
+test("hub: reports an unreleased Lesson shown as a link", () => {
+  const [one, , three] = goodCards();
+  const linked = hubCard(2).replace(/<h3.*<\/h3>/, (title) => `<a href="lesson-2/index.html" data-course-link>${title}</a>`);
+  const problems = findCourseHubProblems(hubPage([one, linked, three]), LIST);
+  assert.deepEqual(problems, ["Lesson 2 is not released but its card is a link"]);
+});
+
+test("hub: reports an unreleased Lesson card without the coming-soon label", () => {
+  const [one, , three] = goodCards();
+  const bare = '<li class="lesson-card" data-lesson="2"><h3 data-i18n="course.lesson2.title">Two</h3></li>';
+  assert.deepEqual(findCourseHubProblems(hubPage([one, bare, three]), LIST), [
+    'Lesson 2 is not released but its card does not say "course.soon"',
+  ]);
+});
+
+test("hub: reports a released Lesson that is not a link to its page", () => {
+  const [, two, three] = goodCards();
+  const asText = findCourseHubProblems(hubPage([hubCard(1), two, three]), LIST);
+  assert.deepEqual(asText, ["Lesson 1 is released but its card is not a link"]);
+  const wrong = findCourseHubProblems(hubPage([hubCard(1, { link: "lesson-2/index.html" }), two, three]), LIST);
+  assert.deepEqual(wrong, ['Lesson 1 links to "lesson-2/index.html" but its page is "lesson-1/index.html"']);
+});
+
+test("hub: reports a released Lesson link that does not carry the language", () => {
+  const [, two, three] = goodCards();
+  const plain = '<li class="lesson-card" data-lesson="1"><a href="lesson-1/index.html"><h3 data-i18n="course.lesson1.title">One</h3></a></li>';
+  assert.deepEqual(findCourseHubProblems(hubPage([plain, two, three]), LIST), [
+    "Lesson 1 links to a course page without data-course-link, so the language would be lost",
+  ]);
+});
+
+test("hub: reports a card with the wrong title key", () => {
+  const [one, , three] = goodCards();
+  const wrong = hubCard(2).replace("course.lesson2.title", "course.lesson3.title");
+  assert.deepEqual(findCourseHubProblems(hubPage([one, wrong, three]), LIST), [
+    'Lesson 2 uses the title "course.lesson3.title" but should use "course.lesson2.title"',
+  ]);
+});
+
+test("hub: reports a missing or invalid last-checked date", () => {
+  assert.deepEqual(findCourseHubProblems(hubPage(goodCards(), "2026-02-30"), LIST), [
+    'the last-checked date "2026-02-30" is not a real calendar date (use YYYY-MM-DD)',
+  ]);
+  assert.deepEqual(findCourseHubProblems(hubPage(goodCards(), "30 October"), LIST), [
+    'the last-checked date "30 October" is not a real calendar date (use YYYY-MM-DD)',
+  ]);
+  const noDate = hubPage(goodCards()).replace(/<time[^>]*>.*?<\/time>/, "");
+  assert.deepEqual(findCourseHubProblems(noDate, LIST), ["the hub has no last-checked date (<time datetime>)"]);
+});
+
+test("hub: reports a page with no Lesson list", () => {
+  assert.deepEqual(findCourseHubProblems("<main><time datetime=\"2026-10-30\"></time></main>", LIST), [
+    "the hub has no Lesson list (<ol class=\"lesson-list\">)",
+  ]);
+});
+
+test("hub: reads the title from the card's heading, not from other text before it", () => {
+  const [one, two, three] = goodCards();
+  const withNumber = two.replace("<h3", '<span data-i18n="course.lesson2.number">2</span><h3');
+  assert.deepEqual(findCourseHubProblems(hubPage([one, withNumber, three]), LIST), []);
 });
