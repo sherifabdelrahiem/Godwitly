@@ -27,7 +27,7 @@
 | S2 | `AGENTS.md` "Project structure" does not list the four new files (`crash-course/index.html`, `css/course.css`, `js/course.js`, `js/course-language.js`). `README.md` was updated | hard (documentation) | fixed in `f28f47b` at the PO's instruction: four entries, with the footer year in the `js/course.js` line |
 | S3 | `js/course.js`: the text-swapping and mobile-menu code copies `js/script.js`; the header comment only explained the language part | Duplicated Code (judgement) | fixed in `8eacdda`: the header now says the copy is deliberate (the landing script must stay unchanged, spec #36) and to check both copies when fixing a bug |
 | S4 | The hub footer's "Crash Courses" link points to the current page but had no `aria-current` | judgement | fixed in `8eacdda` |
-| S5 | "Open the guide in Arabic" links to the hub itself (`?lang=ar`); it works only as a language switch | judgement | partly fixed in `8eacdda` (`hreflang="ar"`). It stays a link, as in the approved Figma frame, so it also works without JavaScript. **Open for PO acceptance** |
+| S5 | "Open the guide in Arabic" links to the hub itself (`?lang=ar`); it works only as a language switch | judgement | partly fixed in `8eacdda` (`hreflang="ar"`). It stays a link, as in the approved Figma frame, so it also works without JavaScript. Accepted by the PO on 2026-10-31 (reviewed the open items and approved the merge) |
 | S6 | No `?lang=` on links between the landing page and the course pages, so English chosen on the landing page gives Arabic on the hub | judgement | no change needed. This is the spec's accepted trade-off ("an English visitor switches once on the course"; landing page unchanged) |
 | S7 | Glossary term "Crash courses" is lower case; the menu label is "Crash Courses" | judgement (naming) | no change needed: title case for a label, as spec v3 writes it |
 | S8 | `[fromAddress, saved].find(…) ?? "ar"`, and the export line | none (checked) | no change needed: it follows `js/message-length.js` |
@@ -54,8 +54,8 @@ Ticket #37 acceptance criteria:
 
 | # | Finding | Spec line | Outcome |
 |---|---|---|---|
-| P1 | The "Open the guide in Arabic" button is not in the ticket's list (title, summary, "Available in Arabic") | #37 "What to build" | **open for PO acceptance.** It comes from the approved Figma frame `Hub / Desktop 1440 · EN`; remove it if you want only what the ticket lists |
-| P2 | Extra copy: the "Free guide" eyebrow and the page's meta description | #37 "What to build" | **open for PO acceptance**, with P1 (the eyebrow is in the Figma frames) |
+| P1 | The "Open the guide in Arabic" button is not in the ticket's list (title, summary, "Available in Arabic") | #37 "What to build" | **open for PO acceptance.** It comes from the approved Figma frame `Hub / Desktop 1440 · EN`; remove it if you want only what the ticket lists. Accepted by the PO on 2026-10-31: kept |
+| P2 | Extra copy: the "Free guide" eyebrow and the page's meta description | #37 "What to build" | accepted by the PO on 2026-10-31, with P1 (the eyebrow is in the Figma frames): kept |
 | P3 | The hub's Arabic title is «دليل كلود للمبتدئين» | spec v3 fixes the English title only | no change needed: it is the agreed Arabic title (ADR-0007 and the glossary). The Arabic summary is placeholder wording for the PO to confirm |
 | P4 | The hub's own links point to itself (`index.html`) | none | no change needed: harmless |
 
@@ -84,16 +84,17 @@ dashboard are untouched.
 | # | Finding | Kind | Outcome |
 |---|---|---|---|
 | R1 | This report still listed S1 and S2 as open after `f28f47b` fixed them | hard (evidence out of date) | fixed in this commit |
-| R2 | `AGENTS.md` says "The Lesson pages will live beside it" about files that don't exist yet; it goes stale if the layout changes | judgement | left as it is: it is the wording of the entry the PO approved. **Open for PO acceptance**, or cut it |
-| R3 | `README.md` "Site deploy" still lists "`dashboard.html` and `_headers`" for what the `AGENTS.md` command includes; it now also includes `crash-course` | judgement | left as it is: the PO told the agent to leave `README.md` unchanged for this fix. **Open for PO acceptance**; preferred fix later: drop the list so `AGENTS.md` stays the one source |
+| R2 | `AGENTS.md` says "The Lesson pages will live beside it" about files that don't exist yet; it goes stale if the layout changes | judgement | left as it is: it is the wording of the entry the PO approved. Accepted by the PO on 2026-10-31 |
+| R3 | `README.md` "Site deploy" still lists "`dashboard.html` and `_headers`" for what the `AGENTS.md` command includes; it now also includes `crash-course` | judgement | left as it is: the PO told the agent to leave `README.md` unchanged for this fix. accepted by the PO on 2026-10-31; preferred fix later: drop the list so `AGENTS.md` stays the one source |
 | R4 | The deliberate copy in `js/course.js` (Duplicated Code) | judgement | no change needed: the same finding as S3, mitigated by the comment in `8eacdda` |
 | R5 | `git archive main … crash-course` fails until this branch is merged, because `main` has no `crash-course/` yet | judgement | no change needed: the command is for deploying merged work; do not deploy before the merge |
 
-S5, P1 and P2 are unchanged and still open for PO acceptance.
+S5, P1 and P2 are accepted as above.
 
 ## Still to do
 
-- **Open for the PO:** S5, P1, P2 (keep the "Open the guide in Arabic" button and the "Free guide" eyebrow?), R2 and R3.
-- **Not pushed, no PR opened, no issue closed.** The commits say `Refs #36, #37`.
+- **Nothing is open.** On 2026-10-31 the PO reviewed the open items (S5, P1, P2, R2, R3), approved the merge, approved closing #37 and decided not to deploy until the first Lesson is added.
+- Pushed and PR #47 opened with the PO's approval. CI passed on Node 24 and 26 before this evidence commit.
+- The commits say `Refs #36, #37`; #36 stays open (Release 1 is not finished).
 - Any further change to code, site files, `AGENTS.md` or the spec needs its own review. A commit that only
   changes this report needs none.
