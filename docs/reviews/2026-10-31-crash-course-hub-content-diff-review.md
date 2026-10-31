@@ -48,11 +48,11 @@ referenced by any page.
 
 | # | Finding | Outcome |
 |---|---|---|
-| P1 | Lesson 1's Arabic title "أهلًا بيك في دليل كلود" is agent-written and departs from the table's subject | **open for PO.** Ticket #38 calls titles 1-5 provisional until each Lesson ticket supplies its approved title |
-| P2 | All 18 outcome and time strings (15, 30, 30, 45, 30, 30, 45, 60, 30 min) are agent-written; neither the spec nor Figma gives them | **open for PO.** Marked provisional in `js/translations.js`; Lessons 6-9 are the weakest because Release 2 is undefined (Lesson 7 says "Run your backend on Railway"; the Railway Windows install is unconfirmed) |
-| P3 | English titles for Lessons 6-9 are agent-written | **open for PO**, with P2 |
+| P1 | Lesson 1's Arabic title "أهلًا بيك في دليل كلود" is agent-written and departs from the table's subject | accepted by the PO on 2026-10-31 (approved the table of strings). Still provisional until Lesson 1's own ticket supplies its approved title |
+| P2 | All 18 outcome and time strings (15, 30, 30, 45, 30, 30, 45, 60, 30 min) are agent-written; neither the spec nor Figma gives them | accepted by the PO on 2026-10-31 (approved the table of the 18 strings). Marked provisional in `js/translations.js`; Lessons 6-9 are the weakest because Release 2 is undefined (Lesson 7 says "Run your backend on Railway"; the Railway Windows install is unconfirmed) |
+| P3 | English titles for Lessons 6-9 are agent-written | accepted by the PO on 2026-10-31, with P2 |
 | P4 | The costs box says "hosting, sign-in and email", not Railway, Clerk and Brevo | no change needed: matches the ticket; no prices are stated, and the spec gives none |
-| P5 | "Who it's for" says "You don't need to code" (not stated in the spec) and leaves out "has Claude Pro and Claude Desktop" | **open for PO**, with P2 |
+| P5 | "Who it's for" says "You don't need to code" (not stated in the spec) and leaves out "has Claude Pro and Claude Desktop" | accepted by the PO on 2026-10-31, with P2 (the table of strings listed the who-it's-for text) |
 | P6 | Extra: an eyebrow, a heading and an aria-label on the Lesson list; README and AGENTS.md upkeep | no change needed: documentation upkeep is required; no hero buttons, closing band or mascot were added |
 
 ### Manual checks run (Chrome on a local server)
@@ -74,5 +74,5 @@ own check, not a subagent review, so the PO may ask for a full one.
 
 ## Still to do
 
-- The PO decides the open items (S1, P1, P2, P3, P5), runs their own check, and approves a push.
+- Open for the PO: S1 (lighter greyed cards, or a new colour token), their own check of the hub, and approval to push. P1, P2, P3 and P5 were accepted on 2026-10-31.
 - Nothing is pushed, no PR is open, #38 is open. The commits say `Refs #36, #38`.
