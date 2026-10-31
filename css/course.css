@@ -123,6 +123,25 @@ html[lang="ar"] .course-en-only {
   background: var(--color-white);
 }
 
+/* A released Lesson: the whole card is the link */
+.lesson-card--open {
+  padding: 0;
+}
+
+.lesson-card__link {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border-radius: var(--radius-card);
+}
+
+.lesson-card--open:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-card);
+}
+
 /* "Coming soon": greyed, and not a link */
 .lesson-card--soon {
   background: var(--color-page);
@@ -205,5 +224,703 @@ html[lang="ar"] .costs-box__title {
 
   .course-hero__content {
     padding-block: 72px;
+  }
+}
+
+/* ============ Lesson pages (ticket #39) ============ */
+
+.course-badge--done {
+  padding: 4px 12px;
+  background: var(--color-learn-bg);
+  color: var(--color-accent);
+  font-size: 12px;
+}
+
+.course-badge--done::before {
+  content: "✓ ";
+}
+
+/* Sidebar on the start side (right in Arabic, left in English): a grid flips with the page direction */
+.lesson-layout {
+  display: grid;
+  gap: 16px;
+  padding-block: 16px 64px;
+}
+
+.lesson-sidebar {
+  min-width: 0;
+}
+
+.lesson {
+  min-width: 0;
+  max-width: 46rem;
+}
+
+/* The list of Lessons: always open on wide screens; behind a button on phones */
+.lesson-nav__toggle {
+  display: none;
+}
+
+.lesson-nav__list {
+  display: grid;
+  gap: 4px;
+  padding: 0;
+  list-style: none;
+}
+
+.lesson-nav__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  color: var(--color-text-soft);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.lesson-nav__item--soon {
+  color: var(--color-text-muted);
+}
+
+.lesson-nav__link {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: inherit;
+}
+
+.lesson-nav__link:hover .lesson-nav__title {
+  text-decoration: underline;
+}
+
+.lesson-nav__item--current {
+  background: var(--color-learn-bg);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.lesson-nav__number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-border);
+  color: var(--color-text-soft);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.lesson-nav__item--current .lesson-nav__number {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.lesson-nav__title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.lesson-nav__done {
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.lesson-nav__done[hidden] {
+  display: none;
+}
+
+.lesson-nav__sections {
+  display: grid;
+  flex: 1 1 100%;
+  gap: 2px;
+  margin-top: 6px;
+  padding-inline-start: 38px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.lesson-nav__sections a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: var(--color-text-soft);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.lesson-nav__sections a:hover {
+  background: var(--color-white);
+  color: var(--color-brand);
+}
+
+/* Trail: دليل كلود ← الدرس ١ */
+.lesson-trail ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.lesson-trail li + li::before {
+  content: "←";
+  margin-inline-end: 10px;
+}
+
+html[dir="ltr"] .lesson-trail li + li::before {
+  content: "→";
+}
+
+.lesson-trail a {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lesson-trail [aria-current="page"] {
+  color: var(--color-text);
+}
+
+/* "This Lesson is available in Arabic" (English visitors only, see .course-en-only) */
+.lesson-notice {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--color-learn-bg);
+  color: var(--color-accent);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ----- The Lesson text: Arabic, right to left, whichever language the page shows ----- */
+.lesson [lang="ar"],
+.lesson-nav [lang="ar"] {
+  font-family: var(--font-arabic-body);
+}
+
+.lesson-part {
+  margin-top: 32px;
+  color: var(--color-text-soft);
+  font-size: 17px;
+  line-height: 1.95;
+}
+
+.lesson-part h1,
+.lesson-part h2,
+.lesson-part h3 {
+  color: var(--color-text);
+  font-family: var(--font-arabic-heading);
+  line-height: 1.5;
+}
+
+.lesson-part h1 {
+  color: var(--color-brand-deep);
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.lesson-part h2 {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.lesson-part h3 {
+  margin-top: 24px;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.lesson-part > * + * {
+  margin-top: 14px;
+}
+
+.lesson-part > h2 + *,
+.lesson-part > h3 + * {
+  margin-top: 10px;
+}
+
+/* Bullets: a small terracotta diamond, the brand colour, instead of the browser's dot */
+.lesson-part ul:not(.checklist):not(.self-check__options) {
+  padding: 0;
+  list-style: none;
+}
+
+.lesson-part ul:not(.checklist):not(.self-check__options) > li {
+  position: relative;
+  padding-inline-start: 26px;
+}
+
+.lesson-part ul:not(.checklist):not(.self-check__options) > li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 6px;
+  top: 0.78em;
+  width: 8px;
+  height: 8px;
+  background: var(--color-brand);
+  transform: rotate(45deg);
+}
+
+.lesson-part li + li {
+  margin-top: 6px;
+}
+
+.lesson-part a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.lesson-part a:hover {
+  color: var(--color-brand);
+}
+
+.lesson-part strong {
+  color: var(--color-text);
+}
+
+/* The welcome bird and the facts box share one row; they stack on phones */
+.lesson-intro__row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lesson-intro__row .lesson-facts {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The picture has empty space around the bird (19% on its start side, 10% on the other), so
+   it is pulled back by that much and the bird lines up with the text */
+.lesson-intro__row {
+  --bird-width: 160px;
+}
+
+.lesson-mascot {
+  width: var(--bird-width);
+  height: auto;
+  margin-inline: calc(var(--bird-width) * -0.19) calc(var(--bird-width) * -0.1);
+}
+
+@media (min-width: 640px) {
+  .lesson-intro__row {
+    --bird-width: clamp(200px, 45%, 330px); /* big enough to be about as tall as the facts box */
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .lesson-mascot {
+    flex: none;
+  }
+}
+
+/* The welcome bird is drawn facing the reader's start side in English; mirror it in Arabic */
+html[dir="rtl"] .lesson-mascot {
+  transform: scaleX(-1);
+}
+
+/* Goal, time, what you need, last checked */
+.lesson-facts {
+  display: grid;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: var(--radius-card);
+  background: var(--color-learn-bg);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.lesson-facts div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+}
+
+.lesson-facts dt {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.lesson-facts dd {
+  margin: 0;
+}
+
+/* Square corners. Callouts and quotes stay simple until ticket #40 builds the full component */
+.callout-plain,
+.lesson-quote {
+  margin-inline: 0;
+  padding: 12px 16px;
+  border-radius: 0;
+  border-inline-start: 4px solid var(--color-accent);
+  background: var(--color-learn-bg);
+}
+
+.lesson-quote {
+  border-inline-start-color: var(--color-border);
+  background: var(--color-page);
+}
+
+.callout-plain p,
+.lesson-quote p {
+  margin: 0;
+}
+
+/* A callout with its bird (decorative; mirrored in Arabic like the other mascots) */
+.callout--bird {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.callout__bird {
+  flex: none;
+  width: 72px;
+  height: auto;
+}
+
+html[dir="rtl"] .callout__bird {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 399px) {
+  .callout__bird {
+    width: 56px;
+  }
+}
+
+/* Tables: three columns are tight at 320px, so each row is stacked there */
+.lesson-table {
+  overflow-wrap: anywhere;
+}
+
+.lesson-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.lesson-table th,
+.lesson-table td {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.lesson-table th {
+  background: var(--color-learn-bg);
+  color: var(--color-text);
+}
+
+@media (max-width: 639px) {
+  .lesson-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .lesson-table table,
+  .lesson-table tbody,
+  .lesson-table tr,
+  .lesson-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .lesson-table tr {
+    margin-top: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .lesson-table td {
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .lesson-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .lesson-table td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--color-accent);
+    font-size: 14px;
+    font-weight: 700;
+  }
+}
+
+/* "You're done when" checklist */
+.checklist {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.checklist label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checklist input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 6px 0 0;
+  accent-color: var(--color-brand);
+}
+
+/* Self-check: choose an answer, see why (js/course.js). Square corners. Without the script
+   the explanations stay under each answer. */
+.self-check__item {
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  background: var(--color-white);
+}
+
+.self-check__item + .self-check__item {
+  margin-top: 12px;
+}
+
+.self-check__options {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.self-check__option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  background: var(--color-page);
+  color: var(--color-text);
+  font: inherit;
+  line-height: 1.7;
+  text-align: start;
+  cursor: default;
+}
+
+.self-check__item--enhanced .self-check__option {
+  cursor: pointer;
+}
+
+.self-check__item--enhanced .self-check__option:hover {
+  border-color: var(--color-accent);
+}
+
+.self-check__marker {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 6px;
+  border: 2px solid var(--color-accent);
+  background: var(--color-white);
+}
+
+.self-check__option.is-right {
+  border: 2px solid var(--color-success);
+}
+
+.self-check__option.is-right .self-check__marker {
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+.self-check__option.is-wrong {
+  border: 2px solid var(--color-danger);
+}
+
+.self-check__option.is-wrong .self-check__marker {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+}
+
+/* After a wrong choice the right answer is outlined too */
+.self-check__option.is-answer {
+  border: 2px dashed var(--color-success);
+}
+
+.self-check__option.is-answer .self-check__marker {
+  border-color: var(--color-success);
+}
+
+.self-check__why {
+  display: block;
+  margin-top: 4px;
+  padding-inline: 14px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.self-check__why[hidden] {
+  display: none;
+}
+
+.self-check__feedback {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-inline-start: 4px solid var(--color-border);
+  background: var(--color-page);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.self-check__feedback:empty {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.self-check__feedback.is-right {
+  border-inline-start-color: var(--color-success);
+}
+
+.self-check__feedback.is-wrong {
+  border-inline-start-color: var(--color-danger);
+}
+
+.self-check__feedback .self-check__why {
+  margin: 0;
+  padding: 0;
+}
+
+.self-check__feedback .self-check__correct {
+  margin-top: 8px;
+}
+
+/* The verdict word is also marked with a sign, so colour is not the only signal */
+.self-check__feedback.is-right > .self-check__why strong::before,
+.self-check__correct .self-check__why strong::before {
+  content: "✓ ";
+  content: "✓ " / "";
+  color: var(--color-success);
+}
+
+.self-check__feedback.is-wrong > .self-check__why strong::before {
+  content: "✗ ";
+  content: "✗ " / "";
+  color: var(--color-danger);
+}
+
+/* Previous / next */
+.lesson-pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.lesson-pager__link {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-white);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+a.lesson-pager__link:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.lesson-pager__link--soon {
+  border-style: dashed;
+  background: var(--color-page);
+  color: var(--color-text-muted);
+}
+
+html[lang="ar"] .lesson-pager__link,
+html[lang="ar"] .lesson-nav__item,
+html[lang="ar"] .lesson-nav__toggle {
+  font-family: var(--font-arabic-body);
+}
+
+/* Phones: the list of Lessons collapses behind a "Lessons" button under the header */
+@media (max-width: 959px) {
+  .lesson-nav--enhanced .lesson-nav__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-white);
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .lesson-nav__chevron {
+    transition: transform 0.2s;
+  }
+
+  .lesson-nav.is-open .lesson-nav__chevron {
+    transform: rotate(180deg);
+  }
+
+  .lesson-nav--enhanced:not(.is-open) .lesson-nav__panel {
+    display: none;
+  }
+
+  .lesson-nav__panel {
+    margin-top: 8px;
+  }
+}
+
+@media (min-width: 960px) {
+  .lesson-layout {
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 48px;
+    padding-top: 32px;
+    align-items: start;
+  }
+
+  .lesson-sidebar {
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-nav__chevron {
+    transition: none;
   }
 }
