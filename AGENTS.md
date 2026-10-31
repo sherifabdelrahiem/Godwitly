@@ -189,10 +189,12 @@ proposed work that enters this Workflow at step 1 or 3.
   `crash-course/lesson-N/` folder (Lesson 1 so far), built from its approved draft in
   `docs/course/lesson-N/`.
 - `css/course.css`: Crash course pages only; reuses the `:root` variables.
-- `js/course.js`: language switcher, mobile menu, the phone Lesson list and footer year for the Crash course pages;
-  they never load `js/script.js`.
+- `js/course.js`: language switcher, mobile menu, the phone Lesson list, checklist ticks with the ✓
+  marks and the celebration, and footer year for the Crash course pages; they never load `js/script.js`.
 - `js/course-language.js`: which language a Crash course page opens in, what it remembers
   and how links carry it; tested in `tests/course-language.test.js`.
+- `js/course-progress.js`: the "You're done when" ticks, remembered per Lesson in the browser
+  only; tested in `tests/course-progress.test.js`.
 - `supabase/functions/`: Edge Functions; `notify-signup` sends the owner an alert-only
   email.
 - `supabase/migrations/`: SQL migrations (the `launch_signups` table, its rules, the
@@ -209,7 +211,8 @@ proposed work that enters this Workflow at step 1 or 3.
   and issues.
 - `tests/`: `node --test` tests (development only, ADR-0006). `tests/checks.js` holds the
   project checks: translation parity, translation keys named in the pages and scripts,
-  JavaScript syntax, the Crash course hub's cards and the Lesson pages' rules.
+  JavaScript syntax, the Crash course hub's cards, the Lesson pages' rules and that each hub card
+  lists the same checklist items as its Lesson page.
   `tests/course-lessons.js` is the agreed list of the nine Lessons those pages must match.
 - `tests/samples/components.html`: development-only page showing the Lesson building blocks
   that no released Lesson uses yet (code boxes, tabs, the printable برشامة). Not in the deploy

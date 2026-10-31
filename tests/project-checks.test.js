@@ -10,6 +10,7 @@ const {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
+  findHubChecklistProblems,
   findCourseLessonProblems,
 } = require("./checks.js");
 const { LESSONS } = require("./course-lessons.js");
@@ -63,6 +64,13 @@ test("every project JavaScript file parses", () => {
 
 test("the real hub shows the agreed Lessons, in order, with the agreed availability", () => {
   assert.deepEqual(findCourseHubProblems(read("crash-course/index.html"), LESSONS), []);
+});
+
+test("the real hub card of each released Lesson lists the items of its Lesson page", () => {
+  const pages = Object.fromEntries(
+    LESSONS.filter((lesson) => lesson.released).map((lesson) => [lesson.number, read(`crash-course/${lesson.page}`)]),
+  );
+  assert.deepEqual(findHubChecklistProblems(read("crash-course/index.html"), LESSONS, pages), []);
 });
 
 test("every agreed Lesson has a title in both languages", () => {

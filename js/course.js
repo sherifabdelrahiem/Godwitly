@@ -8,7 +8,8 @@
     5. Code boxes: a Copy button that copies exactly the box's text
     6. Mac / Windows tabs: show one system's steps at a time
     7. The printable برشامة: a Print button (the print style is in css/course.css)
-    8. Current year in the footer
+    8. Checklist progress: ticks remembered in this browser (js/course-progress.js)
+    9. Current year in the footer
 
   Course pages do not load js/script.js, which saves the landing page's language
   on every visit and expects landing-page elements (the product tabs). The language
@@ -333,7 +334,81 @@ document.querySelectorAll(".barshama").forEach((sheet) => {
   sheet.append(button);
 });
 
-/* ---------- 8. Footer year + start ---------- */
+/* ---------- 8. Checklist progress ---------- */
+
+// Ticks are remembered in this browser only (js/course-progress.js). A Lesson shows its done
+// mark in the sidebar, and on the hub card, only when every item is ticked; the Lesson page
+// also shows the celebration then. Without storage, ticking still works for the visit.
+const courseProgress = createCourseProgress(courseStorage());
+
+function showCompleteMark(lessonId, complete) {
+  const lessonNumber = lessonId.replace("lesson-", "");
+  document.querySelectorAll(`[data-lesson="${lessonNumber}"] [data-complete-mark]`).forEach((mark) => {
+    mark.hidden = !complete;
+  });
+}
+
+// The region is always on the page and empty until the Lesson is complete, so a screen reader
+// that watches it announces what is put in. The line keeps its key, so a language switch
+// translates it too.
+function showCelebration(region, complete) {
+  if (!complete) return region.replaceChildren();
+  if (region.firstChild) return;
+  const bird = document.createElement("img");
+  bird.className = "celebration__bird";
+  bird.src = region.dataset.bird;
+  bird.alt = "";
+  const line = document.createElement("p");
+  // The Lesson section is right to left, but the line follows the page's language.
+  line.dir = "auto";
+  const words = document.createElement("strong");
+  words.dataset.i18n = "course.celebration";
+  words.textContent = TRANSLATIONS[courseLanguage.current()]["course.celebration"];
+  line.append(words);
+  region.append(bird, line);
+}
+
+document.querySelectorAll("[data-checklist]").forEach((list) => {
+  const lessonId = list.dataset.checklist;
+  const boxes = [...list.querySelectorAll("input[data-item]")];
+  const checklist = courseProgress.open(lessonId, boxes.map((box) => box.dataset.item));
+  const celebration = document.querySelector("[data-celebration]");
+
+  function showProgress() {
+    showCompleteMark(lessonId, checklist.isComplete());
+    if (celebration) showCelebration(celebration, checklist.isComplete());
+  }
+
+  boxes.forEach((box) => {
+    box.checked = checklist.isTicked(box.dataset.item);
+    box.addEventListener("change", () => {
+      checklist.set(box.dataset.item, box.checked);
+      showProgress();
+    });
+  });
+  showProgress();
+});
+
+// The hub has no checklist: each Lesson card asks what its Lesson page saved.
+// The hub judges each card by the Lesson's current items (the card lists the same
+// identifiers as the Lesson page) and the saved ticks.
+function showHubMarks() {
+  document.querySelectorAll(".lesson-card[data-checklist-items]").forEach((card) => {
+    const lessonId = "lesson-" + card.dataset.lesson;
+    const itemIds = card.dataset.checklistItems.split(/\s+/).filter(Boolean);
+    showCompleteMark(lessonId, courseProgress.isLessonComplete(lessonId, itemIds));
+  });
+}
+
+if (!document.querySelector("[data-checklist]")) {
+  showHubMarks();
+  // Coming back with the browser's Back button can show the hub from memory: ask again.
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) showHubMarks();
+  });
+}
+
+/* ---------- 9. Footer year + start ---------- */
 
 document.getElementById("year").textContent = new Date().getFullYear();
 applyLanguage(courseLanguage.current());
