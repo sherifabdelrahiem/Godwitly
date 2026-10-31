@@ -422,10 +422,13 @@ html[dir="ltr"] .lesson-trail li + li::before {
   line-height: 1.5;
 }
 
+/* The Lesson title stays on one line: on narrow screens it shrinks with the width (the
+   title is about 15.5 times its font size wide; 40px is the page's side gutters). */
 .lesson-part h1 {
   color: var(--color-brand-deep);
-  font-size: 30px;
+  font-size: clamp(16px, calc((100vw - 40px) / 15.8), 30px);
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .lesson-part h2 {
@@ -557,31 +560,68 @@ html[dir="rtl"] .lesson-mascot {
   margin: 0;
 }
 
-/* Square corners. Callouts and quotes stay simple until ticket #40 builds the full component */
-.callout-plain,
+/* Square corners. The prompt quote stays plain */
 .lesson-quote {
   margin-inline: 0;
   padding: 12px 16px;
   border-radius: 0;
-  border-inline-start: 4px solid var(--color-accent);
-  background: var(--color-learn-bg);
-}
-
-.lesson-quote {
-  border-inline-start-color: var(--color-border);
+  border-inline-start: 4px solid var(--color-border);
   background: var(--color-page);
 }
 
-.callout-plain p,
 .lesson-quote p {
   margin: 0;
 }
 
-/* A callout with its bird (decorative; mirrored in Arabic like the other mascots) */
-.callout--bird {
+/* Callouts. The text label carries the meaning; the colour and the bird only support it.
+   The bird is decorative (alt="") and mirrored in Arabic like the other mascots. */
+.callout {
   display: flex;
   align-items: center;
   gap: 16px;
+  margin: 24px 0;
+  padding: 12px 16px;
+  border-radius: 0;
+  border-inline-start: 4px solid var(--color-text-muted);
+  background: var(--color-page);
+}
+
+.callout p {
+  margin: 0;
+}
+
+.callout__label {
+  color: var(--color-text);
+}
+
+.callout--think {
+  border-inline-start-color: var(--color-brand);
+  background: var(--color-engage-bg);
+}
+
+.callout--confusion {
+  border-inline-start-color: var(--color-brand-deep);
+  background: var(--color-icon-bg);
+}
+
+/* Key idea: teal, the Learn colour */
+.callout--key {
+  border-inline-start-color: var(--color-accent);
+  background: var(--color-learn-bg);
+}
+
+.callout--key .callout__label {
+  color: var(--color-accent);
+}
+
+/* Watch out: a danger border all round, so it stands out from the others */
+.callout--warning {
+  border: 2px solid var(--color-danger);
+  background: var(--color-resilience-bg);
+}
+
+.callout--warning .callout__label {
+  color: var(--color-danger);
 }
 
 .callout__bird {
@@ -617,12 +657,19 @@ html[dir="rtl"] .callout__bird {
   padding: 10px 12px;
   border: 1px solid var(--color-border);
   text-align: start;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .lesson-table th {
   background: var(--color-learn-bg);
   color: var(--color-text);
+}
+
+/* The name in a row's first cell stays on one line (stacked rows on phones wrap as needed) */
+@media (min-width: 640px) {
+  .lesson-table td:first-child {
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 639px) {
@@ -922,5 +969,168 @@ html[lang="ar"] .lesson-nav__toggle {
 @media (prefers-reduced-motion: reduce) {
   .lesson-nav__chevron {
     transition: none;
+  }
+}
+
+/* Code boxes: one prompt or command each, with a Copy button (js/course.js). The code is
+   always left to right, even inside an Arabic Lesson. Square corners. */
+.code-box {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  background: var(--color-white);
+}
+
+.code-box__code {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin: 0;
+  padding: 12px;
+  overflow-x: auto;
+  background: var(--color-page);
+  color: var(--color-text);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.code-box__copy {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-accent);
+  border-radius: 0;
+  background: var(--color-white);
+  color: var(--color-accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.code-box__copy:hover {
+  background: var(--color-learn-bg);
+}
+
+.code-box__status {
+  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.code-box__status.is-failed {
+  color: var(--color-danger);
+}
+
+/* Mac / Windows tabs (js/course.js). Without the script every panel shows under its title. */
+.tabs {
+  margin: 24px 0;
+}
+
+.tabs__title {
+  margin: 16px 0 4px;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.tabs--enhanced .tabs__title {
+  display: none;
+}
+
+.tabs__list {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.tabs__tab {
+  min-height: 44px;
+  margin-bottom: -2px;
+  padding: 8px 20px;
+  border: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--color-text-soft);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tabs__tab[aria-selected="true"] {
+  border-color: var(--color-border);
+  border-bottom-color: var(--color-page);
+  background: var(--color-page);
+  color: var(--color-accent);
+}
+
+.tabs__panel[hidden] {
+  display: none;
+}
+
+/* The printable برشامة. On screen it is a framed sheet; printing it prints this sheet only. */
+.barshama {
+  margin: 32px 0;
+  padding: 20px;
+  border: 2px solid var(--color-accent);
+  border-radius: 0;
+  background: var(--color-white);
+}
+
+.barshama h2:first-child {
+  margin-top: 0;
+}
+
+.barshama__print {
+  min-height: 44px;
+  margin-top: 16px;
+  padding: 8px 20px;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-brand);
+  color: var(--color-white);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.barshama__print:hover {
+  background: var(--color-brand-hover);
+}
+
+/* Printing a Lesson that has a برشامة prints one page with only the sheet: everything that
+   is not the sheet, inside it or around it is hidden, and the pieces around it lose their
+   layout so the sheet starts at the top of the page. */
+@media print {
+  body:has(.barshama) :not(.barshama, .barshama *, :has(.barshama)) {
+    display: none !important;
+  }
+
+  body:has(.barshama),
+  body:has(.barshama) :has(.barshama) {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .barshama {
+    margin: 0;
+    border-width: 1px;
+    break-inside: avoid;
+  }
+
+  .barshama__print {
+    display: none;
   }
 }

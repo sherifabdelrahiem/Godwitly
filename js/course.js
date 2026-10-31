@@ -5,7 +5,10 @@
     2. Mobile menu (open / close)
     3. The Lesson list on Lesson pages (open / close on phones)
     4. The Self-check: choose an answer, see why it is right or wrong
-    5. Current year in the footer
+    5. Code boxes: a Copy button that copies exactly the box's text
+    6. Mac / Windows tabs: show one system's steps at a time
+    7. The printable برشامة: a Print button (the print style is in css/course.css)
+    8. Current year in the footer
 
   Course pages do not load js/script.js, which saves the landing page's language
   on every visit and expects landing-page elements (the product tabs). The language
@@ -195,7 +198,142 @@ document.querySelectorAll(".self-check__item").forEach((item) => {
   options.forEach((option) => option.addEventListener("click", () => choose(option)));
 });
 
-/* ---------- 5. Footer year + start ---------- */
+/* ---------- 5. Code boxes (Lesson pages only) ---------- */
+
+// Each box holds one prompt or command in <code>. The Copy button is added here, not written
+// in the HTML, so a visitor without this script never sees a button that does nothing.
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (error) {
+      /* blocked: fall through to the older way */
+    }
+  }
+  // The older way, for browsers that keep the clipboard from local files.
+  const helper = document.createElement("textarea");
+  helper.value = text;
+  helper.setAttribute("readonly", "");
+  helper.style.position = "fixed";
+  helper.style.opacity = "0";
+  document.body.append(helper);
+  helper.select();
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch (error) {
+    copied = false;
+  }
+  helper.remove();
+  return copied;
+}
+
+document.querySelectorAll(".code-box").forEach((box) => {
+  const code = box.querySelector("code");
+  if (!code) return;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "code-box__copy";
+  button.dataset.i18n = "course.copy";
+  // The message sits next to the button and is announced to screen readers.
+  const status = document.createElement("span");
+  status.className = "code-box__status";
+  status.setAttribute("role", "status");
+  box.prepend(button, status);
+
+  let clearTimer;
+  button.addEventListener("click", async () => {
+    const copied = await copyText(code.textContent);
+    const key = copied ? "course.copied" : "course.copyFailed";
+    // Kept as a key, so switching language while it shows translates it too.
+    status.dataset.i18n = key;
+    status.textContent = TRANSLATIONS[courseLanguage.current()][key];
+    status.classList.toggle("is-failed", !copied);
+    clearTimeout(clearTimer);
+    clearTimer = setTimeout(() => {
+      delete status.dataset.i18n;
+      status.replaceChildren();
+    }, 4000);
+  });
+});
+
+/* ---------- 6. Mac / Windows tabs (Lesson pages only) ---------- */
+
+// Each panel is one system's steps, named by data-tab-label. Without this script every
+// panel stays visible under its own title, so the steps still read. With it, one panel
+// shows at a time. Left/Right (swapped when the tabs read right to left), Home and End move between the tabs.
+document.querySelectorAll("[data-tabs]").forEach((group, groupIndex) => {
+  const panels = [...group.querySelectorAll(":scope > .tabs__panel")];
+  if (panels.length < 2) return;
+
+  const list = document.createElement("div");
+  list.className = "tabs__list";
+  list.setAttribute("role", "tablist");
+  list.dataset.i18nAriaLabel = "course.tabs.label";
+
+  const tabs = panels.map((panel, i) => {
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = "tabs__tab";
+    tab.setAttribute("role", "tab");
+    tab.id = `tabs-${groupIndex}-tab-${i}`;
+    tab.textContent = panel.dataset.tabLabel;
+    panel.id = panel.id || `tabs-${groupIndex}-panel-${i}`;
+    tab.setAttribute("aria-controls", panel.id);
+    panel.setAttribute("role", "tabpanel");
+    panel.setAttribute("aria-labelledby", tab.id);
+    list.append(tab);
+    return tab;
+  });
+
+  function select(index, focus) {
+    tabs.forEach((tab, i) => {
+      tab.setAttribute("aria-selected", String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+      panels[i].hidden = i !== index;
+    });
+    if (focus) tabs[index].focus();
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => select(i, false));
+    tab.addEventListener("keydown", (event) => {
+      // The Lesson text is right to left even when the page is not, so ask the tabs themselves.
+      const rtl = getComputedStyle(list).direction === "rtl";
+      const forward = rtl ? "ArrowLeft" : "ArrowRight";
+      const backward = rtl ? "ArrowRight" : "ArrowLeft";
+      const moves = {
+        [forward]: (i + 1) % tabs.length,
+        [backward]: (i - 1 + tabs.length) % tabs.length,
+        Home: 0,
+        End: tabs.length - 1,
+      };
+      if (event.key in moves) {
+        event.preventDefault();
+        select(moves[event.key], true);
+      }
+    });
+  });
+
+  group.classList.add("tabs--enhanced");
+  group.prepend(list);
+  select(0, false);
+});
+
+/* ---------- 7. Printable برشامة (Lesson pages that have one) ---------- */
+
+document.querySelectorAll(".barshama").forEach((sheet) => {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "barshama__print";
+  button.dataset.i18n = "course.print";
+  button.addEventListener("click", () => window.print());
+  sheet.append(button);
+});
+
+/* ---------- 8. Footer year + start ---------- */
 
 document.getElementById("year").textContent = new Date().getFullYear();
 applyLanguage(courseLanguage.current());

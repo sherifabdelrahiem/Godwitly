@@ -1,0 +1,85 @@
+<!doctype html>
+<!--
+  DEVELOPMENT ONLY (spec #36, ticket #40). Never deployed: it sits in tests/, and the deploy
+  command copies only the site files. Open it with `open tests/samples/components.html`, or
+  over a local server (`python3 -m http.server 8000`, then /tests/samples/components.html), to
+  check the Lesson building blocks that Lesson 1 does not use: code boxes with Copy, Mac /
+  Windows tabs and the printable برشامة. The text is placeholder text, not course content.
+  The stub header only gives js/course.js the elements it expects.
+-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Lesson building blocks — development sample</title>
+    <link rel="stylesheet" href="../../css/styles.css" />
+    <link rel="stylesheet" href="../../css/course.css" />
+  </head>
+  <body>
+    <header style="padding: 12px var(--page-gutter)">
+      <button type="button" class="menu-button" aria-expanded="false" aria-controls="mobile-menu" hidden></button>
+      <div id="mobile-menu" hidden></div>
+      <div class="lang-switch">
+        <button type="button" class="lang-switch__btn" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" class="lang-switch__btn" data-lang="ar" aria-pressed="false">العربية</button>
+      </div>
+    </header>
+
+    <main id="main">
+      <article class="lesson" style="max-width: 760px; margin: 0 auto; padding: 0 var(--page-gutter)">
+        <div class="lesson-part" lang="ar" dir="rtl">
+          <h1>عينة لعناصر الدرس (نص تجريبي)</h1>
+
+          <h2>صناديق الكود</h2>
+          <p>كل صندوق فيه نص واحد، والزر بينسخه بالظبط.</p>
+          <div class="code-box">
+            <pre class="code-box__code" dir="ltr" lang="en"><code>echo "hello"</code></pre>
+          </div>
+          <div class="code-box">
+            <pre class="code-box__code" dir="ltr" lang="en"><code>first line
+  second line, indented
+third line with "quotes" &amp; an ampersand &lt;tag&gt;</code></pre>
+          </div>
+
+          <h2>تبويبات Mac / Windows</h2>
+          <div class="tabs" data-tabs>
+            <div class="tabs__panel" data-tab-label="Mac">
+              <p class="tabs__title">Mac</p>
+              <p>خطوات الماك (نص تجريبي).</p>
+              <div class="code-box">
+                <pre class="code-box__code" dir="ltr" lang="en"><code>open -a Terminal</code></pre>
+              </div>
+            </div>
+            <div class="tabs__panel" data-tab-label="Windows">
+              <p class="tabs__title">Windows</p>
+              <p>خطوات ويندوز (نص تجريبي).</p>
+              <div class="code-box">
+                <pre class="code-box__code" dir="ltr" lang="en"><code>start powershell</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout--key" role="note">
+            <img class="callout__bird" src="../../assets/images/mascot-4-lightbulb.webp" alt="" width="640" height="533" loading="lazy" />
+            <p><strong class="callout__label">فكرة مهمة:</strong> نص تجريبي بعد التبويبات.</p>
+          </div>
+
+          <section class="barshama" id="cheatsheet" aria-labelledby="barshama-title">
+            <h2 id="barshama-title">برشامة (نص تجريبي)</h2>
+            <ul>
+              <li>مصطلح تجريبي: شرح قصير.</li>
+              <li>أمر تجريبي: <code dir="ltr">echo "hello"</code></li>
+            </ul>
+          </section>
+        </div>
+      </article>
+    </main>
+
+    <footer><span id="year"></span></footer>
+
+    <script src="../../js/translations.js"></script>
+    <script src="../../js/course-language.js"></script>
+    <script src="../../js/course.js"></script>
+  </body>
+</html>
