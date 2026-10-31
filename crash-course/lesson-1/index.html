@@ -394,11 +394,8 @@
           <li><label><input type="checkbox" data-item="plan-mode" /> <span>تقدر توضّح يعني إيه Plan mode وليه بتراجع الخطة قبل التنفيذ.</span></label></li>
           <li><label><input type="checkbox" data-item="skill-example" /> <span>تقدر تشرح ببساطة يعني إيه Skill، وتذكر مثالًا لأداة ممكن يحتاجها المشروع.</span></label></li>
           </ul>
-          <!-- Shown by js/course.js when every item above is ticked; the bird is decorative -->
-          <div class="celebration" data-celebration hidden>
-            <img class="celebration__bird" src="../../assets/images/mascot-5-celebrating.webp" alt="" width="640" height="533" />
-            <p role="status"><strong data-i18n="course.celebration">Well done! You finished this Lesson.</strong></p>
-          </div>
+          <!-- A live region that is always here and empty; js/course.js fills it (bird 5 and a line) when every item above is ticked -->
+          <div class="celebration" data-celebration role="status" data-bird="../../assets/images/mascot-5-celebrating.webp"></div>
           </section>
           <section class="lesson-part lesson-section" id="self-check" lang="ar" dir="rtl">
           <h2>اختبر نفسك</h2>

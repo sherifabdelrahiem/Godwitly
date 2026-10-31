@@ -148,7 +148,8 @@
           <h2 id="lessons-title" class="section-title" data-i18n="course.lessons.title">Nine Lessons, one after the other</h2>
           <!-- A Lesson is "Coming soon" until its own ticket adds the page; tests/course-lessons.js lists the agreed Lessons -->
           <ol class="lesson-list" data-i18n-aria-label="course.lessons.label" aria-label="The nine Lessons">
-            <li class="lesson-card lesson-card--open" data-lesson="1">
+            <!-- data-checklist-items: the identifiers of the Lesson's checklist (data-item). tests/checks.js compares them with the Lesson page -->
+            <li class="lesson-card lesson-card--open" data-lesson="1" data-checklist-items="explain-claude-help chat-vs-code plan-mode skill-example">
               <a class="lesson-card__link" href="lesson-1/index.html" data-course-link>
                 <span class="lesson-card__number" data-i18n="course.lesson1.number">1</span>
                 <div class="lesson-card__body">
@@ -156,7 +157,7 @@
                   <p class="lesson-card__outcome" data-i18n="course.lesson1.outcome">Outcome</p>
                   <p class="lesson-card__meta">
                     <span class="lesson-card__time" data-i18n="course.lesson1.time">Time</span>
-                    <!-- Shown by the progress script (ticket #41) when the whole checklist is ticked -->
+                    <!-- Shown by js/course.js when every item of the Lesson's checklist is ticked -->
                     <span class="course-badge course-badge--done" data-complete-mark hidden data-i18n="course.done">Done</span>
                   </p>
                 </div>

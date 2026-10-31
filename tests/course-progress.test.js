@@ -53,18 +53,18 @@ test("a Lesson is complete only when every item is ticked", () => {
 test("an empty checklist is never complete", () => {
   const progress = createCourseProgress(fakeStorage());
   assert.equal(progress.open("lesson-1", []).isComplete(), false);
-  assert.equal(progress.isLessonComplete("lesson-1"), false);
+  assert.equal(progress.isLessonComplete("lesson-1", ITEMS), false);
 });
 
-test("the hub learns a Lesson is complete from what the Lesson page saved", () => {
+test("the hub tells a Lesson is complete from the Lesson's current items and the saved ticks", () => {
   const storage = fakeStorage();
   const checklist = createCourseProgress(storage).open("lesson-1", ITEMS);
   ITEMS.forEach((id) => checklist.set(id, true));
   const hub = createCourseProgress(storage);
-  assert.equal(hub.isLessonComplete("lesson-1"), true);
-  assert.equal(hub.isLessonComplete("lesson-2"), false);
+  assert.equal(hub.isLessonComplete("lesson-1", ITEMS), true);
+  assert.equal(hub.isLessonComplete("lesson-2", ITEMS), false);
   checklist.set("a", false);
-  assert.equal(createCourseProgress(storage).isLessonComplete("lesson-1"), false);
+  assert.equal(createCourseProgress(storage).isLessonComplete("lesson-1", ITEMS), false);
 });
 
 test("ticks follow item identifiers when items are reordered", () => {
@@ -88,32 +88,44 @@ test("a tick for a removed item is ignored", () => {
   assert.equal(after.isComplete(), true);
 });
 
-test("an item added to a finished Lesson makes it incomplete, on the Lesson page and the hub", () => {
+test("an item added after a Lesson was finished makes it incomplete, even on the hub before the Lesson is reopened", () => {
   const storage = fakeStorage();
   const old = createCourseProgress(storage).open("lesson-1", ["a", "b"]);
   old.set("a", true);
   old.set("b", true);
-  const updated = createCourseProgress(storage).open("lesson-1", ["a", "b", "new"]);
-  assert.equal(updated.isComplete(), false);
-  assert.equal(createCourseProgress(storage).isLessonComplete("lesson-1"), false);
+  assert.equal(createCourseProgress(storage).isLessonComplete("lesson-1", ["a", "b"]), true);
+  // The hub is visited first, now knowing the updated checklist.
+  assert.equal(createCourseProgress(storage).isLessonComplete("lesson-1", ["a", "b", "new"]), false);
+  assert.equal(createCourseProgress(storage).open("lesson-1", ["a", "b", "new"]).isComplete(), false);
 });
 
 test("missing or damaged saved data reads as nothing ticked", () => {
   const key = "godwitly-course-progress-lesson-1";
-  const damaged = ["not json", "null", "42", '"text"', "[]", '{"ticked":"a"}', '{"ticked":[1,null,{}]}', ""];
+  const damaged = ["not json", "null", "42", '"text"', "[]", '{"ticked":"a"}', '{"ticked":[1,null,{}]}', '{}', ""];
   for (const saved of damaged) {
     const progress = createCourseProgress(fakeStorage({ [key]: saved }));
     const checklist = progress.open("lesson-1", ITEMS);
     assert.deepEqual(ITEMS.filter((id) => checklist.isTicked(id)), [], `saved: ${saved}`);
     assert.equal(checklist.isComplete(), false);
-    assert.equal(progress.isLessonComplete("lesson-1"), false);
+    assert.equal(progress.isLessonComplete("lesson-1", ITEMS), false);
   }
 });
 
-test("a damaged item list never makes a Lesson complete on the hub", () => {
+test("a record with any invalid entry is rejected whole, not filtered", () => {
   const key = "godwitly-course-progress-lesson-1";
-  const storage = fakeStorage({ [key]: '{"ticked":["a"],"items":"a"}' });
-  assert.equal(createCourseProgress(storage).isLessonComplete("lesson-1"), false);
+  const partly = ['{"ticked":["a",23]}', '{"ticked":["a",null,"b"]}', '{"ticked":["a",["b"]]}'];
+  for (const saved of partly) {
+    const progress = createCourseProgress(fakeStorage({ [key]: saved }));
+    assert.equal(progress.open("lesson-1", ITEMS).isTicked("a"), false, `saved: ${saved}`);
+    assert.equal(progress.isLessonComplete("lesson-1", ["a"]), false, `saved: ${saved}`);
+  }
+});
+
+test("a rejected record is replaced by the next tick", () => {
+  const storage = fakeStorage({ "godwitly-course-progress-lesson-1": '{"ticked":["a",23]}' });
+  createCourseProgress(storage).open("lesson-1", ITEMS).set("b", true);
+  const again = createCourseProgress(storage).open("lesson-1", ITEMS);
+  assert.deepEqual(ITEMS.filter((id) => again.isTicked(id)), ["b"]);
 });
 
 test("a read that throws starts with nothing ticked", () => {
@@ -121,7 +133,7 @@ test("a read that throws starts with nothing ticked", () => {
   const progress = createCourseProgress(storage);
   const checklist = progress.open("lesson-1", ITEMS);
   assert.equal(checklist.isTicked("a"), false);
-  assert.equal(progress.isLessonComplete("lesson-1"), false);
+  assert.equal(progress.isLessonComplete("lesson-1", ITEMS), false);
 });
 
 test("a write that throws still allows ticking and unticking during the visit", () => {

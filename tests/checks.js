@@ -413,6 +413,40 @@ function findCourseHubProblems(html, lessons) {
 const OUTSIDE_LINK = /^([a-z][a-z0-9+.-]*:|\/\/)/i;
 
 // The project-relative path a relative link points to, without its query or #hash.
+// Each released Lesson's hub card lists the same checklist items as its Lesson page
+// (ticket #41): the hub judges "complete" from these current items and the saved ticks, so a
+// changed checklist is never judged by an old copy. lessonPages maps a Lesson number to its HTML.
+function findHubChecklistProblems(hubHtml, lessons, lessonPages) {
+  const problems = [];
+  const hub = hubHtml.replace(/<!--[\s\S]*?-->/g, "");
+  const cards = [...hub.matchAll(/<li\b([^>]*\bdata-lesson="(\d+)"[^>]*)>/gi)].map(([, attributes, number]) => ({
+    number: Number(number),
+    items: (/\sdata-checklist-items="([^"]*)"/i.exec(attributes) || [])[1],
+  }));
+  for (const lesson of lessons.filter((entry) => entry.released)) {
+    const card = cards.find((entry) => entry.number === lesson.number);
+    if (!card) {
+      problems.push(`Lesson ${lesson.number} has no card on the hub, so its checklist items cannot be compared`);
+      continue;
+    }
+    if (card.items === undefined || card.items.trim() === "") {
+      problems.push(`Lesson ${lesson.number}'s hub card has no checklist items (data-checklist-items)`);
+      continue;
+    }
+    const page = (lessonPages[lesson.number] || "").replace(/<!--[\s\S]*?-->/g, "");
+    const checklist = /<(ul|ol)\b[^>]*\sdata-checklist\b[^>]*>([\s\S]*?)<\/\1>/i.exec(page);
+    const onPage = checklist
+      ? [...checklist[2].matchAll(/<input\b[^>]*\sdata-item\s*=\s*"([^"]*)"/gi)].map(([, id]) => id)
+      : [];
+    const onCard = card.items.trim().split(/\s+/);
+    const same = onCard.length === onPage.length && onCard.every((id) => onPage.includes(id));
+    if (!same) {
+      problems.push(`Lesson ${lesson.number}'s hub card lists the items "${card.items}" but its page has "${onPage.join(" ")}"`);
+    }
+  }
+  return problems;
+}
+
 function resolveLink(file, href) {
   const target = href.split("#")[0].split("?")[0];
   return path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
@@ -693,5 +727,6 @@ module.exports = {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
+  findHubChecklistProblems,
   findCourseLessonProblems,
 };

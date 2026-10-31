@@ -1164,8 +1164,8 @@ html[lang="ar"] .lesson-nav__toggle {
   margin-top: 16px;
 }
 
-.celebration[hidden] {
-  display: none;
+.celebration:empty {
+  margin: 0;
 }
 
 .celebration p {

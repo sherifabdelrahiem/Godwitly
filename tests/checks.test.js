@@ -11,6 +11,7 @@ const {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
+  findHubChecklistProblems,
   findCourseLessonProblems,
 } = require("./checks.js");
 
@@ -264,6 +265,41 @@ test("pages: reads attribute names in any case, with digits, but not text inside
     'DATA-I18N "nav.one": no such key in ar',
     'data-i18n-x2 "nav.two": no such key in en',
     'data-i18n-x2 "nav.two": no such key in ar',
+  ]);
+});
+
+// ---- Course check, hub card items match the Lesson page (spec #36, ticket #41) ----
+
+const itemsCard = (n, items) =>
+  `<li class="lesson-card" data-lesson="${n}"${items === undefined ? "" : ` data-checklist-items="${items}"`}><a href="x" data-course-link></a></li>`;
+const itemsHub = (...cards) => `<main><ol class="lesson-list">${cards.join("")}</ol></main>`;
+const itemsLesson = (...ids) =>
+  `<ul data-checklist="lesson-1">${ids.map((id) => `<li><input type="checkbox" data-item="${id}"></li>`).join("")}</ul>`;
+const RELEASED = [{ number: 1, released: true }, { number: 2, released: false }];
+
+test("hub items: a card listing the same items as its Lesson page passes, in any order", () => {
+  const pages = { 1: itemsLesson("a", "b", "c") };
+  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "a b c")), RELEASED, pages), []);
+  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "c a b")), RELEASED, pages), []);
+});
+
+test("hub items: a card that lacks or differs from its Lesson page's items is reported", () => {
+  const pages = { 1: itemsLesson("a", "b") };
+  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1)), RELEASED, pages), [
+    "Lesson 1's hub card has no checklist items (data-checklist-items)",
+  ]);
+  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "a")), RELEASED, pages), [
+    'Lesson 1\'s hub card lists the items "a" but its page has "a b"',
+  ]);
+  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "a b new")), RELEASED, pages), [
+    'Lesson 1\'s hub card lists the items "a b new" but its page has "a b"',
+  ]);
+});
+
+test("hub items: a released Lesson without a card is reported; unreleased Lessons need no items", () => {
+  const pages = { 1: itemsLesson("a") };
+  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(2)), RELEASED, pages), [
+    "Lesson 1 has no card on the hub, so its checklist items cannot be compared",
   ]);
 });
 

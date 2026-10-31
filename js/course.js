@@ -348,6 +348,24 @@ function showCompleteMark(lessonId, complete) {
   });
 }
 
+// The region is always on the page and empty until the Lesson is complete, so a screen reader
+// that watches it announces what is put in. The line keeps its key, so a language switch
+// translates it too.
+function showCelebration(region, complete) {
+  if (!complete) return region.replaceChildren();
+  if (region.firstChild) return;
+  const bird = document.createElement("img");
+  bird.className = "celebration__bird";
+  bird.src = region.dataset.bird;
+  bird.alt = "";
+  const line = document.createElement("p");
+  const words = document.createElement("strong");
+  words.dataset.i18n = "course.celebration";
+  words.textContent = TRANSLATIONS[courseLanguage.current()]["course.celebration"];
+  line.append(words);
+  region.append(bird, line);
+}
+
 document.querySelectorAll("[data-checklist]").forEach((list) => {
   const lessonId = list.dataset.checklist;
   const boxes = [...list.querySelectorAll("input[data-item]")];
@@ -356,7 +374,7 @@ document.querySelectorAll("[data-checklist]").forEach((list) => {
 
   function showDone() {
     showCompleteMark(lessonId, checklist.isComplete());
-    if (celebration) celebration.hidden = !checklist.isComplete();
+    if (celebration) showCelebration(celebration, checklist.isComplete());
   }
 
   boxes.forEach((box) => {
@@ -370,10 +388,13 @@ document.querySelectorAll("[data-checklist]").forEach((list) => {
 });
 
 // The hub has no checklist: each Lesson card asks what its Lesson page saved.
+// The hub judges each card by the Lesson's current items (the card lists the same
+// identifiers as the Lesson page) and the saved ticks.
 function showHubMarks() {
-  document.querySelectorAll(".lesson-card[data-lesson]").forEach((card) => {
+  document.querySelectorAll(".lesson-card[data-checklist-items]").forEach((card) => {
     const lessonId = "lesson-" + card.dataset.lesson;
-    showCompleteMark(lessonId, courseProgress.isLessonComplete(lessonId));
+    const itemIds = card.dataset.checklistItems.split(/\s+/).filter(Boolean);
+    showCompleteMark(lessonId, courseProgress.isLessonComplete(lessonId, itemIds));
   });
 }
 

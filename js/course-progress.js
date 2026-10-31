@@ -3,52 +3,50 @@
   the browser's own storage: nothing here talks to a server.
 
   Ticks are kept per Lesson, against each checklist item's identifier (the
-  data-item on the page), never its position or wording. Alongside the ticks a
-  Lesson saves the identifiers of its checklist, so the hub can tell a Lesson is
-  complete without loading the Lesson page.
+  data-item on the page), never its position or wording. Only the ticks are
+  saved; the Lesson's items always come from the page that asks (the Lesson
+  page, or the hub card's list of the same identifiers), so a changed checklist
+  is never judged by an old copy.
 
   Loaded as a plain script on the course pages, and by the tests in tests/ (Node).
 */
 const COURSE_PROGRESS_KEY_PREFIX = "godwitly-course-progress-";
 
-// Keeps only the text entries of a saved list; anything else reads as an empty list.
-function textEntries(value) {
-  return Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
-}
-
 function createCourseProgress(storage) {
-  // What a Lesson saved, or nothing when it is missing, damaged or storage can't be read.
+  // The ticked identifiers a Lesson saved. A record that is missing, unreadable or has any
+  // invalid part is damaged as a whole and reads as nothing ticked; nothing is salvaged from it.
   function read(lessonId) {
     try {
       const raw = storage.getItem(COURSE_PROGRESS_KEY_PREFIX + lessonId);
-      if (raw === null) return null;
+      if (raw === null) return [];
       const saved = JSON.parse(raw);
-      if (saved === null || typeof saved !== "object" || Array.isArray(saved)) return null;
-      return { ticked: textEntries(saved.ticked), items: textEntries(saved.items) };
+      const valid =
+        saved !== null &&
+        typeof saved === "object" &&
+        Array.isArray(saved.ticked) &&
+        saved.ticked.every((id) => typeof id === "string");
+      return valid ? saved.ticked : [];
     } catch (error) {
-      return null;
+      return [];
     }
   }
 
   // Failing to remember is not an error: the ticks still work for this visit.
-  function write(lessonId, record) {
+  function write(lessonId, ticked) {
     try {
-      storage.setItem(COURSE_PROGRESS_KEY_PREFIX + lessonId, JSON.stringify(record));
+      storage.setItem(COURSE_PROGRESS_KEY_PREFIX + lessonId, JSON.stringify({ ticked }));
     } catch (error) {
       /* storage is full or blocked */
     }
   }
 
+  const allTicked = (itemIds, ticked) => itemIds.length > 0 && itemIds.every((id) => ticked.includes(id));
+
   return {
     // The Lesson page's checklist. itemIds are the identifiers it has now.
     open(lessonId, itemIds) {
-      const saved = read(lessonId);
       // A tick for an item that is no longer on the page is dropped.
-      const ticked = new Set((saved ? saved.ticked : []).filter((id) => itemIds.includes(id)));
-      const save = () => write(lessonId, { ticked: [...ticked], items: [...itemIds] });
-
-      // Keep the hub's copy of the item list in step when the Lesson's checklist has changed.
-      if (saved && saved.items.join("\n") !== itemIds.join("\n")) save();
+      const ticked = new Set(read(lessonId).filter((id) => itemIds.includes(id)));
 
       return {
         isTicked: (id) => ticked.has(id),
@@ -56,17 +54,14 @@ function createCourseProgress(storage) {
           if (!itemIds.includes(id)) return;
           if (value) ticked.add(id);
           else ticked.delete(id);
-          save();
+          write(lessonId, [...ticked]);
         },
-        isComplete: () => itemIds.length > 0 && itemIds.every((id) => ticked.has(id)),
+        isComplete: () => allTicked(itemIds, [...ticked]),
       };
     },
 
-    // For the hub: complete when the Lesson's saved checklist is not empty and fully ticked.
-    isLessonComplete(lessonId) {
-      const saved = read(lessonId);
-      return saved !== null && saved.items.length > 0 && saved.items.every((id) => saved.ticked.includes(id));
-    },
+    // For the hub: complete when the Lesson's current items are not empty and all ticked.
+    isLessonComplete: (lessonId, itemIds) => allTicked(itemIds, read(lessonId)),
   };
 }
 
