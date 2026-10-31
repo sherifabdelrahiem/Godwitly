@@ -418,10 +418,16 @@ function resolveLink(file, href) {
   return path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
 }
 
+// An attribute's value in double quotes, single quotes or none; undefined when absent.
+function attributeValue(attributes, name) {
+  const found = new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'=<>\`]+))`, "i").exec(attributes);
+  return found ? (found[1] ?? found[2] ?? found[3]) : undefined;
+}
+
 function anchorsIn(html) {
   return [...html.matchAll(/<a\b([^>]*)>/gi)].map(([, attributes]) => ({
     attributes,
-    href: (/\shref\s*=\s*"([^"]*)"/i.exec(attributes) || [])[1],
+    href: attributeValue(attributes, "href"),
   }));
 }
 
@@ -606,7 +612,8 @@ function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
       linkProblems.add(`the link "${href}" goes to a course page without data-course-link, so the language would be lost`);
     }
   }
-  for (const [, src] of page.matchAll(/<img\b[^>]*\ssrc\s*=\s*"([^"]*)"/gi)) {
+  for (const [, attributes] of page.matchAll(/<img\b([^>]*)>/gi)) {
+    const src = attributeValue(attributes, "src");
     if (!src || OUTSIDE_LINK.test(src)) continue;
     const target = resolveLink(file, src);
     if (!exists(target)) linkProblems.add(`the image "${src}" points to ${target}, which does not exist`);

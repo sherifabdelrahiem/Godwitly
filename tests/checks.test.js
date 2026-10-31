@@ -663,3 +663,17 @@ test("links: a link to a course page carries the language (data-course-link); ot
   );
   assert.deepEqual(lessonProblems(fine), []);
 });
+
+test("links: single-quoted and unquoted addresses are read too", () => {
+  assert.deepEqual(lessonProblems(withLinks("<a href='http://example.com/'>x</a>")), [
+    'the link "http://example.com/" is not a complete https:// address',
+  ]);
+  assert.deepEqual(lessonProblems(withLinks("<a href=http://example.com/>x</a>")), [
+    'the link "http://example.com/" is not a complete https:// address',
+  ]);
+  const html = withLinks("<img src='../../assets/missing.webp'><a href='resources/a.md'>a</a>");
+  assert.deepEqual(lessonProblems(html, { exists: (target) => !/resources|missing/.test(target) }), [
+    'the link "resources/a.md" points to crash-course/lesson-1/resources/a.md, which does not exist',
+    'the image "../../assets/missing.webp" points to assets/missing.webp, which does not exist',
+  ]);
+});
