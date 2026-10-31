@@ -47,7 +47,7 @@ Ticket #37 acceptance criteria:
 | Link text keys in both languages; checks pass | met: `nav.crashCourses` = "Crash Courses" / "الدورات المكثّفة"; the hub is in the reference check |
 | Manual: Arabic by default, `?lang=en`, blocked storage | **run** (see below) |
 | Manual: landing page and dashboard behave as before | partly run (see below) |
-| Manual: `file://`, local server, EN/AR, desktop and 320px | **partly run; `file://` not run** (see below) |
+| Manual: `file://`, local server, EN/AR, desktop and 320px | met on the PO's check of `file://` (2026-10-31) and the agent's local-server checks below; the PO's check was one look at three tabs, not a recorded list of cases |
 | `node --test` passes | met |
 | Diff review saved | this report |
 
@@ -67,7 +67,7 @@ Ticket #37 acceptance criteria:
 
 ### Not run
 
-- **`file://`:** the browser tool can't open local files. The hub uses relative paths and wraps all storage access, but this is **not confirmed**. Please double-click `crash-course/index.html` in English and Arabic.
+- **`file://` by the agent:** the browser tool can't open local files. The PO opened the hub (default and `?lang=en`) and the landing page from `file://` on 2026-10-31 and reported "the three files are ok".
 - **Landing Launch sign-up form and the Sign-up dashboard:** not exercised. `js/script.js`, `js/form.js` and all `dashboard.*` files are untouched (see the diff), and the form was not submitted.
 - **Landing page in English and Arabic at 1024px:** the new fifth menu link was seen at 1440px and 320px, not at 1024px.
 - **Hub on a real phone, and keyboard navigation:** not run.
