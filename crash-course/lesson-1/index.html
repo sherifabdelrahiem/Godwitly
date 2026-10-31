@@ -7,8 +7,7 @@
   not in js/translations.js. Everything else (header, sidebar labels, trail, pager, notice)
   gets its text from ../../js/translations.js through data-i18n, like the hub.
 
-  The callouts, code boxes, tabs, Self-check and checklist behaviour are built later
-  (tickets #40 and #41); until then they appear as plain text.
+  The callouts are built (ticket #40); the checklist's saved ticks come with ticket #41.
 -->
 <html lang="en" dir="ltr">
   <head>
@@ -204,10 +203,10 @@
           </blockquote>
           <p>كل ما توضّح المطلوب وتديله المعلومات اللي محتاجها، يبقى عنده أساس أفضل يساعدك عليه. وكلود ممكن يغلط أو يفهمك بشكل مختلف عن قصدك، علشان كده راجع النتيجة وتأكد من المعلومات قبل ما تعتمد عليها.</p>
           <!-- Callout "فكّر فيها" (mascot 2, thoughtful) -->
-          <blockquote class="callout-plain callout--bird">
+          <div class="callout callout--think" role="note">
           <img class="callout__bird" src="../../assets/images/mascot-2-thoughtful.webp" alt="" width="640" height="600" loading="lazy" />
-          <p><strong>فكّر فيها:</strong> لو عندك فكرة لمشروع، إيه المعلومات اللي محتاج تجهّزها عشان تشرحها لكلود بوضوح؟</p>
-          </blockquote>
+          <p><strong class="callout__label">فكّر فيها:</strong> لو عندك فكرة لمشروع، إيه المعلومات اللي محتاج تجهّزها عشان تشرحها لكلود بوضوح؟</p>
+          </div>
           </section>
           <section class="lesson-part lesson-section" id="claude-vs-code" lang="ar" dir="rtl">
           <h2>إيه الفرق بين كلود وكلود كود؟</h2>
@@ -216,17 +215,17 @@
           <p>يعني لو طلبت منه يعمل صفحة، يقدر يشتغل على ملفاتها جوه فولدر المشروع. وبعدها تقدر تطلب منه يعدّل الألوان، أو يكبّر الكتابة، أو يصلّح مشكلة في شكل الصفحة على الموبايل.</p>
           <p>إنت بتشرح المطلوب وبتراجع النتيجة، وكلود كود بيساعدك في التنفيذ. وقبل ما توافق على خطوة بيطلب إذنك فيها، فاقرا هو ناوي يعمل إيه.</p>
           <!-- Callout "لخبطة شائعة" (mascot 3, confused) -->
-          <blockquote class="callout-plain callout--bird">
+          <div class="callout callout--confusion" role="note">
           <img class="callout__bird" src="../../assets/images/mascot-3-confused.webp" alt="" width="640" height="426" loading="lazy" />
-          <p><strong>لخبطة شائعة:</strong> المحادثة مع كلود بتساعدك تفهم وتكتب وتفكّر. كلود كود كمان يقدر يشتغل على ملفات المشروع حسب الصلاحيات اللي إنت بتديهاله.</p>
-          </blockquote>
+          <p><strong class="callout__label">لخبطة شائعة:</strong> المحادثة مع كلود بتساعدك تفهم وتكتب وتفكّر. كلود كود كمان يقدر يشتغل على ملفات المشروع حسب الصلاحيات اللي إنت بتديهاله.</p>
+          </div>
           <h3>إيه هو Plan mode؟</h3>
           <p><strong>Plan mode</strong> أو وضع التخطيط بيخلّيك تطلب من كلود يفكّر في خطوات الشغل ويعرض لك خطة تراجعها قبل التنفيذ. وبكده تلاقي أي سوء فهم بدري، قبل ما أي ملف يتغيّر، وتوافق على خطة إنت فاهمها. هتجرّبه بالتفصيل في درس لاحق.</p>
-          <!-- Callout "خلّي بالك" (attentive reminder bird, mascot 7, in place of mascot 6; danger border comes with #40) -->
-          <blockquote class="callout-plain callout--bird">
+          <!-- Callout "خلّي بالك" (attentive reminder bird, mascot 7, in place of mascot 6) -->
+          <div class="callout callout--warning" role="note">
           <img class="callout__bird" src="../../assets/images/mascot-7-attentive.webp" alt="" width="640" height="533" loading="lazy" />
-          <p><strong>خلّي بالك:</strong> راجع اقتراحات كلود وتأكد إنك فاهم التغيير المطلوب قبل ما توافق عليه. الصلاحيات بتختلف حسب وضع التشغيل اللي إنت مختاره.</p>
-          </blockquote>
+          <p><strong class="callout__label">خلّي بالك:</strong> راجع اقتراحات كلود وتأكد إنك فاهم التغيير المطلوب قبل ما توافق عليه. الصلاحيات بتختلف حسب وضع التشغيل اللي إنت مختاره.</p>
+          </div>
           </section>
           <section class="lesson-part lesson-section" id="ways-to-use" lang="ar" dir="rtl">
           <h2>إزاي ممكن تستخدم كلود؟</h2>
@@ -271,10 +270,11 @@
           </table>
           </div>
           <p><strong>واجهة المستخدم (UI)</strong> هي الحاجات اللي الشخص بيشوفها وبيتفاعل معاها، زي الأزرار والقوائم والألوان. أما <strong>تجربة المستخدم (UX)</strong> فهي مدى سهولة ووضوح استخدام الموقع أو التطبيق بالنسبة للشخص.</p>
-          <!-- Callout "فكرة مهمة" (mascot 4, lightbulb; teal) — the callout component and its mascot come with ticket #40 -->
-          <blockquote class="callout-plain">
-          <p><strong>فكرة مهمة:</strong> الـSkill بتوجّه طريقة الشغل، لكن إنت لسه اللي بتراجع النتيجة وبتقرر إذا كانت مناسبة لمشروعك.</p>
-          </blockquote>
+          <!-- Callout "فكرة مهمة" (mascot 4, lightbulb; teal) -->
+          <div class="callout callout--key" role="note">
+          <img class="callout__bird" src="../../assets/images/mascot-4-lightbulb.webp" alt="" width="640" height="533" loading="lazy" />
+          <p><strong class="callout__label">فكرة مهمة:</strong> الـSkill بتوجّه طريقة الشغل، لكن إنت لسه اللي بتراجع النتيجة وبتقرر إذا كانت مناسبة لمشروعك.</p>
+          </div>
           </section>
           <section class="lesson-part lesson-section" id="build-alone" lang="ar" dir="rtl">
           <h2>هل كلود لوحده يقدر يساعدك تبني مشروع؟</h2>

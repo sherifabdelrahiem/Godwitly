@@ -424,6 +424,15 @@ function attributeValue(attributes, name) {
   return found ? (found[1] ?? found[2] ?? found[3]) : undefined;
 }
 
+// The four callouts and the mascot file each one shows (spec #36; the Watch out bird is
+// mascot 7, which the PO accepted in place of mascot 6).
+const CALLOUT_MASCOTS = {
+  think: "mascot-2-thoughtful.webp",
+  confusion: "mascot-3-confused.webp",
+  key: "mascot-4-lightbulb.webp",
+  warning: "mascot-7-attentive.webp",
+};
+
 function anchorsIn(html) {
   return [...html.matchAll(/<a\b([^>]*)>/gi)].map(([, attributes]) => ({
     attributes,
@@ -590,6 +599,39 @@ function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
     if (options.length < 2) problems.push(`Self-check question ${i + 1} has fewer than two options`);
     else if (correct === 0) problems.push(`Self-check question ${i + 1} has no correct option (data-correct="true")`);
     else if (correct > 1) problems.push(`Self-check question ${i + 1} has more than one correct option`);
+  });
+
+  // Callouts: the text label carries the meaning, so each has one; the mascot is decorative
+  // (alt="") and fixed per kind. Two callouts in a row would put two mascots on one screen of
+  // reading, which the spec rules out. (Screens differ, so the full rule is checked by eye.)
+  const callouts = [...page.matchAll(/<div\b([^>]*\bclass\s*=\s*(["'])[^"']*\bcallout\b[^"']*\2[^>]*)>([\s\S]*?)<\/div>/gi)];
+  callouts.forEach(([whole, attributes, , inner], i) => {
+    const n = i + 1;
+    const kind = ((attributeValue(attributes, "class") || "").match(/\bcallout--([a-z]+)/) || [])[1];
+    if (!Object.hasOwn(CALLOUT_MASCOTS, kind)) {
+      problems.push(`callout ${n} has the unknown kind "${kind || ""}"`);
+    }
+    const bird = /<img\b([^>]*)>/i.exec(inner);
+    if (bird) {
+      const src = attributeValue(bird[1], "src") || "";
+      if (kind in CALLOUT_MASCOTS && !src.endsWith("/" + CALLOUT_MASCOTS[kind])) {
+        problems.push(`callout ${n} (${kind}) should show ${CALLOUT_MASCOTS[kind]}`);
+      }
+      if (attributeValue(bird[1], "alt") !== "") {
+        problems.push(`callout ${n} has a mascot with alt text; a mascot is decorative (alt="")`);
+      }
+    }
+    const label = /<[a-z]+\b[^>]*\bclass\s*=\s*["'][^"']*\bcallout__label\b[^"']*["'][^>]*>([\s\S]*?)<\/[a-z]+>/i.exec(inner);
+    if (!label || label[1].replace(/<[^>]*>/g, "").trim() === "") {
+      problems.push(`callout ${n} has no text label (class="callout__label"); the label carries the meaning`);
+    }
+    const next = callouts[i + 1];
+    if (next) {
+      const gap = page.slice(callouts[i].index + whole.length, next.index);
+      if (gap.trim() === "") {
+        problems.push(`callouts ${n} and ${n + 1} follow each other directly; at most one mascot per screen of reading`);
+      }
+    }
   });
 
   // Links. Findings are collected in a set so a link repeated on the page is reported once.

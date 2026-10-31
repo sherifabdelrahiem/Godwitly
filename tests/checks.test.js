@@ -705,3 +705,43 @@ test("self-check: single-quoted attributes are read too", () => {
     'Self-check question 1 has no correct option (data-correct="true")',
   ]);
 });
+
+const MASCOT_OF = { think: "mascot-2-thoughtful", confusion: "mascot-3-confused", key: "mascot-4-lightbulb", warning: "mascot-7-attentive" };
+const callout = ({ kind = "key", mascot = MASCOT_OF[kind], alt = "", label = "Label:", bird = true } = {}) =>
+  `<div class="callout callout--${kind}" role="note">` +
+  (bird ? `<img class="callout__bird" src="../../assets/images/${mascot}.webp" alt="${alt}">` : "") +
+  `<p>${label === null ? "" : `<strong class="callout__label">${label}</strong>`} Text.</p></div>`;
+const between = "<p>Some Lesson text between callouts.</p>";
+
+test("callouts: each of the four kinds with its own mascot, a label and a decorative bird passes", () => {
+  const html = ["think", "confusion", "key", "warning"].map((kind) => callout({ kind })).join(between);
+  assert.deepEqual(lessonProblems(withLinks(html)), []);
+});
+
+test("callouts: an unknown kind, a wrong mascot, a bird with alt text or a missing label is reported", () => {
+  assert.deepEqual(lessonProblems(withLinks(callout({ kind: "fun" }))), ['callout 1 has the unknown kind "fun"']);
+  assert.deepEqual(lessonProblems(withLinks(callout({ kind: "key", mascot: "mascot-3-confused" }))), [
+    "callout 1 (key) should show mascot-4-lightbulb.webp",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(callout({ alt: "A bird" }))), [
+    'callout 1 has a mascot with alt text; a mascot is decorative (alt="")',
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(callout({ label: null }))), [
+    "callout 1 has no text label (class=\"callout__label\"); the label carries the meaning",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(callout({ label: "  " }))), [
+    "callout 1 has no text label (class=\"callout__label\"); the label carries the meaning",
+  ]);
+});
+
+test("callouts: a callout may have no bird, but two callouts may not follow each other directly", () => {
+  assert.deepEqual(lessonProblems(withLinks(callout({ bird: false }))), []);
+  assert.deepEqual(lessonProblems(withLinks(callout({ kind: "think" }) + "\n " + callout({ kind: "key" }))), [
+    "callouts 1 and 2 follow each other directly; at most one mascot per screen of reading",
+  ]);
+  const comment = callout({ kind: "think" }) + "<!-- note -->" + callout({ kind: "key" });
+  assert.deepEqual(lessonProblems(withLinks(comment)), [
+    "callouts 1 and 2 follow each other directly; at most one mascot per screen of reading",
+  ]);
+  assert.deepEqual(lessonProblems(withLinks(callout({ kind: "think" }) + between + callout({ kind: "key" }))), []);
+});

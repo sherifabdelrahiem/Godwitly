@@ -223,6 +223,11 @@ const TRANSLATIONS = {
     "course.pager.prev": "Previous",
     "course.pager.next": "Next",
     "course.selfCheck.correctAnswer": "The correct answer:",
+    "course.copy": "Copy",
+    "course.copied": "Copied",
+    "course.copyFailed": "Couldn't copy. Select the text and copy it yourself.",
+    "course.tabs.label": "Operating system",
+    "course.print": "Print the cheatsheet",
 
     // Footer
     "footer.text": "Godwitly by BCM Hub — learning, engagement and organisational preparedness.",
@@ -494,6 +499,11 @@ const TRANSLATIONS = {
     "course.pager.prev": "السابق",
     "course.pager.next": "التالي",
     "course.selfCheck.correctAnswer": "الإجابة الصحيحة:",
+    "course.copy": "نسخ",
+    "course.copied": "تم النسخ",
+    "course.copyFailed": "تعذّر النسخ. حدّد النص وانسخه بنفسك.",
+    "course.tabs.label": "نظام التشغيل",
+    "course.print": "اطبع البرشامة",
 
     "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والاستعداد المؤسسي.",
 
