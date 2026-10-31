@@ -143,3 +143,9 @@ no longer matches (the spec body is frozen; this report records the change). REA
 seven mascots. The callout keeps its plain look; the danger border comes with #40. Self-checked, **not
 subagent-reviewed**; `node --test` 101 pass; looked at in Chrome (Arabic): the bird shows at 72px, mirrored.
 Not run: English, 320px by eye for this bird (same 56px rule as the other callout birds).
+
+## PO acceptance (2026-10-31)
+
+In the session the PO decided: the sidebar stays as it is (right in Arabic, left in English; titles Arabic in
+Arabic, English in English), with no spec change; and accepted P5, P6, R5, R7 and the mascot 7 replacement
+as recorded above. No finding is open apart from the PO's push, PR and issue decisions.
