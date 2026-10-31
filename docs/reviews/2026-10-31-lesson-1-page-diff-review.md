@@ -111,3 +111,11 @@ Safari/Firefox, `file://`.
 
 **Open (not changed):** "the title written in English in the sidebar" is not clear yet (see the chat). Any
 change that makes shared text English-only would change the approved spec and needs v4.
+
+## Round 3: bird and facts in one row (`527981f`)
+
+At the PO's request the welcome bird and the facts box share one row from 640px (24px gap, centred), and
+stack below that. A markup wrapper and about 25 lines of CSS; self-checked, **not subagent-reviewed**.
+`node --test` 101 pass. Checked in Chrome: a 1280px-wide frame shows one row, the bird at the start side
+(right in Arabic); a 320px frame stacks them with no horizontal scroll (page width 316 of 316) in Arabic and
+English. Not run: English at 1280px, a real phone.
