@@ -22,7 +22,7 @@
 
 | # | Finding | Kind | Outcome |
 |---|---|---|---|
-| S1 | `css/course.css` used three hard-coded greys (`#f0eeeb`, `#dcd8d3`, `#e6e2dd`); spec #36 says no new colours | hard | fixed in the fix commit: `--color-page` and `--color-border`. Visible change: greyed cards are now lighter than the Figma frame's grey (they keep a border). **Open for PO:** accept, or ask for a new token (that would be a spec change) |
+| S1 | `css/course.css` used three hard-coded greys (`#f0eeeb`, `#dcd8d3`, `#e6e2dd`); spec #36 says no new colours | hard | fixed in the fix commit: `--color-page` and `--color-border`. Visible change: greyed cards are now lighter than the Figma frame's grey (they keep a border). Accepted by the PO on 2026-10-31: lighter greyed cards kept, no new token |
 | S2 | Six `mascot-*.webp` files ship (about 200 KB) but no page uses them | judgement (Speculative Generality) | no change needed: ticket #38 requires them prepared here for the Lesson material |
 | S3 | Nine near-identical card `<li>`s | judgement (Duplicated Code) | no change needed: static page without a build; the hub check catches drift |
 | S4 | 18 keys translate only a digit (`course.lessonN.number`) | judgement | no change needed: gives Arabic-Indic digits in Arabic |
@@ -42,7 +42,7 @@ referenced by any page.
 | Each card shows number, title, outcome, estimated time | met (all provisional text, see P2) |
 | Six mascots renamed, resized, compressed, transparency kept; only web-sized versions committed | met: 640 px WebP with alpha, 26-38 KB each against 0.7-1.3 MB; the PNGs stay untracked |
 | Course check built test-first, with missing card, wrong order, unreleased-as-link examples and a real-file test | met (the released-Lesson branch has example tests only; nothing is released yet) |
-| Manual: no mascot; EN and AR; desktop and 320px | met on the agent's Chrome checks below; the PO's check is not yet done |
+| Manual: no mascot; EN and AR; desktop and 320px | met on the agent's Chrome checks below and the PO's check (approved 2026-10-31) |
 | `node --test` passes | met |
 | Diff review saved | this report |
 
@@ -74,5 +74,5 @@ own check, not a subagent review, so the PO may ask for a full one.
 
 ## Still to do
 
-- Open for the PO: S1 (lighter greyed cards, or a new colour token), their own check of the hub, and approval to push. P1, P2, P3 and P5 were accepted on 2026-10-31.
-- Nothing is pushed, no PR is open, #38 is open. The commits say `Refs #36, #38`.
+- **Nothing is open.** On 2026-10-31 the PO accepted S1, P1, P2, P3 and P5, and approved the hub check and the push with a PR (merging, closing #38 and deploying were not approved).
+- Pushed and the PR opened with the PO's approval. #38 stays open until the PO approves closing it. The commits say `Refs #36, #38`.
