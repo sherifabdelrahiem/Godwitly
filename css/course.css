@@ -489,9 +489,34 @@ html[dir="ltr"] .lesson-trail li + li::before {
   color: var(--color-text);
 }
 
+/* The welcome bird and the facts box share one row; they stack on phones */
+.lesson-intro__row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lesson-intro__row .lesson-facts {
+  flex: 1;
+  min-width: 0;
+}
+
 .lesson-mascot {
-  width: 200px;
+  width: 160px;
   height: auto;
+}
+
+@media (min-width: 640px) {
+  .lesson-intro__row {
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .lesson-mascot {
+    flex: none;
+    width: 200px;
+  }
 }
 
 /* The welcome bird is drawn facing the reader's start side in English; mirror it in Arabic */
