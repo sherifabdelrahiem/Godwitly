@@ -501,22 +501,28 @@ html[dir="ltr"] .lesson-trail li + li::before {
   min-width: 0;
 }
 
+/* The picture has empty space around the bird (19% on its start side, 10% on the other), so
+   it is pulled back by that much and the bird lines up with the text */
+.lesson-intro__row {
+  --bird-width: 160px;
+}
+
 .lesson-mascot {
-  width: 160px;
+  width: var(--bird-width);
   height: auto;
+  margin-inline: calc(var(--bird-width) * -0.19) calc(var(--bird-width) * -0.1);
 }
 
 @media (min-width: 640px) {
   .lesson-intro__row {
+    --bird-width: clamp(200px, 45%, 330px); /* big enough to be about as tall as the facts box */
     flex-direction: row;
     align-items: center;
     gap: 8px;
   }
 
-  /* Big enough to be about as tall as the facts box */
   .lesson-mascot {
     flex: none;
-    width: clamp(200px, 45%, 330px);
   }
 }
 
