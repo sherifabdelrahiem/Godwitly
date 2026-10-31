@@ -211,6 +211,9 @@ proposed work that enters this Workflow at step 1 or 3.
   project checks: translation parity, translation keys named in the pages and scripts,
   JavaScript syntax, the Crash course hub's cards and the Lesson pages' rules.
   `tests/course-lessons.js` is the agreed list of the nine Lessons those pages must match.
+- `tests/samples/components.html`: development-only page showing the Lesson building blocks
+  that no released Lesson uses yet (code boxes, tabs, the printable برشامة). Not in the deploy
+  command's file list, so never deployed.
 - `.github/workflows/checks.yml`: the PR checks (see Development commands, Test). A change
   to it needs a security review and a new gate assessment (spec #31).
 - `.agents/skills/`: the vendored Matt Pocock skills (MIT; see its `README.md`).

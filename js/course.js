@@ -247,10 +247,15 @@ document.querySelectorAll(".code-box").forEach((box) => {
   button.addEventListener("click", async () => {
     const copied = await copyText(code.textContent);
     const key = copied ? "course.copied" : "course.copyFailed";
+    // Kept as a key, so switching language while it shows translates it too.
+    status.dataset.i18n = key;
     status.textContent = TRANSLATIONS[courseLanguage.current()][key];
     status.classList.toggle("is-failed", !copied);
     clearTimeout(clearTimer);
-    clearTimer = setTimeout(() => status.replaceChildren(), 4000);
+    clearTimer = setTimeout(() => {
+      delete status.dataset.i18n;
+      status.replaceChildren();
+    }, 4000);
   });
 });
 
@@ -258,7 +263,7 @@ document.querySelectorAll(".code-box").forEach((box) => {
 
 // Each panel is one system's steps, named by data-tab-label. Without this script every
 // panel stays visible under its own title, so the steps still read. With it, one panel
-// shows at a time. Left/Right (swapped in Arabic), Home and End move between the tabs.
+// shows at a time. Left/Right (swapped when the tabs read right to left), Home and End move between the tabs.
 document.querySelectorAll("[data-tabs]").forEach((group, groupIndex) => {
   const panels = [...group.querySelectorAll(":scope > .tabs__panel")];
   if (panels.length < 2) return;
@@ -295,8 +300,10 @@ document.querySelectorAll("[data-tabs]").forEach((group, groupIndex) => {
   tabs.forEach((tab, i) => {
     tab.addEventListener("click", () => select(i, false));
     tab.addEventListener("keydown", (event) => {
-      const forward = document.documentElement.dir === "rtl" ? "ArrowLeft" : "ArrowRight";
-      const backward = document.documentElement.dir === "rtl" ? "ArrowRight" : "ArrowLeft";
+      // The Lesson text is right to left even when the page is not, so ask the tabs themselves.
+      const rtl = getComputedStyle(list).direction === "rtl";
+      const forward = rtl ? "ArrowLeft" : "ArrowRight";
+      const backward = rtl ? "ArrowRight" : "ArrowLeft";
       const moves = {
         [forward]: (i + 1) % tabs.length,
         [backward]: (i - 1 + tabs.length) % tabs.length,
