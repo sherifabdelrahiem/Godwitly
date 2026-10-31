@@ -665,6 +665,13 @@ html[dir="rtl"] .callout__bird {
   color: var(--color-text);
 }
 
+/* The name in a row's first cell stays on one line (stacked rows on phones wrap as needed) */
+@media (min-width: 640px) {
+  .lesson-table td:first-child {
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 639px) {
   .lesson-table thead {
     position: absolute;

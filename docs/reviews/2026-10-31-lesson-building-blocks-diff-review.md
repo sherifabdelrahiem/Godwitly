@@ -54,4 +54,9 @@
 
 The PO accepted the findings above on 2026-10-31 in the session.
 
-Later change (PO request, after the review): table cells are vertically centred (`vertical-align: middle` in `css/course.css`) so tool names sit in the middle of their rows. This CSS-only change needs its own re-review before merge.
+Later change (PO request, after the review): table cells are vertically centred (`vertical-align: middle` in `css/course.css`) so tool names sit in the middle of their rows. That change and a second one (the table's first-column names stay on one line from 640px up, so
+"Railway" and "Claude in Chrome" no longer break mid-word; stacked rows on phones are unchanged) are
+CSS-only. Re-review (self-check, commits `be45cfe` and the commit after it): both are small CSS
+changes; in Chrome the three tables show the names on one line and centred vertically, with no
+horizontal overflow at 660px and 1470px (320px uses the unchanged stacked layout). `node --test`
+104 pass. The PO asked to merge on 2026-10-31 and to close #40 (its amendments belong to #39).
