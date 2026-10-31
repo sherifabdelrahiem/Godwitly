@@ -510,12 +510,13 @@ html[dir="ltr"] .lesson-trail li + li::before {
   .lesson-intro__row {
     flex-direction: row;
     align-items: center;
-    gap: 24px;
+    gap: 8px;
   }
 
+  /* Big enough to be about as tall as the facts box */
   .lesson-mascot {
     flex: none;
-    width: 200px;
+    width: clamp(200px, 45%, 330px);
   }
 }
 
@@ -527,12 +528,12 @@ html[dir="rtl"] .lesson-mascot {
 /* Goal, time, what you need, last checked */
 .lesson-facts {
   display: grid;
-  gap: 8px;
-  padding: 16px 20px;
+  gap: 4px;
+  padding: 12px 16px;
   border-radius: var(--radius-card);
   background: var(--color-learn-bg);
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: 15px;
+  line-height: 1.7;
 }
 
 .lesson-facts div {
