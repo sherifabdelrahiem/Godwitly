@@ -8,7 +8,8 @@
     5. Code boxes: a Copy button that copies exactly the box's text
     6. Mac / Windows tabs: show one system's steps at a time
     7. The printable برشامة: a Print button (the print style is in css/course.css)
-    8. Current year in the footer
+    8. Checklist progress: ticks remembered in this browser (js/course-progress.js)
+    9. Current year in the footer
 
   Course pages do not load js/script.js, which saves the landing page's language
   on every visit and expects landing-page elements (the product tabs). The language
@@ -333,7 +334,50 @@ document.querySelectorAll(".barshama").forEach((sheet) => {
   sheet.append(button);
 });
 
-/* ---------- 8. Footer year + start ---------- */
+/* ---------- 8. Checklist progress ---------- */
+
+// Ticks are remembered in this browser only (js/course-progress.js). A Lesson shows its done
+// mark in the sidebar, and on the hub card, only when every item is ticked; the Lesson page
+// also shows the celebration then. Without storage, ticking still works for the visit.
+const courseProgress = createCourseProgress(courseStorage());
+
+function showCompleteMark(lessonId, complete) {
+  const lessonNumber = lessonId.replace("lesson-", "");
+  document.querySelectorAll(`[data-lesson="${lessonNumber}"] [data-complete-mark]`).forEach((mark) => {
+    mark.hidden = !complete;
+  });
+}
+
+document.querySelectorAll("[data-checklist]").forEach((list) => {
+  const lessonId = list.dataset.checklist;
+  const boxes = [...list.querySelectorAll("input[data-item]")];
+  const checklist = courseProgress.open(lessonId, boxes.map((box) => box.dataset.item));
+  const celebration = document.querySelector("[data-celebration]");
+
+  function show() {
+    showCompleteMark(lessonId, checklist.isComplete());
+    if (celebration) celebration.hidden = !checklist.isComplete();
+  }
+
+  boxes.forEach((box) => {
+    box.checked = checklist.isTicked(box.dataset.item);
+    box.addEventListener("change", () => {
+      checklist.set(box.dataset.item, box.checked);
+      show();
+    });
+  });
+  show();
+});
+
+// The hub has no checklist: each Lesson card asks what its Lesson page saved.
+if (!document.querySelector("[data-checklist]")) {
+  document.querySelectorAll(".lesson-card[data-lesson]").forEach((card) => {
+    const lessonId = "lesson-" + card.dataset.lesson;
+    showCompleteMark(lessonId, courseProgress.isLessonComplete(lessonId));
+  });
+}
+
+/* ---------- 9. Footer year + start ---------- */
 
 document.getElementById("year").textContent = new Date().getFullYear();
 applyLanguage(courseLanguage.current());

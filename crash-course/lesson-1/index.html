@@ -7,7 +7,7 @@
   not in js/translations.js. Everything else (header, sidebar labels, trail, pager, notice)
   gets its text from ../../js/translations.js through data-i18n, like the hub.
 
-  The callouts are built (ticket #40); the checklist's saved ticks come with ticket #41.
+  The callouts are built (ticket #40); the checklist's saved ticks and celebration are ticket #41.
 -->
 <html lang="en" dir="ltr">
   <head>
@@ -394,7 +394,11 @@
           <li><label><input type="checkbox" data-item="plan-mode" /> <span>تقدر توضّح يعني إيه Plan mode وليه بتراجع الخطة قبل التنفيذ.</span></label></li>
           <li><label><input type="checkbox" data-item="skill-example" /> <span>تقدر تشرح ببساطة يعني إيه Skill، وتذكر مثالًا لأداة ممكن يحتاجها المشروع.</span></label></li>
           </ul>
-          <!-- The celebration (mascot 5) and saved ticks come with ticket #41 -->
+          <!-- Shown by js/course.js when every item above is ticked; the bird is decorative -->
+          <div class="celebration" data-celebration hidden>
+            <img class="celebration__bird" src="../../assets/images/mascot-5-celebrating.webp" alt="" width="640" height="533" />
+            <p role="status"><strong data-i18n="course.celebration">Well done! You finished this Lesson.</strong></p>
+          </div>
           </section>
           <section class="lesson-part lesson-section" id="self-check" lang="ar" dir="rtl">
           <h2>اختبر نفسك</h2>
@@ -519,9 +523,10 @@
       </p>
     </footer>
 
-    <!-- translations.js must load first, then the language rule, then the page script -->
+    <!-- translations.js must load first, then the language rule, then the progress rule, then the page script -->
     <script src="../../js/translations.js"></script>
     <script src="../../js/course-language.js"></script>
+    <script src="../../js/course-progress.js"></script>
     <script src="../../js/course.js"></script>
   </body>
 </html>

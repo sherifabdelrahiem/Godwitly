@@ -193,6 +193,8 @@ proposed work that enters this Workflow at step 1 or 3.
   they never load `js/script.js`.
 - `js/course-language.js`: which language a Crash course page opens in, what it remembers
   and how links carry it; tested in `tests/course-language.test.js`.
+- `js/course-progress.js`: the "You're done when" ticks, remembered per Lesson in the browser
+  only; tested in `tests/course-progress.test.js`.
 - `supabase/functions/`: Edge Functions; `notify-signup` sends the owner an alert-only
   email.
 - `supabase/migrations/`: SQL migrations (the `launch_signups` table, its rules, the

@@ -1154,3 +1154,36 @@ html[lang="ar"] .lesson-nav__toggle {
     display: none;
   }
 }
+
+/* Celebration under a fully ticked checklist (js/course.js). The bird is decorative and
+   mirrored in Arabic like the other mascots. */
+.celebration {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.celebration[hidden] {
+  display: none;
+}
+
+.celebration p {
+  margin: 0;
+}
+
+.celebration__bird {
+  flex: none;
+  width: 120px;
+  height: auto;
+}
+
+html[dir="rtl"] .celebration__bird {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 399px) {
+  .celebration__bird {
+    width: 88px;
+  }
+}

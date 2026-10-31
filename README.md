@@ -24,6 +24,7 @@ address, not by double-click. See "Sign-up dashboard" below.
 | `css/course.css` | Styling for the Crash course pages only. It reuses `css/styles.css` and its `:root` variables. |
 | `js/course.js` | Language switcher, mobile menu, the phone Lesson list and footer year for the Crash course pages. They never load `js/script.js`. |
 | `js/course-language.js` | Which language a Crash course page opens in, what it remembers (under its own name, never the landing page's) and how links carry it. |
+| `js/course-progress.js` | The "You're done when" ticks: remembered per Lesson in the visitor's own browser, never sent anywhere. Drives the ✓ on the hub and sidebar and the celebration. |
 | `assets/images/` | Logo, background landscapes, birds, device and product pictures, and the seven web-sized course mascots (`mascot-*.webp`; the original PNGs stay out of Git). |
 | `dashboard.html` | The private Sign-up dashboard page (not linked from the landing page). |
 | `css/dashboard.css` | Styling for the Sign-up dashboard only. It reuses the `:root` variables. |
