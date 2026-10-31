@@ -28,15 +28,15 @@ sideways. The new rule `html:not([dir="rtl"]) .lesson-mascot` swaps the two marg
 ## Standards findings (sub-agent review, none blocking)
 | # | Finding | Outcome |
 |---|---|---|
-| F-1 | The new comment's "right to left in both languages" is easy to misread; the older comment at css/course.css:507-508 says "start side", true only for Arabic | **PO acceptance requested** (comment wording only) |
-| F-2 | `:not([dir="rtl"])` rather than `html[dir="ltr"]` pairs less clearly with the Arabic rule, but also covers a missing `dir` attribute | **PO acceptance requested** (deliberate) |
-| F-3 | The base rule now describes the Arabic case and the override repeats the pair with values swapped | **PO acceptance requested** (acceptable per the reviewer) |
+| F-1 | The new comment's "right to left in both languages" is easy to misread; the older comment at css/course.css:507-508 says "start side", true only for Arabic | **Accepted by the PO, 2026-10-31** (comment wording only; code left as is) |
+| F-2 | `:not([dir="rtl"])` rather than `html[dir="ltr"]` pairs less clearly with the Arabic rule, but also covers a missing `dir` attribute | **Accepted by the PO, 2026-10-31** (deliberate) |
+| F-3 | The base rule now describes the Arabic case and the override repeats the pair with values swapped | **Accepted by the PO, 2026-10-31** (acceptable per the reviewer) |
 | F-4 | The review report must record the 320px checks in both languages | Fixed: see Verification |
 
 ## Spec findings (sub-agent review, none blocking)
 | # | Finding | Outcome |
 |---|---|---|
-| F-5 | Cosmetic: older comment says "start side", true only for Arabic | **PO acceptance requested** (same as F-1) |
+| F-5 | Cosmetic: older comment says "start side", true only for Arabic | **Accepted by the PO, 2026-10-31** (same as F-1) |
 | F-6 | The reviewer ran no browser; manual checks need a re-run at 320px in both languages | Fixed: done above (tool-driven) |
 | F-7 | Spec fit: addresses story 55, the Mobile bullet and manual check 5; scope is one CSS rule plus a comment; no scope creep | Informational |
 
