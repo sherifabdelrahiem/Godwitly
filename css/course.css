@@ -973,7 +973,8 @@ html[lang="ar"] .lesson-nav__toggle {
 }
 
 /* Code boxes: one prompt or command each, with a Copy button (js/course.js). The code is
-   always left to right, even inside an Arabic Lesson. Square corners. */
+   left to right by default, even inside an Arabic Lesson (an Arabic prompt sets dir="rtl" and
+   reads from the right edge). Square corners. */
 .code-box {
   display: grid;
   grid-template-columns: auto 1fr;
