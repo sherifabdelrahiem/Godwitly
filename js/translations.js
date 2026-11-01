@@ -190,7 +190,6 @@ const TRANSLATIONS = {
     "course.title": "Claude Crash Course for Beginners",
     "course.summary":
       "A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step.",
-    "course.availableArabic": "Available in Arabic",
     "course.openArabic": "Open the guide in Arabic",
 
     // Crash course hub content. The Lesson times and outcomes are provisional until
@@ -509,7 +508,6 @@ const TRANSLATIONS = {
     "course.title": "دليل كلود للمبتدئين",
     "course.summary":
       "تعلّم استخدام Claude وClaude Code من الصفر، خطوة بخطوة وبالسرعة التي تناسبك.",
-    "course.availableArabic": "متاح بالعربية",
     "course.openArabic": "افتح الدليل بالعربية",
 
     // محتوى صفحة الدليل. أوقات الدروس ونتائجها مؤقتة لحد ما كل درس تتوافق مسودته

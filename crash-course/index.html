@@ -106,33 +106,29 @@
           <p class="hero__intro" data-i18n="course.summary">
             A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step.
           </p>
-          <!-- English visitors only: the Lessons are in Arabic (ADR-0008) -->
-          <div class="button-row course-en-only">
-            <a href="index.html?lang=ar" hreflang="ar" class="pill pill--primary" data-i18n="course.openArabic">Open the guide in Arabic</a>
-            <span class="course-badge" data-i18n="course.availableArabic">Available in Arabic</span>
+          <div class="course-hero__actions">
+            <!-- Godwitly account (spec #56): hidden until js/course.js shows it, so a visitor without
+                 JavaScript never sees a button that does nothing. Shown to English and Arabic visitors. -->
+            <div class="account-bar account-bar--hero" role="group" data-account hidden data-i18n-aria-label="account.label" aria-label="Godwitly account">
+              <div class="account-bar__row" data-account-out hidden>
+                <button type="button" class="pill pill--primary account-bar__button" data-account-action="sign-in" data-i18n="account.signIn">Sign in with Google</button>
+                <p class="account-bar__notice">
+                  <span data-i18n="account.notice">Signing in creates a Godwitly account. It does not enrol you in anything.</span>
+                  <a href="privacy/index.html" data-course-link data-i18n="account.noticeLink">What we keep</a>
+                </p>
+              </div>
+              <div class="account-bar__row" data-account-in hidden>
+                <p class="account-bar__who">
+                  <span data-i18n="account.signedInAs">Signed in as</span>
+                  <bdi class="account-bar__name" data-account-name></bdi>
+                </p>
+                <button type="button" class="pill pill--outline account-bar__button" data-account-action="sign-out" data-i18n="account.signOut">Sign out</button>
+              </div>
+              <p class="account-bar__note" data-account-note hidden></p>
+            </div>
+            <!-- English visitors only: the Lessons are in Arabic (ADR-0008) -->
+            <a href="index.html?lang=ar" hreflang="ar" class="pill pill--soft course-en-only" data-i18n="course.openArabic">Open the guide in Arabic</a>
           </div>
-        </div>
-      </section>
-
-      <!-- Godwitly account bar (spec #56), under the hero: hidden until js/course.js shows it, so a visitor
-           without JavaScript never sees a button that does nothing. -->
-      <section class="account-bar" data-account hidden data-i18n-aria-label="account.label" aria-label="Godwitly account">
-        <div class="container account-bar__inner">
-          <div class="account-bar__row" data-account-out hidden>
-            <button type="button" class="pill pill--primary account-bar__button" data-account-action="sign-in" data-i18n="account.signIn">Sign in with Google</button>
-            <p class="account-bar__notice">
-              <span data-i18n="account.notice">Signing in creates a Godwitly account. It does not enrol you in anything.</span>
-              <a href="privacy/index.html" data-course-link data-i18n="account.noticeLink">What we keep</a>
-            </p>
-          </div>
-          <div class="account-bar__row" data-account-in hidden>
-            <p class="account-bar__who">
-              <span data-i18n="account.signedInAs">Signed in as</span>
-              <bdi class="account-bar__name" data-account-name></bdi>
-            </p>
-            <button type="button" class="pill pill--outline account-bar__button" data-account-action="sign-out" data-i18n="account.signOut">Sign out</button>
-          </div>
-          <p class="account-bar__note" data-account-note hidden></p>
         </div>
       </section>
 

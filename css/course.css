@@ -39,7 +39,27 @@ html[lang="ar"] .course-hero .hero__intro {
   font-weight: 600;
 }
 
-/* Only English visitors see the "Available in Arabic" row */
+/* The hero's two actions: the account stack (sign-in button with its notice under it) and,
+   for English visitors, the soft "Open the guide in Arabic" pill */
+.course-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px 16px;
+  margin-top: 28px;
+}
+
+/* A soft pill in the colours the old "Available in Arabic" badge had */
+.pill--soft {
+  background: var(--color-learn-bg);
+  color: var(--color-accent);
+}
+
+.pill--soft:hover {
+  background: #d9e8e5;
+}
+
+/* Only English visitors see the "Open the guide in Arabic" pill */
 html[lang="ar"] .course-en-only {
   display: none;
 }
@@ -1250,4 +1270,27 @@ html[dir="rtl"] .celebration__bird {
 
 .privacy p {
   margin-block: 0 12px;
+}
+
+/* The account stack inside the hub's hero: no white bar, the notice sits under the button */
+.account-bar--hero {
+  background: none;
+  border: 0;
+  padding: 0;
+  max-width: 17rem;
+}
+
+/* Over the landscape, the notice and messages get a soft white backing so they stay readable */
+.account-bar--hero .account-bar__notice,
+.account-bar--hero .account-bar__who,
+.account-bar--hero .account-bar__note {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.account-bar--hero .account-bar__row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
