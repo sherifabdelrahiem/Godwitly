@@ -152,21 +152,25 @@ test("the preview deploy list is the production list plus all the accounts mater
   assert.deepEqual(findDeployListProblems(preview, MANIFESTS), []);
 });
 
-test("the accounts migrations load every Lesson and checklist item of the real manifest, field for field", () => {
-  const dir = path.join(ROOT, "supabase/accounts/migrations");
-  const sql = fs.readdirSync(dir).filter((name) => name.endsWith(".sql")).map((name) => fs.readFileSync(path.join(dir, name), "utf8")).join("\n");
+test("the accounts foundation migration's seed matches the real manifest as it stood then, field for field", () => {
+  // Scope: only the foundation migration's INSERT seed. A later manifest change gets its own
+  // migration and its own check (spec #56: "each change to the manifest needs its own
+  // migration"), so this one is not widened to "the final state after all migrations".
+  const file = path.join(ROOT, "supabase/accounts/migrations/20261101130000_accounts_foundation.sql");
+  // Comments are dropped first, so a commented-out row can never satisfy the check.
+  const sql = fs.readFileSync(file, "utf8").replace(/^\s*--.*$/gm, "");
   const lessonRows = [...sql.matchAll(/\('([^']*)', (\d+), '([^']*)', '((?:[^']|'')*)', (true|false), (true|false), (true|false)\)/g)].map((m) => ({
     course: m[1], number: Number(m[2]), titleKey: m[3], summary: m[4].replace(/''/g, "'"), preview: m[5] === "true", required: m[6] === "true", released: m[7] === "true",
   }));
   const itemRows = [...sql.matchAll(/\('([^']*)', (\d+), '([^']*)', (true|false), (true|false)\)/g)].map((m) => ({
     course: m[1], lesson: Number(m[2]), id: m[3], required: m[4] === "true", retired: m[5] === "true",
   }));
-  assert.ok(lessonRows.length > 0 && itemRows.length > 0, "no inserts found in the accounts migrations");
+  assert.ok(lessonRows.length > 0 && itemRows.length > 0, "no inserts found in the foundation migration");
   const real = MANIFESTS.filter(({ manifest }) => !manifest.test);
   for (const { manifest } of real) {
     for (const lesson of manifest.lessons) {
       const row = lessonRows.find((r) => r.course === manifest.id && r.number === lesson.number);
-      assert.ok(row, `${manifest.id} Lesson ${lesson.number} is not in the accounts migrations`);
+      assert.ok(row, `${manifest.id} Lesson ${lesson.number} is not in the foundation migration`);
       assert.deepEqual(
         [row.titleKey, row.summary, row.preview, row.required, row.released],
         [lesson.titleKey, lesson.summary, lesson.preview, lesson.required, lesson.released],
@@ -174,7 +178,7 @@ test("the accounts migrations load every Lesson and checklist item of the real m
       );
       for (const item of lesson.items) {
         const itemRow = itemRows.find((r) => r.course === manifest.id && r.lesson === lesson.number && r.id === item.id);
-        assert.ok(itemRow, `${manifest.id} Lesson ${lesson.number} item ${item.id} is not in the accounts migrations`);
+        assert.ok(itemRow, `${manifest.id} Lesson ${lesson.number} item ${item.id} is not in the foundation migration`);
         assert.deepEqual([itemRow.required, itemRow.retired], [item.required, Boolean(item.retired)], `item ${item.id} differs`);
       }
     }
