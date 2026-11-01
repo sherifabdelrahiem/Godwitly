@@ -493,8 +493,9 @@ test("deploy list: reports the test Crash course's folder or manifest, or a fold
     'the deploy file list has "test-course/lesson-1/", which holds test Crash course material (test-course)',
     'the deploy file list has "courses", which holds test Crash course material (courses/test-course.js)',
   ]);
-  assert.deepEqual(findDeployListProblems(["./"], [TEST_COURSE]), [
-    'the deploy file list has "./", which holds test Crash course material (test-course)',
+  assert.deepEqual(findDeployListProblems(["a/../test-course", "test-course/."], [TEST_COURSE]), [
+    'the deploy file list has "a/../test-course"; an entry is one plain path, with no spaces, patterns or pathspec magic',
+    'the deploy file list has "test-course/."; an entry is one plain path, with no spaces, patterns or pathspec magic',
   ]);
 });
 
@@ -511,6 +512,12 @@ test("deploy list: reports an entry the deploy command would read differently: s
     'the deploy file list has "test-*"; an entry is one plain path, with no spaces, patterns or pathspec magic',
     'the deploy file list has ":(glob)**"; an entry is one plain path, with no spaces, patterns or pathspec magic',
   ]);
+});
+
+test("deploy list: reports an entry git would read as an option, or one that leaves or restarts the path", () => {
+  const plain = (entry) => `the deploy file list has "${entry}"; an entry is one plain path, with no spaces, patterns or pathspec magic`;
+  const entries = ["-o", "x.tar", "--prefix", "./", ".", "..", "../x", "/test-course", ".hidden"];
+  assert.deepEqual(findDeployListProblems(entries, [TEST_COURSE]), ["-o", "--prefix", "./", ".", "..", "../x", "/test-course", ".hidden"].map(plain));
 });
 
 test("deploy list: reports an empty list", () => {

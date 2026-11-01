@@ -412,60 +412,6 @@ function findCourseHubProblems(html, lessons) {
 // accurate or matches its approved draft.
 const OUTSIDE_LINK = /^([a-z][a-z0-9+.-]*:|\/\/)/i;
 
-// The manifest (spec #56, ticket #57) is the one source of each Lesson's checklist items. For
-// each released Lesson, its hub card lists exactly the manifest's current (not retired) items,
-// and its Lesson page has exactly those items, each marked data-required="true" or "false" as
-// the manifest says. The hub judges "complete" from the card's items (ticket #41), so a changed
-// checklist is never judged by an old copy. lessonPages maps a Lesson number to its HTML.
-function findManifestChecklistProblems(manifest, hubHtml, lessonPages) {
-  const problems = [];
-  const hub = hubHtml.replace(/<!--[\s\S]*?-->/g, "");
-  const list = /<ol\b[^>]*class="lesson-list"[^>]*>([\s\S]*?)<\/ol>/i.exec(hub);
-  const cards = [...(list ? list[1] : "").matchAll(/<li\b([^>]*\bdata-lesson="(\d+)"[^>]*)>/gi)].map(([, attributes, number]) => ({
-    number: Number(number),
-    items: (/\sdata-checklist-items="([^"]*)"/i.exec(attributes) || [])[1],
-  }));
-  const sameIds = (a, b) => a.every((id) => b.includes(id)) && b.every((id) => a.includes(id)) && a.length === new Set(a).size;
-  for (const lesson of manifest.lessons.filter((entry) => entry.released)) {
-    const current = lesson.items.filter((item) => !item.retired);
-    const wanted = current.map((item) => item.id);
-    const card = cards.find((entry) => entry.number === lesson.number);
-    if (!card) {
-      problems.push(`Lesson ${lesson.number} has no card on the hub, so its checklist items cannot be compared`);
-    } else if (card.items === undefined || card.items.trim() === "") {
-      problems.push(`Lesson ${lesson.number}'s hub card has no checklist items (data-checklist-items)`);
-    } else if (!sameIds(card.items.trim().split(/\s+/), wanted)) {
-      problems.push(`Lesson ${lesson.number}'s hub card lists the items "${card.items}" but the manifest has "${wanted.join(" ")}"`);
-    }
-
-    const page = (lessonPages[lesson.number] || "").replace(/<!--[\s\S]*?-->/g, "");
-    // "data-checklist" itself, not data-checklist-items
-    const checklist = /<(ul|ol)\b[^>]*\sdata-checklist(?=[\s=>])[^>]*>([\s\S]*?)<\/\1>/i.exec(page);
-    const onPage = checklist
-      ? [...checklist[2].matchAll(/<input\b[^>]*\sdata-item\s*=\s*"([^"]*)"[^>]*>/gi)].map(([box, id]) => ({
-          id,
-          required: attributeValue(box, "data-required"),
-        }))
-      : [];
-    const pageIds = onPage.map((item) => item.id);
-    if (!sameIds(pageIds, wanted)) {
-      problems.push(`Lesson ${lesson.number}'s page has the items "${pageIds.join(" ")}" but the manifest has "${wanted.join(" ")}"`);
-      continue;
-    }
-    for (const item of onPage) {
-      const agreed = current.find((entry) => entry.id === item.id);
-      if (item.required !== "true" && item.required !== "false") {
-        problems.push(`Lesson ${lesson.number}'s item "${item.id}" has no data-required="true" or "false" on its page`);
-      } else if (item.required !== String(agreed.required)) {
-        problems.push(
-          `Lesson ${lesson.number}'s item "${item.id}" is marked data-required="${item.required}" on its page but the manifest says ${agreed.required}`,
-        );
-      }
-    }
-  }
-  return problems;
-}
-
 // The project-relative path a relative link points to, without its query or #hash.
 function resolveLink(file, href) {
   const target = href.split("#")[0].split("?")[0];
@@ -740,11 +686,68 @@ function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
   return problems;
 }
 
-// 7. Crash course manifest (spec #56, ticket #57): its own rules. Lessons are numbered 1, 2, 3
+// 7. Manifest checklist items (spec #56, ticket #57). The manifest is the one source of each
+// Lesson's checklist items. For each released Lesson, its hub card lists exactly the manifest's
+// current (not retired) items,
+// and its Lesson page has exactly those items, each marked data-required="true" or "false" as
+// the manifest says. The hub judges "complete" from the card's items (ticket #41), so a changed
+// checklist is never judged by an old copy. lessonPages maps a Lesson number to its HTML.
+function findManifestChecklistProblems(manifest, hubHtml, lessonPages) {
+  const problems = [];
+  const hub = hubHtml.replace(/<!--[\s\S]*?-->/g, "");
+  const list = /<ol\b[^>]*class="lesson-list"[^>]*>([\s\S]*?)<\/ol>/i.exec(hub);
+  const cards = [...(list ? list[1] : "").matchAll(/<li\b([^>]*\bdata-lesson="(\d+)"[^>]*)>/gi)].map(([, attributes, number]) => ({
+    number: Number(number),
+    items: (/\sdata-checklist-items="([^"]*)"/i.exec(attributes) || [])[1],
+  }));
+  const sameIds = (a, b) => a.every((id) => b.includes(id)) && b.every((id) => a.includes(id)) && a.length === new Set(a).size;
+  for (const lesson of manifest.lessons.filter((entry) => entry.released)) {
+    const current = lesson.items.filter((item) => !item.retired);
+    const wanted = current.map((item) => item.id);
+    const card = cards.find((entry) => entry.number === lesson.number);
+    if (!card) {
+      problems.push(`Lesson ${lesson.number} has no card on the hub, so its checklist items cannot be compared`);
+    } else if (card.items === undefined || card.items.trim() === "") {
+      problems.push(`Lesson ${lesson.number}'s hub card has no checklist items (data-checklist-items)`);
+    } else if (!sameIds(card.items.trim().split(/\s+/), wanted)) {
+      problems.push(`Lesson ${lesson.number}'s hub card lists the items "${card.items}" but the manifest has "${wanted.join(" ")}"`);
+    }
+
+    const page = (lessonPages[lesson.number] || "").replace(/<!--[\s\S]*?-->/g, "");
+    // "data-checklist" itself, not data-checklist-items
+    const checklist = /<(ul|ol)\b[^>]*\sdata-checklist(?=[\s=>])[^>]*>([\s\S]*?)<\/\1>/i.exec(page);
+    const onPage = checklist
+      ? [...checklist[2].matchAll(/<input\b[^>]*\sdata-item\s*=\s*"([^"]*)"[^>]*>/gi)].map(([box, id]) => ({
+          id,
+          required: attributeValue(box, "data-required"),
+        }))
+      : [];
+    const pageIds = onPage.map((item) => item.id);
+    if (!sameIds(pageIds, wanted)) {
+      problems.push(`Lesson ${lesson.number}'s page has the items "${pageIds.join(" ")}" but the manifest has "${wanted.join(" ")}"`);
+      continue;
+    }
+    for (const item of onPage) {
+      const agreed = current.find((entry) => entry.id === item.id);
+      if (item.required !== "true" && item.required !== "false") {
+        problems.push(`Lesson ${lesson.number}'s item "${item.id}" has no data-required="true" or "false" on its page`);
+      } else if (item.required !== String(agreed.required)) {
+        problems.push(
+          `Lesson ${lesson.number}'s item "${item.id}" is marked data-required="${item.required}" on its page but the manifest says ${agreed.required}`,
+        );
+      }
+    }
+  }
+  return problems;
+}
+
+// 8. Crash course manifest (spec #56, ticket #57): its own rules. Lessons are numbered 1, 2, 3
 // in order, every flag is true or false, and an item id appears once in the whole Crash course,
 // retired items included, so a retired id is never reused. Limits: this sees one version of the
 // manifest, so an id deleted outright and later added back with a new meaning goes unnoticed
-// (retired items must stay in the list), and it never checks that a summary is accurate.
+// (retired items must stay in the list), and it never checks that a summary is accurate (the
+// project checks compare each real summary with its Arabic hub outcome). The checks below
+// assume a manifest that passes this one; the project checks run it on every manifest.
 function findManifestProblems(manifest) {
   const problems = [];
   const isFlag = (value) => value === true || value === false;
@@ -754,6 +757,9 @@ function findManifestProblems(manifest) {
   if (!isFlag(manifest.test)) problems.push("the manifest's test flag must be true or false");
   if (!Array.isArray(manifest.lessons)) return [...problems, "the manifest has no Lesson list"];
 
+  if (manifest.lessons.some((lesson) => !lesson || typeof lesson !== "object")) {
+    return [...problems, "the manifest's Lesson list has an entry that is not a Lesson"];
+  }
   const numbers = manifest.lessons.map((lesson) => lesson.number);
   const wanted = numbers.map((_, i) => i + 1);
   if (!numbers.every((number, i) => number === wanted[i]) || numbers.length !== wanted.length) {
@@ -790,7 +796,7 @@ function findManifestProblems(manifest) {
   return problems;
 }
 
-// 8. The public part of a manifest (spec #56) holds only the agreed fields: the Crash course's
+// 9. The public part of a manifest (spec #56) holds only the agreed fields: the Crash course's
 // id and Lessons; for a released Lesson its number, title key, summary, three flags and current
 // items (id and required flag); for a coming-soon Lesson its number and title key. A test Crash
 // course has none. `part` is what courses/manifest.js publicPart() gives for `manifest`.
@@ -832,26 +838,29 @@ function findPublicPartProblems(part, manifest) {
   return problems;
 }
 
-// 9. The production deploy file list (deploy-files.txt) holds no test Crash course material
+// 10. The production deploy file list (deploy-files.txt) holds no test Crash course material
 // and no manifest: no entry is, holds or sits inside a test Crash course's folder or any
 // manifest file (a manifest holds more than is public). The deploy command hands each entry to
 // git archive as it stands, so an entry must be one plain path: no spaces (the shell would split
-// it), no pattern characters and no ":" pathspec magic (git would match more than it names).
+// it), no pattern characters and no ":" pathspec magic (git would match more than it names),
+// and every segment starts with a letter, digit or "_": no "-" (git would read an option such as
+// -o), no ".", ".." or hidden names, and no leading "/".
 // `paths` is the list's lines, blank lines removed; `manifests` is courses/manifest.js
 // MANIFESTS. Limits: this reads the list, not what was actually uploaded, so the assembled files
 // are still inspected before each upload (spec #56).
-const PLAIN_PATH = /^[A-Za-z0-9._\/-]+$/;
+const PLAIN_PATH = /^[A-Za-z0-9_][A-Za-z0-9_.-]*(?:\/[A-Za-z0-9_][A-Za-z0-9_.-]*)*\/?$/;
 
 function findDeployListProblems(paths, manifests) {
   if (!paths.length) return ["the deploy file list is empty"];
   const clean = (entry) => path.posix.normalize(entry).replace(/\/+$/, "").replace(/^\.$/, "");
-  const material = manifests.flatMap(({ file, manifest }) => [
-    ...(manifest.test ? [{ target: clean(manifest.folder), what: "test Crash course material" }] : []),
-    { target: clean(file), what: manifest.test ? "test Crash course material" : "a Crash course manifest" },
-  ]);
+  const material = manifests.flatMap(({ file, manifest }) => {
+    if (!manifest.test) return [{ target: clean(file), what: "a Crash course manifest" }];
+    const what = "test Crash course material";
+    return [{ target: clean(manifest.folder), what }, { target: clean(file), what }];
+  });
   const problems = [];
   for (const entry of paths) {
-    if (!PLAIN_PATH.test(entry) || entry.startsWith(":")) {
+    if (!PLAIN_PATH.test(entry)) {
       problems.push(`the deploy file list has "${entry}"; an entry is one plain path, with no spaces, patterns or pathspec magic`);
       continue;
     }

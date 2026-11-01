@@ -132,7 +132,7 @@ test("each Lesson's summary is its Arabic hub outcome, word for word (the PO, 20
   }
 });
 
-test("the production deploy file list holds no test Crash course material", () => {
+test("the production deploy file list holds no test Crash course material and no manifest, and only plain paths", () => {
   const paths = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
   assert.ok(paths.includes("crash-course") && paths.includes("index.html"), "deploy-files.txt not read");
   assert.deepEqual(findDeployListProblems(paths, MANIFESTS), []);
