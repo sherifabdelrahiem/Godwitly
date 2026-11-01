@@ -466,112 +466,6 @@ function findManifestChecklistProblems(manifest, hubHtml, lessonPages) {
   return problems;
 }
 
-// 7. Crash course manifest (spec #56, ticket #57): its own rules. Lessons are numbered 1, 2, 3
-// in order, every flag is true or false, and an item id appears once in the whole Crash course,
-// retired items included, so a retired id is never reused. Limits: this sees one version of the
-// manifest, so an id deleted outright and later added back with a new meaning goes unnoticed
-// (retired items must stay in the list), and it never checks that a summary is accurate.
-function findManifestProblems(manifest) {
-  const problems = [];
-  const isFlag = (value) => value === true || value === false;
-  const blank = (value) => typeof value !== "string" || value.trim() === "";
-  if (blank(manifest.id)) problems.push("the manifest has no id");
-  if (blank(manifest.folder)) problems.push("the manifest has no folder");
-  if (!isFlag(manifest.test)) problems.push("the manifest's test flag must be true or false");
-
-  const numbers = manifest.lessons.map((lesson) => lesson.number);
-  const wanted = numbers.map((_, i) => i + 1);
-  if (numbers.join(",") !== wanted.join(",")) {
-    problems.push(`Lessons are numbered ${numbers.join(", ")} but should be ${wanted.join(", ")}`);
-  }
-
-  const ids = [];
-  for (const lesson of manifest.lessons) {
-    if (blank(lesson.titleKey)) problems.push(`Lesson ${lesson.number} has no title key`);
-    if (blank(lesson.summary)) problems.push(`Lesson ${lesson.number} has no summary`);
-    for (const flag of ["preview", "required", "released"]) {
-      if (!isFlag(lesson[flag])) problems.push(`Lesson ${lesson.number}'s ${flag} flag must be true or false`);
-    }
-    for (const item of lesson.items) {
-      if (blank(item.id)) {
-        problems.push(`Lesson ${lesson.number} has an item with no id`);
-        continue;
-      }
-      ids.push(item.id);
-      if (!isFlag(item.required)) problems.push(`Lesson ${lesson.number}'s item "${item.id}" has a required flag that is not true or false`);
-      if (item.retired !== undefined && item.retired !== true) {
-        problems.push(`Lesson ${lesson.number}'s item "${item.id}" has a retired flag that is not true`);
-      }
-    }
-  }
-  new Set(ids.filter((id, i) => ids.indexOf(id) !== i)).forEach((id) =>
-    problems.push(`the item id "${id}" is used more than once (a retired id is never reused)`),
-  );
-  return problems;
-}
-
-// 8. The public part of a manifest (spec #56) holds only the agreed fields: the Crash course's
-// id and Lessons; for a released Lesson its number, title key, summary, three flags and current
-// items (id and required flag); for a coming-soon Lesson its number and title key. A test Crash
-// course has none. `part` is what courses/manifest.js publicPart() gives for `manifest`.
-const PUBLIC_FIELDS = {
-  course: ["id", "lessons"],
-  released: ["number", "titleKey", "summary", "preview", "required", "released", "items"],
-  soon: ["number", "titleKey"],
-  item: ["id", "required"],
-};
-
-function findPublicPartProblems(part, manifest) {
-  if (manifest.test) {
-    return part === null ? [] : [`the test Crash course ${manifest.id} has a public part; it must have none`];
-  }
-  const problems = [];
-  const extraFields = (object, allowed, where) =>
-    Object.keys(object)
-      .filter((field) => !allowed.includes(field))
-      .forEach((field) => problems.push(`${where} has the field "${field}", which is not public`));
-  extraFields(part, PUBLIC_FIELDS.course, "the public part");
-  for (const lesson of part.lessons || []) {
-    const agreed = manifest.lessons.find((entry) => entry.number === lesson.number);
-    const where = `Lesson ${lesson.number} in the public part`;
-    if (!agreed) {
-      problems.push(`${where} is not in the manifest`);
-      continue;
-    }
-    extraFields(lesson, agreed.released ? PUBLIC_FIELDS.released : PUBLIC_FIELDS.soon, where);
-    if (!agreed.released) continue;
-    for (const item of lesson.items || []) {
-      const itemWhere = `Lesson ${lesson.number}'s item "${item.id}" in the public part`;
-      extraFields(item, PUBLIC_FIELDS.item, itemWhere);
-      const source = agreed.items.find((entry) => entry.id === item.id);
-      if (!source) problems.push(`${itemWhere} is not one of its items in the manifest`);
-      else if (source.retired) problems.push(`${itemWhere} is retired`);
-    }
-  }
-  return problems;
-}
-
-// 9. The production deploy file list (deploy-files.txt) holds no test Crash course material:
-// no entry is, holds or sits inside a test Crash course's folder or its manifest file.
-// `manifests` is courses/manifest.js MANIFESTS. Limits: this reads the list, not what was
-// actually uploaded, so the assembled files are still inspected before each upload (spec #56).
-function findDeployListProblems(paths, manifests) {
-  if (!paths.length) return ["the deploy file list is empty"];
-  const clean = (entry) => path.posix.normalize(entry).replace(/\/+$/, "").replace(/^\.$/, "");
-  const material = manifests
-    .filter(({ manifest }) => manifest.test)
-    .flatMap(({ file, manifest }) => [clean(manifest.folder), clean(file)]);
-  const problems = [];
-  for (const entry of paths) {
-    const listed = clean(entry);
-    const hit = material.find(
-      (target) => listed === "" || listed === target || target.startsWith(listed + "/") || listed.startsWith(target + "/"),
-    );
-    if (hit) problems.push(`the deploy file list has "${entry}", which holds test Crash course material (${hit})`);
-  }
-  return problems;
-}
-
 // The project-relative path a relative link points to, without its query or #hash.
 function resolveLink(file, href) {
   const target = href.split("#")[0].split("?")[0];
@@ -843,6 +737,130 @@ function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
     if (!exists(target)) linkProblems.add(`the image "${src}" points to ${target}, which does not exist`);
   }
   problems.push(...linkProblems);
+  return problems;
+}
+
+// 7. Crash course manifest (spec #56, ticket #57): its own rules. Lessons are numbered 1, 2, 3
+// in order, every flag is true or false, and an item id appears once in the whole Crash course,
+// retired items included, so a retired id is never reused. Limits: this sees one version of the
+// manifest, so an id deleted outright and later added back with a new meaning goes unnoticed
+// (retired items must stay in the list), and it never checks that a summary is accurate.
+function findManifestProblems(manifest) {
+  const problems = [];
+  const isFlag = (value) => value === true || value === false;
+  const blank = (value) => typeof value !== "string" || value.trim() === "";
+  if (blank(manifest.id)) problems.push("the manifest has no id");
+  if (blank(manifest.folder)) problems.push("the manifest has no folder");
+  if (!isFlag(manifest.test)) problems.push("the manifest's test flag must be true or false");
+  if (!Array.isArray(manifest.lessons)) return [...problems, "the manifest has no Lesson list"];
+
+  const numbers = manifest.lessons.map((lesson) => lesson.number);
+  const wanted = numbers.map((_, i) => i + 1);
+  if (!numbers.every((number, i) => number === wanted[i]) || numbers.length !== wanted.length) {
+    const shown = numbers.map((number) => (typeof number === "number" ? number : JSON.stringify(number)));
+    problems.push(`Lessons are numbered ${shown.join(", ")} but should be ${wanted.join(", ")}`);
+  }
+
+  const ids = [];
+  for (const lesson of manifest.lessons) {
+    if (blank(lesson.titleKey)) problems.push(`Lesson ${lesson.number} has no title key`);
+    if (blank(lesson.summary)) problems.push(`Lesson ${lesson.number} has no summary`);
+    for (const flag of ["preview", "required", "released"]) {
+      if (!isFlag(lesson[flag])) problems.push(`Lesson ${lesson.number}'s ${flag} flag must be true or false`);
+    }
+    if (!Array.isArray(lesson.items)) {
+      problems.push(`Lesson ${lesson.number} has no item list`);
+      continue;
+    }
+    for (const item of lesson.items) {
+      if (blank(item.id)) {
+        problems.push(`Lesson ${lesson.number} has an item with no id`);
+        continue;
+      }
+      ids.push(item.id);
+      if (!isFlag(item.required)) problems.push(`Lesson ${lesson.number}'s item "${item.id}" has a required flag that is not true or false`);
+      if (item.retired !== undefined && item.retired !== true) {
+        problems.push(`Lesson ${lesson.number}'s item "${item.id}" has a retired flag that is not true`);
+      }
+    }
+  }
+  new Set(ids.filter((id, i) => ids.indexOf(id) !== i)).forEach((id) =>
+    problems.push(`the item id "${id}" is used more than once (a retired id is never reused)`),
+  );
+  return problems;
+}
+
+// 8. The public part of a manifest (spec #56) holds only the agreed fields: the Crash course's
+// id and Lessons; for a released Lesson its number, title key, summary, three flags and current
+// items (id and required flag); for a coming-soon Lesson its number and title key. A test Crash
+// course has none. `part` is what courses/manifest.js publicPart() gives for `manifest`.
+const PUBLIC_FIELDS = {
+  course: ["id", "lessons"],
+  released: ["number", "titleKey", "summary", "preview", "required", "released", "items"],
+  soon: ["number", "titleKey"],
+  item: ["id", "required"],
+};
+
+function findPublicPartProblems(part, manifest) {
+  if (manifest.test) {
+    return part === null ? [] : [`the test Crash course ${manifest.id} has a public part; it must have none`];
+  }
+  if (part === null || typeof part !== "object") return [`the Crash course ${manifest.id} has no public part`];
+  const problems = [];
+  const extraFields = (object, allowed, where) =>
+    Object.keys(object)
+      .filter((field) => !allowed.includes(field))
+      .forEach((field) => problems.push(`${where} has the field "${field}", which is not public`));
+  extraFields(part, PUBLIC_FIELDS.course, "the public part");
+  for (const lesson of part.lessons || []) {
+    const agreed = manifest.lessons.find((entry) => entry.number === lesson.number);
+    const where = `Lesson ${lesson.number} in the public part`;
+    if (!agreed) {
+      problems.push(`${where} is not in the manifest`);
+      continue;
+    }
+    extraFields(lesson, agreed.released ? PUBLIC_FIELDS.released : PUBLIC_FIELDS.soon, where);
+    if (!agreed.released) continue;
+    for (const item of lesson.items || []) {
+      const itemWhere = `Lesson ${lesson.number}'s item "${item.id}" in the public part`;
+      extraFields(item, PUBLIC_FIELDS.item, itemWhere);
+      const source = agreed.items.find((entry) => entry.id === item.id);
+      if (!source) problems.push(`${itemWhere} is not one of its items in the manifest`);
+      else if (source.retired) problems.push(`${itemWhere} is retired`);
+    }
+  }
+  return problems;
+}
+
+// 9. The production deploy file list (deploy-files.txt) holds no test Crash course material
+// and no manifest: no entry is, holds or sits inside a test Crash course's folder or any
+// manifest file (a manifest holds more than is public). The deploy command hands each entry to
+// git archive as it stands, so an entry must be one plain path: no spaces (the shell would split
+// it), no pattern characters and no ":" pathspec magic (git would match more than it names).
+// `paths` is the list's lines, blank lines removed; `manifests` is courses/manifest.js
+// MANIFESTS. Limits: this reads the list, not what was actually uploaded, so the assembled files
+// are still inspected before each upload (spec #56).
+const PLAIN_PATH = /^[A-Za-z0-9._\/-]+$/;
+
+function findDeployListProblems(paths, manifests) {
+  if (!paths.length) return ["the deploy file list is empty"];
+  const clean = (entry) => path.posix.normalize(entry).replace(/\/+$/, "").replace(/^\.$/, "");
+  const material = manifests.flatMap(({ file, manifest }) => [
+    ...(manifest.test ? [{ target: clean(manifest.folder), what: "test Crash course material" }] : []),
+    { target: clean(file), what: manifest.test ? "test Crash course material" : "a Crash course manifest" },
+  ]);
+  const problems = [];
+  for (const entry of paths) {
+    if (!PLAIN_PATH.test(entry) || entry.startsWith(":")) {
+      problems.push(`the deploy file list has "${entry}"; an entry is one plain path, with no spaces, patterns or pathspec magic`);
+      continue;
+    }
+    const listed = clean(entry);
+    const hit = material.find(
+      ({ target }) => listed === "" || listed === target || target.startsWith(listed + "/") || listed.startsWith(target + "/"),
+    );
+    if (hit) problems.push(`the deploy file list has "${entry}", which holds ${hit.what} (${hit.target})`);
+  }
   return problems;
 }
 

@@ -427,6 +427,21 @@ test("manifest: reports an item id used twice in a Crash course, including a ret
   ]);
 });
 
+test("manifest: reports a missing Lesson list or item list, and a Lesson number that is not a whole number, without failing", () => {
+  assert.deepEqual(findManifestProblems({ id: "x", folder: "x", test: false }), ["the manifest has no Lesson list"]);
+  const manifest = goodManifest();
+  manifest.lessons[0] = { ...manifest.lessons[0], number: "1" };
+  delete manifest.lessons[1].items;
+  assert.deepEqual(findManifestProblems(manifest), [
+    'Lessons are numbered "1", 2 but should be 1, 2',
+    "Lesson 2 has no item list",
+  ]);
+});
+
+test("public part: reports a missing public part for a Crash course that is not a test", () => {
+  assert.deepEqual(findPublicPartProblems(null, goodManifest()), ["the Crash course example has no public part"]);
+});
+
 test("public part: what publicPart gives for a real manifest passes", () => {
   assert.deepEqual(findPublicPartProblems(publicPart(goodManifest()), goodManifest()), []);
 });
@@ -480,6 +495,21 @@ test("deploy list: reports the test Crash course's folder or manifest, or a fold
   ]);
   assert.deepEqual(findDeployListProblems(["./"], [TEST_COURSE]), [
     'the deploy file list has "./", which holds test Crash course material (test-course)',
+  ]);
+});
+
+test("deploy list: reports any manifest file, or a folder holding one, since a manifest holds more than is public", () => {
+  assert.deepEqual(findDeployListProblems(["courses/example.js", "js"], [REAL_COURSE, TEST_COURSE]), [
+    'the deploy file list has "courses/example.js", which holds a Crash course manifest (courses/example.js)',
+  ]);
+});
+
+test("deploy list: reports an entry the deploy command would read differently: spaces, pattern characters or a pathspec", () => {
+  assert.deepEqual(findDeployListProblems(["index.html test-course", " js", "test-*", ":(glob)**", "css"], [TEST_COURSE]), [
+    'the deploy file list has "index.html test-course"; an entry is one plain path, with no spaces, patterns or pathspec magic',
+    'the deploy file list has " js"; an entry is one plain path, with no spaces, patterns or pathspec magic',
+    'the deploy file list has "test-*"; an entry is one plain path, with no spaces, patterns or pathspec magic',
+    'the deploy file list has ":(glob)**"; an entry is one plain path, with no spaces, patterns or pathspec magic',
   ]);
 });
 

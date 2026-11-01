@@ -115,14 +115,25 @@ for (const { file, manifest } of MANIFESTS) {
   });
 }
 
-test("there is one test Crash course, and it has no public part", () => {
-  const tests = MANIFESTS.filter(({ manifest }) => manifest.test);
-  assert.equal(tests.length, 1);
-  assert.equal(publicPart(tests[0].manifest), null);
+test("there is one test Crash course: one released Preview Lesson, one released Lesson that needs Enrolment, no public part", () => {
+  const testCourses = MANIFESTS.filter(({ manifest }) => manifest.test);
+  assert.equal(testCourses.length, 1);
+  const { lessons } = testCourses[0].manifest;
+  assert.deepEqual(
+    lessons.map(({ preview, released }) => ({ preview, released })),
+    [{ preview: true, released: true }, { preview: false, released: true }],
+  );
+  assert.equal(publicPart(testCourses[0].manifest), null);
+});
+
+test("each Lesson's summary is its Arabic hub outcome, word for word (the PO, 2026-11-01)", () => {
+  for (const { number, summary } of COURSE.lessons) {
+    assert.equal(summary, TRANSLATIONS.ar[`course.lesson${number}.outcome`], `Lesson ${number}'s summary`);
+  }
 });
 
 test("the production deploy file list holds no test Crash course material", () => {
-  const paths = read("deploy-files.txt").split("\n").filter((line) => line.trim() !== "");
+  const paths = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
   assert.ok(paths.includes("crash-course") && paths.includes("index.html"), "deploy-files.txt not read");
   assert.deepEqual(findDeployListProblems(paths, MANIFESTS), []);
 });
