@@ -52,4 +52,4 @@
 |---|---|---|
 | 0 | `a0eaea5` | No P0. P1s (production exposure, missing Record sign-in/migration, failed sign-out reported as success) handled in `063c288` and `20b02d9`. |
 | 1 | `359cef2` | `VERDICT: PASS`. No P0/P1. One P2 (manifest check read all migrations): fixed in `5ad49af`. `node --test` 194 passed, 1 sandbox EPERM (not a code failure; 195/195 locally). Codex could not reach GitHub, so spec and ticket were not re-read live. |
-| 2 | `5ad49af` | pending |
+| 2 | `5ad49af` (report `a6c5253`) | `VERDICT: PASS`. No P0/P1/P2. Codex ran 80 in-memory mutation checks (a differing Lesson field or item, each of the 13 seed rows commented out): all failed the check as they should. `node --test` 194 passed, 1 sandbox EPERM (195/195 locally). It could not verify any PO delegation from Git, which is correct: none is recorded. |
