@@ -32,10 +32,10 @@
 | P2 | Sign-out does not blank other tabs on `pageshow`/visibility | Deferred to the ticket that adds protected content and the gate (spec "Browser behaviour"); pending PO. supabase-js already signs other tabs out. |
 | P3 | Sign-out takes no Web Lock; no sign-in generation | Deferred to the cookie-exchange/gate ticket (T2); pending PO |
 | P4 | Live region sat inside the hidden bar; errors not announced; "signed in" announced on every load | Fixed, `391c86a`. A regression I introduced while fixing it (script looked for the region inside the bar) was caught in the browser and fixed in the same commit. |
-| P5 | CSP `connect-src` has no `'self'` | Deferred to T2 (adds the site's own endpoints). Applied on the agent's recommendation when the PO started the Codex loop; the PO has not answered the five questions one by one, so this is pending PO confirmation at merge. |
+| P5 | CSP `connect-src` has no `'self'` | Deferred to T2 (adds the site's own endpoints). Applied on the agent's recommendation and **confirmed by the PO on 2026-11-01**. |
 | P6 | SQL checks: no revoked-token or REST path for direct writes; "enrols in nothing" check is weak because no Enrolment table exists | Not changed. The tables have no grants for any client role, so a token does not matter; stronger check belongs with the Enrolment ticket. Pending PO. |
 | P7 | No project check ties the migration's inserts to `courses/claude-beginners.js` | Fixed, `359cef2`; scoped to the foundation seed in `5ad49af` after Codex round 1 (P2) |
-| P8 | Scope: `Referrer-Policy` and `nosniff` added for the course pages; `deploy-files.preview.txt` and explicit `deploy-files.txt` | `Referrer-Policy` dropped, `359cef2`. `nosniff` and the deploy lists kept (needed by the ticket rule); PO to confirm at merge. |
+| P8 | Scope: `Referrer-Policy` and `nosniff` added for the course pages; `deploy-files.preview.txt` and explicit `deploy-files.txt` | `Referrer-Policy` dropped, `359cef2`. `nosniff` and the deploy lists kept (needed by the ticket rule). Confirmed by the PO on 2026-11-01. |
 | P9 | Account strings and the draft privacy text are in `js/translations.js`, which production deploys; hub/Lesson 1 production pages carry hidden bar markup | Open, pending PO. Inert in production (the bar stays hidden and no account script loads there, `359cef2`), but the draft privacy wording is readable in the public `translations.js`. |
 | P10 | **Verified:** on Cloudflare Pages a missing script returns the home page with status 200 (`curl` on production, 2026-11-01), so production pages would request `js/accounts-boot.js` and get HTML back | Fixed, `359cef2`: `js/course.js` loads the boot script only where `js/accounts-hosts.js` allows it (localhost and `*.godwitly.pages.dev`, never `godwitly.pages.dev`); tested in `tests/accounts-hosts.test.js`. Checked on localhost. Production behaviour still to confirm on the first production deploy. |
 | P11 | Record sign-in is called once per page load on the first `SIGNED_IN`; a lost call is not retried; also fires on tab refocus (server rejects) | Not changed. Verified end to end (1 row recorded). Retry on failure is optional; pending PO. |
@@ -44,7 +44,8 @@
 
 - Standards: 10 findings. 6 fixed, 4 judgement calls pending PO. Worst: Arabic Enrolment wording (fixed).
 - Spec: 11 findings. 1 fixed (live region); the rest open, deferred or pending PO. Worst: the privacy wording is unapproved (P1).
-- No outcome here is recorded as "accepted by the PO": none has been given yet.
+- **PO confirmation, 2026-11-01:** the five technical choices (production gating by host, `Referrer-Policy` dropped, the manifest/migration check, and deferring cross-tab sign-out and `connect-src 'self'` to T2) were confirmed, and the merge was approved.
+- **Not explicitly accepted by the PO:** S5, S7, S9, S10 and P9 were left unchanged and the PR was merged with the PO's merge approval; the PO did not name them. P1 (privacy wording approval) is still open and blocks any production release, not the merge.
 
 ## Codex loop (Claude fixes, Codex reviews)
 
