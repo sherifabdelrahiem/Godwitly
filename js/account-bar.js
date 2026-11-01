@@ -15,8 +15,9 @@
 
   const parts = {
     out: bar.querySelector("[data-account-out]"),
-    signedIn: bar.querySelector("[data-account-in]"),
-    name: bar.querySelector("[data-account-name]"),
+    // The signed-in controls (name and Sign out) are in the header and, on narrow screens, the menu.
+    signedIn: document.querySelectorAll("[data-account-signed-in]"),
+    names: document.querySelectorAll("[data-account-name]"),
     note: bar.querySelector("[data-account-note]"),
     live: document.querySelector("[data-account-live]"),
   };
@@ -61,11 +62,17 @@
   function show(state) {
     const text = TRANSLATIONS[courseLanguage.current()];
     const noteKey = NOTES[state.status] || state.message;
-    bar.hidden = state.status === "loading";
+    // The bar (sign-in button and notice) is for signed-out people; signed in, the header has the controls.
+    bar.hidden = state.status === "loading" || state.status === "signed-in";
     parts.out.hidden = state.status !== "signed-out";
-    parts.signedIn.hidden = state.status !== "signed-in";
+    parts.signedIn.forEach((element) => {
+      element.hidden = state.status !== "signed-in";
+    });
     // The name is text only, isolated from the page direction by <bdi>.
-    parts.name.textContent = state.status === "signed-in" ? state.name || text["account.nameMissing"] : "";
+    const name = state.status === "signed-in" ? state.name || text["account.nameMissing"] : "";
+    parts.names.forEach((element) => {
+      element.textContent = name;
+    });
     parts.note.hidden = !noteKey;
     if (noteKey) {
       parts.note.dataset.i18n = noteKey;
@@ -86,7 +93,7 @@
     if (state.status !== "loading") previousStatus = state.status;
   }
 
-  bar.querySelectorAll("[data-account-action]").forEach((button) => {
+  document.querySelectorAll("[data-account-action]").forEach((button) => {
     button.addEventListener("click", () => {
       if (button.dataset.accountAction === "sign-in") account.signIn();
       else account.signOut();

@@ -182,7 +182,7 @@ const TRANSLATIONS = {
 
     // Crash course hub (crash-course/index.html). The Lessons themselves are Arabic-only
     // at first (ADR-0008); the hub shows English visitors a title, a summary and
-    // "Available in Arabic".
+    // an "Open the guide in Arabic" link.
     "course.metaTitle": "Claude Crash Course for Beginners — Godwitly",
     "course.metaDescription":
       "A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step. The Lessons are in Arabic.",

@@ -53,6 +53,12 @@
       </nav>
 
       <div class="header-actions">
+        <!-- Signed-in account, like the header of Google or Facebook: the name and Sign out (spec #56).
+             Hidden until js/account-bar.js shows it. Wide screens only; narrow screens use the menu. -->
+        <div class="header-account" role="group" data-account-signed-in hidden data-i18n-aria-label="account.label" aria-label="Godwitly account">
+          <span class="header-account__name"><bdi data-account-name></bdi></span>
+          <button type="button" class="pill pill--outline pill--small" data-account-action="sign-out" data-i18n="account.signOut">Sign out</button>
+        </div>
         <div class="lang-switch" role="group" data-i18n-aria-label="a11y.language" aria-label="Choose language">
           <svg class="icon lang-switch__globe" aria-hidden="true"><use href="#icon-globe"></use></svg>
           <button type="button" class="lang-switch__btn" data-lang="en" lang="en" aria-pressed="true">English</button>
@@ -80,6 +86,13 @@
           <a href="../../index.html#contact" data-i18n="nav.contact">Get notified</a>
           <a href="../index.html" data-course-link class="is-current" data-i18n="nav.crashCourses">Crash Courses</a>
         </nav>
+        <div class="mobile-menu__account" role="group" data-account-signed-in hidden data-i18n-aria-label="account.label" aria-label="Godwitly account">
+          <p class="account-bar__who">
+            <span data-i18n="account.signedInAs">Signed in as</span>
+            <bdi class="account-bar__name" data-account-name></bdi>
+          </p>
+          <button type="button" class="pill pill--outline pill--small" data-account-action="sign-out" data-i18n="account.signOut">Sign out</button>
+        </div>
       </div>
     </header>
 
@@ -96,13 +109,6 @@
             <span data-i18n="account.notice">Signing in creates a Godwitly account. It does not enrol you in anything.</span>
             <a href="../privacy/index.html" data-course-link data-i18n="account.noticeLink">What we keep</a>
           </p>
-        </div>
-        <div class="account-bar__row" data-account-in hidden>
-          <p class="account-bar__who">
-            <span data-i18n="account.signedInAs">Signed in as</span>
-            <bdi class="account-bar__name" data-account-name></bdi>
-          </p>
-          <button type="button" class="pill pill--outline account-bar__button" data-account-action="sign-out" data-i18n="account.signOut">Sign out</button>
         </div>
         <p class="account-bar__note" data-account-note hidden></p>
       </div>
