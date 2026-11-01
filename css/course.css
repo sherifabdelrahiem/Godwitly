@@ -1301,7 +1301,7 @@ html[dir="rtl"] .celebration__bird {
 .account-bar--hero .account-bar__notice {
   grid-column: 1 / -1;
   grid-row: 2;
-  max-width: 22rem;
+  max-width: 28rem;
 }
 
 .account-bar--hero .account-bar__note {
@@ -1322,8 +1322,7 @@ html[dir="rtl"] .celebration__bird {
   }
 }
 
-/* Over the landscape, the notice and messages get a soft white backing so they stay readable */
-.account-bar--hero .account-bar__notice,
+/* Over the landscape, messages keep a soft white backing so they stay readable */
 .account-bar--hero .account-bar__who,
 .account-bar--hero .account-bar__note {
   padding: 6px 10px;
@@ -1331,11 +1330,29 @@ html[dir="rtl"] .celebration__bird {
   background: rgba(255, 255, 255, 0.88);
 }
 
-/* The notice is a quiet line, smaller than the page text */
-.account-bar--hero .account-bar__notice {
-  font-size: 0.8125rem;
+/* The notice is bold text with no box. A faint white halo keeps it readable on the landscape. */
+.account-bar__notice {
+  font-weight: 600;
+  color: var(--color-text);
 }
 
+.account-bar--hero .account-bar__notice {
+  padding: 0;
+  background: none;
+  font-size: 0.875rem;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 6px #fff,
+    0 0 10px rgba(255, 255, 255, 0.9),
+    0 0 16px rgba(255, 255, 255, 0.8);
+}
+
+/* The link to what is kept is red, like the page's other highlights */
+.account-bar__notice a {
+  color: var(--color-brand-hover);
+  text-decoration: underline;
+  white-space: nowrap;
+}
 
 /* ---------- Signed-in account in the header (spec #56) ---------- */
 
