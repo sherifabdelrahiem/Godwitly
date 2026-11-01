@@ -67,17 +67,18 @@ reset role;
 update private.account_state set last_used_at = now() - interval '2 days' where user_id = '00000000-0000-0000-0000-0000000000a2';
 set local role authenticated;
 select pg_temp.act_as('00000000-0000-0000-0000-0000000000a2', '00000000-0000-0000-0000-0000000005a2');
-do $$
-declare before_ts timestamptz;
-begin
+do $$ begin
   perform public.can_open('claude-beginners', 1);
   perform public.can_open('test-course', 2);
   perform public.enrol('test-course');
-  reset role;
-  select last_used_at into before_ts from private.account_state where user_id = '00000000-0000-0000-0000-0000000000a2';
-  if before_ts > now() - interval '1 day' then raise exception 'E3b failed: a Preview or refused call moved last_used_at'; end if;
-  set local role authenticated;
 end $$;
+reset role;
+do $$ begin
+  if (select last_used_at from private.account_state where user_id = '00000000-0000-0000-0000-0000000000a2') > now() - interval '1 day' then
+    raise exception 'E3b failed: a Preview or refused call moved last_used_at';
+  end if;
+end $$;
+set local role authenticated;
 
 -- E4: the test-list account enrols in the test Crash course and then opens its protected Lesson.
 select pg_temp.act_as('00000000-0000-0000-0000-0000000000b2', '00000000-0000-0000-0000-0000000005b2');
