@@ -6,9 +6,11 @@
   this record feeds `/to-spec` and the Codex gate. It is not the Codex gate.
 - Panel: Claude (proposing architect) and Codex `gpt-6.1-sol`, medium effort, read-only (vendor
   reviewer). Codex made no edits, deploys or git writes.
-- Rounds: 3 of a maximum of 4. Stopped when no technical blocker remained and the open items
-  were product decisions for the PO.
-- Related: `GLOSSARY.md` (Accounts and Enrolment), ADR-0009, ADR-0010.
+- Codex panel rounds: Panel 1, 3 of a maximum of 4 (section 3), stopped when no technical
+  blocker remained and the open items were product decisions for the PO; Panel 2, 4 rounds
+  (section 4). "Round 4" to "Round 6" elsewhere in this record are the PO's question rounds in
+  the `/grill-with-docs` session, numbered separately from the panel rounds.
+- Related: `GLOSSARY.md` (Accounts and Enrolment), ADR-0009, ADR-0010, ADR-0011.
 
 This record keeps two things apart:
 
