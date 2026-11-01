@@ -56,14 +56,14 @@ These choose values the spec says each Crash course names for itself; they chang
 | S-9 | **A deploy entry starting with "-" was read by git archive as an option (`-o`)** | Fixed in 9c06518: every path segment starts with a letter, digit or "_" (also refuses `.`, `..`, hidden names, leading "/") |
 | S-10 | Dead ":" check; repeated literal; project test name | Fixed in 9c06518 |
 | S-11 | Pre-existing: the `data-item` pattern reads double quotes only | Not changed: pre-existing, fails safe (reported as a mismatch) |
-| S-12 | Section 7 comment has one 131-character line | **Open, for the PO** (cosmetic) |
-| S-13 | The deploy-entry message names "." and ".." but the rule refuses any segment starting with "." | **Open, for the PO** (cosmetic) |
+| S-12 | Section 7 comment has one 131-character line | **Accepted by the PO, 2026-11-01** (cosmetic) |
+| S-13 | The deploy-entry message names "." and ".." but the rule refuses any segment starting with "." | **Accepted by the PO, 2026-11-01** (cosmetic) |
 
 ## Spec findings
 | # | Finding | Outcome |
 |---|---|---|
 | P-1 | The public-part check proves `publicPart()`; nothing is published yet. Later tickets (migration, Seam 4 anonymous-read SQL) must reuse or match it | Informational, carried to T1 #58 |
-| P-2 | "Retired ids never reused" is checked within one version only; an id deleted outright and re-added is not caught | Documented limit in `tests/checks.js` section 8; retired items must stay in the manifest. **For the PO to accept** |
+| P-2 | "Retired ids never reused" is checked within one version only; an id deleted outright and re-added is not caught | Documented limit in `tests/checks.js` section 8; retired items must stay in the manifest. **Accepted by the PO, 2026-11-01** |
 | P-3 | Test Crash course shape not enforced | Fixed in fde4fa3 (one released Preview Lesson, one released Lesson that needs Enrolment) |
 | P-4 | Hub cards carry ids only, so required flags are compared on Lesson pages only | Informational: the hub's states change in T6 #64 |
 | P-5 | `folder` and `retired` go beyond the spec's literal field list | Informational: internal, kept out of the public part, needed for the deploy check and retirement |
