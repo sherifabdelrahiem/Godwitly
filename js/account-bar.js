@@ -62,6 +62,9 @@
   function show(state) {
     const text = TRANSLATIONS[courseLanguage.current()];
     const noteKey = NOTES[state.status] || state.message;
+    // If the keyboard focus is on a signed-in control that is about to hide (Sign out), remember it,
+    // so focus can move to the Sign in button instead of being lost to the page body.
+    const focusWasInSignedIn = Array.from(parts.signedIn).some((element) => element.contains(document.activeElement));
     // The bar (sign-in button and notice) is for signed-out people; signed in, the header has the controls.
     bar.hidden = state.status === "loading" || state.status === "signed-in";
     parts.out.hidden = state.status !== "signed-out";
@@ -73,6 +76,10 @@
     parts.names.forEach((element) => {
       element.textContent = name;
     });
+    if (focusWasInSignedIn && state.status === "signed-out") {
+      const signIn = bar.querySelector('[data-account-action="sign-in"]');
+      if (signIn && !bar.hidden) signIn.focus();
+    }
     parts.note.hidden = !noteKey;
     if (noteKey) {
       parts.note.dataset.i18n = noteKey;
