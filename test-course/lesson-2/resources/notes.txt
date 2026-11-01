@@ -1,0 +1,1 @@
+TEST-LOCKED-RESOURCE-SENTINEL: a Resource of the test Lesson 2. Dummy text.

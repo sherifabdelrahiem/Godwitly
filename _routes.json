@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "include": [
+    "/*"
+  ],
+  "exclude": [
+    "/",
+    "/index.html",
+    "/dashboard",
+    "/dashboard.html",
+    "/css/*",
+    "/js/*",
+    "/assets/*",
+    "/crash-course",
+    "/crash-course/",
+    "/crash-course/index.html",
+    "/crash-course/privacy",
+    "/crash-course/privacy/*",
+    "/crash-course/lesson-1",
+    "/crash-course/lesson-1/*"
+  ]
+}

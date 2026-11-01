@@ -20,3 +20,7 @@ js/accounts-config.js
 crash-course/privacy
 js/accounts-boot.js
 js/account-bar.js
+js/locked.js
+account/locked
+test-course
+_routes.json

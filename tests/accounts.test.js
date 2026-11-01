@@ -17,14 +17,16 @@ function fakeStorage(initial = {}) {
 }
 
 // A stand-in for supabase.createClient. `emit` plays an Auth event to the page.
-function fakeLibrary({ signInError = null, signOutThrows = false, signOutError = null, initializeError = null } = {}) {
-  const calls = { created: [], signIn: [], signOut: [], rpc: [] };
+function fakeLibrary({ signInError = null, signOutThrows = false, signOutError = null, initializeError = null, rpcReply = null } = {}) {
+  const calls = { created: [], signIn: [], signOut: [], rpc: [], rpcArgs: [] };
   let listener;
   const createClient = (url, key, options) => {
     calls.created.push({ url, key, options });
     return {
-      rpc: async (name) => {
+      rpc: async (name, args) => {
         calls.rpc.push(name);
+        calls.rpcArgs.push(args);
+        if (name !== "record_sign_in" && rpcReply) return rpcReply();
         return { data: "recorded", error: null };
       },
       auth: {
@@ -270,4 +272,31 @@ test("OAuth details are removed from the address and the rest stays", () => {
   assert.equal(cleanOAuthAddress("http://x.test/a/?lang=en#error=denied&error_code=x"), "/a/?lang=en");
   assert.equal(cleanOAuthAddress("http://x.test/a/?lang=en#lesson-1"), null);
   assert.equal(cleanOAuthAddress("http://x.test/a/?lang=en"), null);
+});
+
+test("Enrol calls the enrol function for the Crash course and reports success only for enrolled or already enrolled", async () => {
+  for (const [data, ok] of [["enrolled", true], ["already", true], ["refused", false], ["no-session", false], [null, false]]) {
+    const library = fakeLibrary({ rpcReply: async () => ({ data, error: null }) });
+    const { session } = build({ library });
+    await session.start();
+    const result = await session.enrol("test-course");
+    assert.equal(result.ok, ok, String(data));
+    assert.deepEqual(library.calls.rpc.filter((name) => name === "enrol"), ["enrol"]);
+    assert.deepEqual(library.calls.rpcArgs.at(-1), { p_course: "test-course" });
+  }
+});
+
+test("Enrol reports failure, never success, when the server errors, throws, or sign-in never started", async () => {
+  const failing = fakeLibrary({ rpcReply: async () => ({ data: null, error: { message: "boom" } }) });
+  const a = build({ library: failing });
+  await a.session.start();
+  assert.equal((await a.session.enrol("test-course")).ok, false);
+
+  const throwing = fakeLibrary({ rpcReply: async () => { throw new Error("offline"); } });
+  const b = build({ library: throwing });
+  await b.session.start();
+  assert.equal((await b.session.enrol("test-course")).ok, false);
+
+  const c = build();
+  assert.equal((await c.session.enrol("test-course")).ok, false);
 });

@@ -856,13 +856,15 @@ function findPublicPartProblems(part, manifest) {
 // are still inspected before each upload (spec #56).
 const PLAIN_PATH = /^[A-Za-z0-9_][A-Za-z0-9_.-]*(?:\/[A-Za-z0-9_][A-Za-z0-9_.-]*)*\/?$/;
 
-function findDeployListProblems(paths, manifests) {
+// The Pages preview list may name a test Crash course's pages (the lock is proven there) but never a
+// manifest: pass { allowTestFolders: true } for it.
+function findDeployListProblems(paths, manifests, { allowTestFolders = false } = {}) {
   if (!paths.length) return ["the deploy file list is empty"];
   const clean = (entry) => path.posix.normalize(entry).replace(/\/+$/, "").replace(/^\.$/, "");
   const material = manifests.flatMap(({ file, manifest }) => {
     if (!manifest.test) return [{ target: clean(file), what: "a Crash course manifest" }];
     const what = "test Crash course material";
-    return [{ target: clean(manifest.folder), what }, { target: clean(file), what }];
+    return [...(allowTestFolders ? [] : [{ target: clean(manifest.folder), what }]), { target: clean(file), what }];
   });
   const problems = [];
   for (const entry of paths) {
@@ -881,7 +883,19 @@ function findDeployListProblems(paths, manifests) {
 
 // Godwitly accounts sign-in is preview-only until ticket T10 (spec #56, ticket #58): these files must
 // not be in the production deploy list, and a directory that holds them must not be listed whole.
-const ACCOUNT_MATERIAL = ["js/accounts.js", "js/accounts-config.js", "js/accounts-boot.js", "js/account-bar.js", "crash-course/privacy"];
+// The gate's material (ticket #59) is preview-only too: the locked page and its script, the route list
+// and the test Crash course's pages. The Functions are not in a file list (see AGENTS.md, Deploy).
+const ACCOUNT_MATERIAL = [
+  "js/accounts.js",
+  "js/accounts-config.js",
+  "js/accounts-boot.js",
+  "js/account-bar.js",
+  "crash-course/privacy",
+  "js/locked.js",
+  "account/locked",
+  "test-course",
+  "_routes.json",
+];
 
 function findAccountsDeployProblems(paths) {
   const clean = (entry) => path.posix.normalize(entry).replace(/\/+$/, "");
@@ -892,7 +906,75 @@ function findAccountsDeployProblems(paths) {
   });
 }
 
+// 11. The gate's configuration agrees with the manifests, the route list and `_headers` (spec #56,
+// "The gate", Testing Decisions seam 3). `courses` is functions/_lib/routes.mjs COURSES;
+// `routesJson` the parsed _routes.json; `headersText` the text of `_headers`; `csp` the gate's CSP.
+//  - every Crash course in the table matches its manifest: folder, Lesson numbers and the preview and
+//    released flags, and a released Lesson that needs Enrolment carries the manifest's summary;
+//  - every protected Lesson's folder, and everything under it, is in the route list (a gated
+//    folder as a whole), the account endpoints are in it, and nothing is excluded;
+//  - the CSP in `_headers` for the Crash course pages is the gate's CSP, word for word.
+function findGateProblems({ courses, manifests, routesJson, headersText, csp }) {
+  const problems = [];
+  for (const { manifest } of manifests) {
+    const entry = courses.find((c) => c.id === manifest.id);
+    if (!entry) {
+      problems.push(`the gate table (functions/_lib/routes.mjs) has no entry for the Crash course "${manifest.id}"`);
+      continue;
+    }
+    if (entry.folder !== manifest.folder) problems.push(`gate table "${manifest.id}": folder "${entry.folder}" differs from the manifest's "${manifest.folder}"`);
+    if (entry.gateFolder !== Boolean(manifest.test)) problems.push(`gate table "${manifest.id}": gateFolder must be true for a test Crash course and false otherwise`);
+    const numbers = entry.lessons.map((l) => l.number).join(",");
+    const expected = manifest.lessons.map((l) => l.number).join(",");
+    if (numbers !== expected) problems.push(`gate table "${manifest.id}": Lessons ${numbers} differ from the manifest's ${expected}`);
+    for (const lesson of manifest.lessons) {
+      const row = entry.lessons.find((l) => l.number === lesson.number);
+      if (!row) continue;
+      if (row.preview !== lesson.preview || row.released !== lesson.released) {
+        problems.push(`gate table "${manifest.id}" Lesson ${lesson.number}: preview/released flags differ from the manifest`);
+      }
+      if (lesson.released && !lesson.preview && row.summary !== lesson.summary) {
+        problems.push(`gate table "${manifest.id}" Lesson ${lesson.number}: summary differs from the manifest`);
+      }
+    }
+  }
+  for (const entry of courses) {
+    if (!manifests.some(({ manifest }) => manifest.id === entry.id)) problems.push(`the gate table has "${entry.id}", which has no manifest`);
+  }
+
+  const include = Array.isArray(routesJson.include) ? routesJson.include : [];
+  const exclude = Array.isArray(routesJson.exclude) ? routesJson.exclude : [];
+  if (routesJson.version !== 1) problems.push("_routes.json: version must be 1");
+  // Pages matches routes case-sensitively but may serve files case-insensitively, so a protected
+  // path must reach the gate in every spelling. Everything is routed to the gate except named public
+  // paths, and no excluded pattern may match a protected path, in any letter case.
+  const matches = (pattern, requestPath) => (pattern.endsWith("*") ? requestPath.startsWith(pattern.slice(0, -1)) : requestPath === pattern);
+  const protectedPaths = ["/account", "/account/x"];
+  for (const entry of courses) {
+    const roots = entry.gateFolder ? [`/${entry.folder}`] : entry.lessons.filter((l) => !l.preview).map((l) => `/${entry.folder}/lesson-${l.number}`);
+    for (const root of roots) protectedPaths.push(root, `${root}/`, `${root}/index.html`, `${root}/resources/a.pdf`);
+  }
+  for (const protectedPath of protectedPaths) {
+    for (const spelling of new Set([protectedPath, protectedPath.toUpperCase(), protectedPath.replace(/\/(.)/g, (_, c) => "/" + c.toUpperCase())])) {
+      const routed = include.some((pattern) => matches(pattern, spelling)) && !exclude.some((pattern) => matches(pattern, spelling));
+      if (!routed) problems.push(`_routes.json does not send "${spelling}" to the gate`);
+    }
+  }
+  for (const pattern of exclude) {
+    if (pattern.includes("*") && !pattern.endsWith("*")) problems.push(`_routes.json exclude "${pattern}": a pattern may end in "*" only`);
+  }
+
+  const lines = headersText.split(/\r?\n/);
+  for (const section of ["/crash-course", "/crash-course/*"]) {
+    const at = lines.findIndex((line) => line === section);
+    const policy = at < 0 ? "" : ((lines.slice(at + 1).find((line) => /^\s+Content-Security-Policy:/.test(line)) || "").split("Content-Security-Policy:")[1] || "").trim();
+    if (policy !== csp) problems.push(`_headers "${section}": the Content-Security-Policy differs from the gate's (functions/_lib/csp.mjs)`);
+  }
+  return problems;
+}
+
 module.exports = {
+  findGateProblems,
   ACCOUNT_MATERIAL,
   findAccountsDeployProblems,
   findParityProblems,

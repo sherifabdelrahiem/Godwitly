@@ -164,6 +164,19 @@ function createAccountSession({
       }
     },
 
+    // Enrol in a Crash course (spec #56, "Functions the site calls"). Free and immediate; asking
+    // again changes nothing. Success is reported only when the server says "enrolled" or
+    // "already"; anything else, including an error or a timeout, is a failure the page can show.
+    async enrol(courseId) {
+      if (!client) return { ok: false };
+      try {
+        const { data, error } = await client.rpc("enrol", { p_course: courseId });
+        return { ok: !error && (data === "enrolled" || data === "already") };
+      } catch (error) {
+        return { ok: false };
+      }
+    },
+
     async signOut() {
       if (!client) return;
       // Signed out on this device either way. If the server could not be told, the page says so,

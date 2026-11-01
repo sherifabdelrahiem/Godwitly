@@ -110,6 +110,10 @@
   document.querySelectorAll("[data-account-only]").forEach((element) => {
     element.hidden = false;
   });
+  // Other scripts on the page (the locked page, js/locked.js) share this one sign-in; a second one
+  // would start a second library client on the same saved session.
+  window.godwitlyAccount = account;
+  window.dispatchEvent(new Event("godwitly-account-ready"));
   account.subscribe(show);
   // A language switch re-translates the bar's own text.
   document.querySelectorAll(".lang-switch__btn").forEach((button) => button.addEventListener("click", () => show(account.getState())));

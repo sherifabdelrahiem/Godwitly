@@ -16,3 +16,6 @@ tokens without installing anything (see `README.md`, "Common changes").
 - Adding any dependency, CDN script or build tool needs the PO's approval (`AGENTS.md`).
 - The Sign-up dashboard (`dashboard.html`) is a deliberate exception: it works online only and
   loads one pinned CDN script (ADR-0005).
+- Protected Lessons (the ones that need Enrolment) and the Course report are further online-only
+  exceptions: they are served through Cloudflare Pages Functions (ADR-0010) and do not work from
+  `file://`. The public pages, including Preview Lessons, still do.

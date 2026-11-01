@@ -232,6 +232,20 @@ proposed work that enters this Workflow at step 1 or 3.
   addresses, never `godwitly.pages.dev`); the boot script loads the pinned supabase-js (SRI) and
   the rest. A missing file on Pages returns the home page with status 200, so production pages
   must not name files that are not deployed.
+- `functions/`: the Cloudflare Pages Functions gate for protected Lessons (spec #56, ADR-0010).
+  `_middleware.js` is the entry point; the logic is in `_lib/gate.mjs` (tested in
+  `tests/gate.test.js` with a fake request, file store and fetch), the guarded pages in
+  `_lib/routes.mjs` and the policy in `_lib/csp.mjs`. Preview-only until T10. Protected Lessons
+  and the gate work online only (ADR-0001).
+- `_routes.json`: which requests reach the gate. Every request goes to it except named public
+  paths (home page, `css`, `js`, `assets`, the Crash course hub, privacy and Preview Lesson 1),
+  because Pages matches routes case-sensitively while files may be served case-insensitively; the
+  gate passes unprotected paths on untouched. No protected path may be excluded in any letter
+  case. A project check compares it with `functions/_lib/routes.mjs`.
+- `account/locked/index.html` and `js/locked.js`: the bilingual locked page the gate serves in
+  place of a protected Lesson (the gate refuses `/account/locked/` itself).
+- `test-course/`: the test Crash course's dummy pages (Preview Lesson, protected Lesson and
+  Resource), which prove the lock on the Pages preview. Never in `deploy-files.txt`.
 - `supabase/accounts/`: migrations and SQL checks for the `godwitly-accounts` project only.
   Never apply them to `godwitly` (whose migrations are in `supabase/migrations/`).
 - `tests/samples/components.html`: development-only page showing the Lesson building blocks
@@ -262,6 +276,12 @@ Use the commands verified for this repository:
   `git archive main $(git show main:deploy-files.txt) | tar -x -C <empty-folder>`, then
   `npx wrangler@4.153.0 pages deploy <empty-folder> --project-name godwitly --branch main
   --commit-hash "$(git rev-parse main)"`. Check https://godwitly.pages.dev afterwards.
+  Preview (the Pages branch `preview`, with the gate; PO approval each time): assemble a staging
+  folder with the Functions at its root and the site files in a sub-folder, then deploy from there
+  so Wrangler compiles the Functions:
+  `STAGE=$(mktemp -d) && mkdir "$STAGE/site" && git archive <commit> $(git show <commit>:deploy-files.preview.txt) | tar -x -C "$STAGE/site" && git archive <commit> functions | tar -x -C "$STAGE" && (cd "$STAGE" && npx wrangler@4.153.0 pages deploy site --project-name godwitly --branch preview --commit-hash <commit>)`.
+  Check https://preview.godwitly.pages.dev afterwards, and run the bypass matrix
+  (`docs/reviews/`, ticket #59). Production never gets Functions until T10.
 
 If a command is unavailable or fails, report that accurately.
 
