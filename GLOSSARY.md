@@ -175,11 +175,16 @@ _Avoid_: notification, notify email
 ### Crash course
 
 **Crash course**:
-The Claude Crash Course for Beginners: a free, self-paced Godwitly guide that teaches
-complete beginners to use Claude and Claude Code. It is not a Learn Programme: there is no
-enrolment, tracking or Final exam.
-Arabic: دليل كلود للمبتدئين (the agreed Arabic title, not a word-for-word translation)
+A free, self-paced Godwitly guide on one subject, made of Lessons, that a Course taker can
+work through and enrol in. It is not a Learn Programme: its Enrolment and Course progress are
+its own, not Learn's, and there is no Final exam. The first is the Claude Crash Course for
+Beginners.
+Arabic: دورة مكثّفة
 _Avoid_: Programme, course on its own, training; Arabic: كورس، برنامج
+
+**Claude Crash Course for Beginners**:
+The first Crash course: it teaches complete beginners to use Claude and Claude Code.
+Arabic: دليل كلود للمبتدئين (the agreed Arabic title, not a word-for-word translation)
 
 **Crash courses**:
 The site's section for Crash courses; the header, mobile menu and footer link to it. Until
@@ -189,8 +194,8 @@ course)
 _Avoid_: Courses, Programmes, Learn (a product name); Arabic: كورسات، برامج
 
 **Lesson**:
-One part of the Crash course with a single outcome the Course taker can check. Lessons are
-numbered from 1 and are not tied to days.
+One part of a Crash course with a single outcome the Course taker can check. Lessons are
+numbered from 1 within their Crash course and are not tied to days.
 Arabic: درس
 _Avoid_: Domain, module, day, unit
 
@@ -207,8 +212,8 @@ Arabic: اختبر نفسك
 _Avoid_: quiz, test, exam, Practice; Arabic: اختبار، امتحان
 
 **Course taker**:
-A person working through the Crash course. Used in docs and specs only; the course pages
-address them as "إنت".
+A person working through a Crash course, enrolled or not. Used in docs and specs only; the
+course pages address them as "إنت".
 _Avoid_: Learner (reserved for Learn), student, user, trainee
 
 **Sample business**:
@@ -218,7 +223,8 @@ permission.
 _Avoid_: demo, the bakery
 
 **Resources**:
-Optional files that go with one Lesson, which the Course taker downloads and uses while
+Optional files that go with one Lesson and share its access (public with a Preview Lesson,
+otherwise for Enrolled accounts only), which the Course taker downloads and uses while
 working, such as the Sample business facts file or a template. A Lesson may have none.
 Arabic: المصادر
 _Avoid_: annex, training material, attachments; Arabic: ملحق، مرفقات
@@ -235,6 +241,76 @@ its key terms, the prompts and commands to copy, and its main warnings. It is pa
 Lesson, not a Resource.
 Arabic: برشامة
 _Avoid_: summary, reference card; Arabic: ملخّص، ورقة مختصرة
+
+### Accounts and Enrolment
+
+**Godwitly account**:
+One person's identity on Godwitly, opened by signing in with Google. The intention is one per
+person, but a person can sign in with several Google accounts, so figures count accounts, not
+people. It never gives access to Launch sign-ups.
+Arabic: حساب Godwitly
+_Avoid_: user, profile, member, Learner; Arabic: مستخدم، عضوية
+
+**Enrolment**:
+A Godwitly account's own, free choice to take one Crash course. It gives access to that
+Crash course only. Signing in alone enrols in nothing. "Enrolled" describes a Course taker's
+state, not a separate kind of person.
+Arabic: الالتحاق (التحق بالدورة)
+_Avoid_: registration, sign-up, subscription; Arabic: التسجيل، الاشتراك
+
+**Preview Lesson**:
+A Lesson anyone may open without signing in or enrolling. Each Crash course names its own.
+It is still a Required Lesson where its Crash course says so.
+Arabic: درس مفتوح
+_Avoid_: free Lesson, sample Lesson, trial; Arabic: درس مجاني، درس تجريبي
+
+**Required Lesson**:
+A Lesson that counts towards Course progress. Each Crash course names its own set.
+Arabic: درس أساسي
+
+**Required checklist item**:
+An item on a Lesson's "You're done when" checklist that counts towards completing that Lesson.
+Arabic: بند أساسي
+
+**Completed Lesson**:
+A Required Lesson in which an Enrolled account has ticked every current Required checklist
+item. A Lesson with no Required checklist items is never complete. Self-reported, not
+assessed.
+Arabic: درس مكتمل
+_Avoid_: passed, mastered; Arabic: ناجح
+
+**Course progress**:
+One Enrolled account's Completed Lessons as a share of the released Required Lessons of one
+Crash course, shown with how many Lessons are still coming soon. Self-reported ticks, not
+measured understanding.
+Arabic: التقدّم في الدورة
+_Avoid_: Readiness, Study plan, score, percentage complete; Arabic: الجاهزية
+
+**Caught up**:
+An Enrolled account has completed every released Required Lesson of a Crash course that still
+has Lessons coming soon. It is not a Completed Crash course.
+Arabic: أنهى المتاح
+_Avoid_: finished, completed
+
+**Completed Crash course**:
+A Crash course in which every Required Lesson of the whole planned Crash course is a Completed
+Lesson for that account. It cannot happen while any Lesson is coming soon, and it is lost again
+if a new Required Lesson is released. It is not a certificate or a pass.
+Arabic: دورة مكتملة
+_Avoid_: graduation, certification, passed; Arabic: شهادة، تخرّج
+
+**Completion rate**:
+The share of a Crash course's Enrolments, counted over all time, that reached a Completed Crash
+course. Deleted accounts still count, anonymously, as they stood when deleted.
+Arabic: نسبة الإتمام
+_Avoid_: pass rate, success rate
+
+**Course report**:
+The private page where the Project owner sees each Crash course's figures: Enrolments, Caught
+up, Completed Crash courses and Completion rate. It shows figures only, never one person's
+records, and is separate from the Sign-up dashboard.
+Arabic: تقرير الدورات
+_Avoid_: dashboard, analytics, admin panel
 
 ### Access to sign-ups
 
