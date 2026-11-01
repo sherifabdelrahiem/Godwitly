@@ -6,6 +6,7 @@ const assert = require("node:assert/strict");
 
 const ORIGIN = "https://preview.godwitly.pages.dev";
 const FILES = {
+  "/crash-course/privacy/": "<html>PRIVACY</html>",
   "/test-course/": "<html>TEST HUB</html>",
   "/test-course/lesson-1/": "<html>TEST OPEN LESSON</html>",
   "/test-course/lesson-2/": "<html>SECRET-LOCKED-SENTINEL</html>",
@@ -29,8 +30,8 @@ function makeEnv(files = FILES) {
       async fetch(request) {
         const path = new URL(request.url).pathname;
         served.push(path);
-        if (path in files) return new Response(files[path], { status: 200, headers: { "content-type": "text/html" } });
-        return new Response("<html>HOME PAGE</html>", { status: 200 }); // Pages' fallback
+        if (path in files) return new Response(files[path], { status: 200, headers: { "content-type": path.endsWith(".txt") ? "text/plain" : "text/html" } });
+        return new Response("<html>HOME PAGE</html>", { status: 200, headers: { "content-type": "text/html" } }); // Pages' fallback
       },
     },
   };
@@ -278,4 +279,16 @@ test("the capital-letter spellings of a protected folder are gated, never passed
     assert.doesNotMatch(body, SECRET);
     assert.ok(!env.served.includes(path));
   }
+});
+
+test("an Enrolled request for a Resource that does not exist is refused, not answered with the home page", async () => {
+  const { response, body } = await ask("/test-course/lesson-2/missing.txt", { cookie: GOOD }, answers("open"));
+  assert.equal(response.status, 404);
+  assert.doesNotMatch(body, /HOME PAGE/);
+});
+
+test("a capital-letter spelling under a Crash course folder that is passed on still gets the page's policy", async () => {
+  const response = await gate.handleGate(req("/Crash-Course/privacy/"), makeEnv(), { fetch: makeFetch(() => assert.fail("x")) });
+  assert.match(response.headers.get("content-security-policy") || "", /frame-ancestors 'none'/);
+  assert.equal(response.headers.get("x-content-type-options"), "nosniff");
 });

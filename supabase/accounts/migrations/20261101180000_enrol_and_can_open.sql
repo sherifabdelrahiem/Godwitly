@@ -102,7 +102,11 @@ begin
   on conflict (user_id, course_id) do nothing;
   get diagnostics inserted = row_count;
 
-  update private.account_state as a set last_used_at = now() where a.user_id = caller;
+  -- Counts as use at most once a day, and only a real Enrolment or a repeat after a day.
+  update private.account_state as a
+     set last_used_at = now()
+   where a.user_id = caller
+     and a.last_used_at < now() - interval '1 day';
 
   return case when inserted = 1 then 'enrolled' else 'already' end;
 end;
@@ -134,16 +138,17 @@ begin
     return 'locked';
   end if;
 
-  perform pg_advisory_xact_lock(hashtextextended(caller::text, 0));
-  update private.account_state as a
-     set last_used_at = now()
-   where a.user_id = caller
-     and a.last_used_at < now() - interval '1 day';
-
+  -- A Preview Lesson or a refused request is not use of the account. Opening a Lesson the caller is
+  -- Enrolled in moves last_used_at, at most once a day, under the same per-account lock.
   if is_preview then
     return 'open';
   end if;
+  perform pg_advisory_xact_lock(hashtextextended(caller::text, 0));
   if exists (select 1 from private.enrolments as e where e.user_id = caller and e.course_id = p_course) then
+    update private.account_state as a
+       set last_used_at = now()
+     where a.user_id = caller
+       and a.last_used_at < now() - interval '1 day';
     return 'open';
   end if;
   return 'locked';

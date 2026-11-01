@@ -27,6 +27,12 @@
     summary.hidden = false;
   }
 
+  const number = document.querySelector("[data-locked-number]");
+  if (data && Number.isInteger(data.lesson) && data.lesson > 0) {
+    number.textContent = String(data.lesson);
+    document.querySelector("[data-locked-lesson]").hidden = false;
+  }
+
   const message = document.querySelector("[data-locked-message]");
   function say(key) {
     if (!key) {

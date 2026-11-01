@@ -68,7 +68,7 @@ export function resolvePath(pathname) {
     return { kind: "hub", course };
   }
   const match = /^lesson-([1-9][0-9]*)$/.exec(second);
-  if (!match) return course.gateFolder ? { kind: "refused" } : { kind: "other" };
+  if (!match) return course.gateFolder ? { kind: "refused" } : { kind: "other", inCourseFolder: true };
   const lesson = course.lessons.find((l) => l.number === Number(match[1]));
   if (!lesson) return { kind: "refused" };
   let rest = segments.slice(2);
@@ -160,7 +160,7 @@ async function lockedPage({ reason, course, lesson, request, env }) {
   return new Response(request.method === "HEAD" ? null : body, { status, headers });
 }
 
-async function serveAsset({ path, request, env }) {
+async function serveAsset({ path, request, env, expectHtml = true }) {
   let asset;
   try {
     asset = await env.ASSETS.fetch(new Request(new URL(path, request.url), { method: request.method === "HEAD" ? "GET" : request.method }));
@@ -168,8 +168,23 @@ async function serveAsset({ path, request, env }) {
     return plain(503, "Service unavailable", { "Retry-After": "30" });
   }
   if (asset.status !== 200) return plain(404, "Not found");
+  // A missing file on Pages returns the home page with status 200: a Resource that is not a web page
+  // but comes back as one does not exist.
+  if (!expectHtml && /text\/html/i.test(asset.headers.get("content-type") || "")) return plain(404, "Not found");
   const headers = gateHeaders(asset.headers.get("content-type"));
   return new Response(request.method === "HEAD" ? null : asset.body, { status: 200, headers });
+}
+
+// A request the gate does not guard goes on untouched. Under a Crash course folder (which can be
+// reached in a capital-letter spelling that the `_headers` rules may not match) the page's security
+// headers are added if the file store did not supply its own.
+async function passThrough(request, env, inCourseFolder) {
+  const response = await env.ASSETS.fetch(request);
+  if (!inCourseFolder || response.headers.has("content-security-policy")) return response;
+  const headers = new Headers(response.headers);
+  headers.set("Content-Security-Policy", CSP);
+  headers.set("X-Content-Type-Options", "nosniff");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
 export async function handleGate(request, env, { fetch: doFetch = fetch, now = () => Date.now(), timeoutMs = CAN_OPEN_TIMEOUT_MS } = {}) {
@@ -178,7 +193,7 @@ export async function handleGate(request, env, { fetch: doFetch = fetch, now = (
   }
   const url = new URL(request.url);
   const target = resolvePath(url.pathname);
-  if (target.kind === "other") return env.ASSETS.fetch(request);
+  if (target.kind === "other") return passThrough(request, env, target.inCourseFolder);
   if (target.kind === "refused" || target.kind === "account") return plain(404, "Not found");
 
   if (target.kind === "hub") {
@@ -188,13 +203,14 @@ export async function handleGate(request, env, { fetch: doFetch = fetch, now = (
   const { course, lesson, rest } = target;
   if (!lesson.released) return plain(404, "Not found");
   const path = canonicalPath(course, lesson, rest);
-  if (lesson.preview) return serveAsset({ path, request, env });
+  const expectHtml = rest.length === 0 || /\.html?$/i.test(rest[rest.length - 1]);
+  if (lesson.preview) return serveAsset({ path, request, env, expectHtml });
 
   const token = cookieValue(request, COOKIE_NAME);
   if (!token || !tokenLooksUsable(token, now())) {
     return lockedPage({ reason: "locked", course, lesson, request, env });
   }
   const verdict = await canOpen({ token, course, lesson, env, doFetch, timeoutMs });
-  if (verdict === "open") return serveAsset({ path, request, env });
+  if (verdict === "open") return serveAsset({ path, request, env, expectHtml });
   return lockedPage({ reason: verdict, course, lesson, request, env });
 }
