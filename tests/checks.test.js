@@ -436,6 +436,12 @@ test("manifest: reports a missing Lesson list or item list, and a Lesson number 
     'Lessons are numbered "1", 2 but should be 1, 2',
     "Lesson 2 has no item list",
   ]);
+  const odd = goodManifest();
+  odd.lessons[0].items.push(null);
+  assert.deepEqual(findManifestProblems(odd), ["Lesson 1 has an item with no id"]);
+  assert.deepEqual(findManifestProblems({ ...goodManifest(), lessons: [[]] }), [
+    "the manifest's Lesson list has an entry that is not a Lesson",
+  ]);
 });
 
 test("public part: reports a missing public part for a Crash course that is not a test", () => {
@@ -494,8 +500,8 @@ test("deploy list: reports the test Crash course's folder or manifest, or a fold
     'the deploy file list has "courses", which holds test Crash course material (courses/test-course.js)',
   ]);
   assert.deepEqual(findDeployListProblems(["a/../test-course", "test-course/."], [TEST_COURSE]), [
-    'the deploy file list has "a/../test-course"; an entry is one plain path, with no spaces, patterns or pathspec magic',
-    'the deploy file list has "test-course/."; an entry is one plain path, with no spaces, patterns or pathspec magic',
+    'the deploy file list has "a/../test-course"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+    'the deploy file list has "test-course/."; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
   ]);
 });
 
@@ -507,15 +513,15 @@ test("deploy list: reports any manifest file, or a folder holding one, since a m
 
 test("deploy list: reports an entry the deploy command would read differently: spaces, pattern characters or a pathspec", () => {
   assert.deepEqual(findDeployListProblems(["index.html test-course", " js", "test-*", ":(glob)**", "css"], [TEST_COURSE]), [
-    'the deploy file list has "index.html test-course"; an entry is one plain path, with no spaces, patterns or pathspec magic',
-    'the deploy file list has " js"; an entry is one plain path, with no spaces, patterns or pathspec magic',
-    'the deploy file list has "test-*"; an entry is one plain path, with no spaces, patterns or pathspec magic',
-    'the deploy file list has ":(glob)**"; an entry is one plain path, with no spaces, patterns or pathspec magic',
+    'the deploy file list has "index.html test-course"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+    'the deploy file list has " js"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+    'the deploy file list has "test-*"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+    'the deploy file list has ":(glob)**"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
   ]);
 });
 
 test("deploy list: reports an entry git would read as an option, or one that leaves or restarts the path", () => {
-  const plain = (entry) => `the deploy file list has "${entry}"; an entry is one plain path, with no spaces, patterns or pathspec magic`;
+  const plain = (entry) => `the deploy file list has "${entry}"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")`;
   const entries = ["-o", "x.tar", "--prefix", "./", ".", "..", "../x", "/test-course", ".hidden"];
   assert.deepEqual(findDeployListProblems(entries, [TEST_COURSE]), ["-o", "--prefix", "./", ".", "..", "../x", "/test-course", ".hidden"].map(plain));
 });

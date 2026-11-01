@@ -688,9 +688,8 @@ function findCourseLessonProblems(html, { file, courseDir, lessons, exists }) {
 
 // 7. Manifest checklist items (spec #56, ticket #57). The manifest is the one source of each
 // Lesson's checklist items. For each released Lesson, its hub card lists exactly the manifest's
-// current (not retired) items,
-// and its Lesson page has exactly those items, each marked data-required="true" or "false" as
-// the manifest says. The hub judges "complete" from the card's items (ticket #41), so a changed
+// current (not retired) items, and its Lesson page has exactly those items, each marked
+// data-required="true" or "false" as the manifest says. The hub judges "complete" from the card's items (ticket #41), so a changed
 // checklist is never judged by an old copy. lessonPages maps a Lesson number to its HTML.
 function findManifestChecklistProblems(manifest, hubHtml, lessonPages) {
   const problems = [];
@@ -746,7 +745,7 @@ function findManifestChecklistProblems(manifest, hubHtml, lessonPages) {
 // retired items included, so a retired id is never reused. Limits: this sees one version of the
 // manifest, so an id deleted outright and later added back with a new meaning goes unnoticed
 // (retired items must stay in the list), and it never checks that a summary is accurate (the
-// project checks compare each real summary with its Arabic hub outcome). The checks below
+// project checks compare each real summary with its Arabic hub outcome). Checks 7 and 9
 // assume a manifest that passes this one; the project checks run it on every manifest.
 function findManifestProblems(manifest) {
   const problems = [];
@@ -757,7 +756,7 @@ function findManifestProblems(manifest) {
   if (!isFlag(manifest.test)) problems.push("the manifest's test flag must be true or false");
   if (!Array.isArray(manifest.lessons)) return [...problems, "the manifest has no Lesson list"];
 
-  if (manifest.lessons.some((lesson) => !lesson || typeof lesson !== "object")) {
+  if (manifest.lessons.some((lesson) => !lesson || typeof lesson !== "object" || Array.isArray(lesson))) {
     return [...problems, "the manifest's Lesson list has an entry that is not a Lesson"];
   }
   const numbers = manifest.lessons.map((lesson) => lesson.number);
@@ -779,7 +778,7 @@ function findManifestProblems(manifest) {
       continue;
     }
     for (const item of lesson.items) {
-      if (blank(item.id)) {
+      if (!item || typeof item !== "object" || blank(item.id)) {
         problems.push(`Lesson ${lesson.number} has an item with no id`);
         continue;
       }
@@ -861,7 +860,7 @@ function findDeployListProblems(paths, manifests) {
   const problems = [];
   for (const entry of paths) {
     if (!PLAIN_PATH.test(entry)) {
-      problems.push(`the deploy file list has "${entry}"; an entry is one plain path, with no spaces, patterns or pathspec magic`);
+      problems.push(`the deploy file list has "${entry}"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")`);
       continue;
     }
     const listed = clean(entry);
