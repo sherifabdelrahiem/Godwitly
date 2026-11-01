@@ -118,7 +118,17 @@ async function canOpen({ token, course, lesson, env, doFetch, timeoutMs }) {
       body: JSON.stringify({ p_course: course.id, p_lesson: lesson.number }),
       signal: controller.signal,
     });
-    if (response.status === 401) return "locked"; // an invalid or expired token
+    if (response.status === 401) {
+      // Only a refused token (expired or invalid, PostgREST PGRST301/PGRST303) means "not signed in".
+      // Any other 401, such as a wrong project key, is our fault and must read as unavailable.
+      let code = "";
+      try {
+        code = String((await response.json()).code || "");
+      } catch (error) {
+        code = "";
+      }
+      return code === "PGRST301" || code === "PGRST303" ? "locked" : "unavailable";
+    }
     if (response.status !== 200) return "unavailable";
     const answer = await response.json();
     return answer === "open" ? "open" : answer === "locked" ? "locked" : "unavailable";

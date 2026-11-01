@@ -237,8 +237,11 @@ proposed work that enters this Workflow at step 1 or 3.
   `tests/gate.test.js` with a fake request, file store and fetch), the guarded pages in
   `_lib/routes.mjs` and the policy in `_lib/csp.mjs`. Preview-only until T10. Protected Lessons
   and the gate work online only (ADR-0001).
-- `_routes.json`: which requests reach the gate (every protected folder and everything under it,
-  and `/account/*`; nothing excluded). A project check compares it with `functions/_lib/routes.mjs`.
+- `_routes.json`: which requests reach the gate. Every request goes to it except named public
+  paths (home page, `css`, `js`, `assets`, the Crash course hub, privacy and Preview Lesson 1),
+  because Pages matches routes case-sensitively while files may be served case-insensitively; the
+  gate passes unprotected paths on untouched. No protected path may be excluded in any letter
+  case. A project check compares it with `functions/_lib/routes.mjs`.
 - `account/locked/index.html` and `js/locked.js`: the bilingual locked page the gate serves in
   place of a protected Lesson (the gate refuses `/account/locked/` itself).
 - `test-course/`: the test Crash course's dummy pages (Preview Lesson, protected Lesson and

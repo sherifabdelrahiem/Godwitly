@@ -130,7 +130,7 @@ test("an Enrolled account opens the Lesson; the accounts project gets only the t
 });
 
 test("not Enrolled, enrolled elsewhere, a revoked session or a refused token all give the locked page", async () => {
-  for (const fetch of [answers("locked"), answers({ code: "PGRST301", message: "JWT expired" }, 401)]) {
+  for (const fetch of [answers("locked"), answers({ code: "PGRST303", message: "JWT expired" }, 401), answers({ code: "PGRST301", message: "JWT invalid" }, 401)]) {
     const { response, body } = await ask("/test-course/lesson-2/", { cookie: GOOD }, fetch);
     assert.equal(response.status, 403);
     assert.doesNotMatch(body, SECRET);
@@ -142,6 +142,8 @@ test("when the accounts project fails, times out or answers oddly the page says 
   const failures = [
     answers({ message: "boom" }, 500),
     answers({ message: "nope" }, 403),
+    answers({ message: "Invalid API key" }, 401),
+    makeFetch(() => new Response("nope", { status: 401 })),
     makeFetch(() => {
       throw new Error("network down");
     }),
