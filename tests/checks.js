@@ -334,7 +334,7 @@ function findSyntaxProblems(files) {
 
 // 5. Course hub (spec #36, Seam 1): the hub shows exactly the agreed Lessons, in
 // order, with the agreed availability, and a real last-checked date. `lessons` is
-// the agreed list (tests/course-lessons.js). Limits: this proves the page's
+// the agreed list, from the Crash course's manifest (courses/). Limits: this proves the page's
 // structure only, not that the text is accurate or that a linked page exists.
 function isCalendarDate(text) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
@@ -412,10 +412,12 @@ function findCourseHubProblems(html, lessons) {
 // accurate or matches its approved draft.
 const OUTSIDE_LINK = /^([a-z][a-z0-9+.-]*:|\/\/)/i;
 
-// Each released Lesson's hub card lists the same checklist items as its Lesson page
-// (ticket #41): the hub judges "complete" from these current items and the saved ticks, so a
-// changed checklist is never judged by an old copy. lessonPages maps a Lesson number to its HTML.
-function findHubChecklistProblems(hubHtml, lessons, lessonPages) {
+// The manifest (spec #56, ticket #57) is the one source of each Lesson's checklist items. For
+// each released Lesson, its hub card lists exactly the manifest's current (not retired) items,
+// and its Lesson page has exactly those items, each marked data-required="true" or "false" as
+// the manifest says. The hub judges "complete" from the card's items (ticket #41), so a changed
+// checklist is never judged by an old copy. lessonPages maps a Lesson number to its HTML.
+function findManifestChecklistProblems(manifest, hubHtml, lessonPages) {
   const problems = [];
   const hub = hubHtml.replace(/<!--[\s\S]*?-->/g, "");
   const list = /<ol\b[^>]*class="lesson-list"[^>]*>([\s\S]*?)<\/ol>/i.exec(hub);
@@ -423,27 +425,149 @@ function findHubChecklistProblems(hubHtml, lessons, lessonPages) {
     number: Number(number),
     items: (/\sdata-checklist-items="([^"]*)"/i.exec(attributes) || [])[1],
   }));
-  for (const lesson of lessons.filter((entry) => entry.released)) {
+  const sameIds = (a, b) => a.every((id) => b.includes(id)) && b.every((id) => a.includes(id)) && a.length === new Set(a).size;
+  for (const lesson of manifest.lessons.filter((entry) => entry.released)) {
+    const current = lesson.items.filter((item) => !item.retired);
+    const wanted = current.map((item) => item.id);
     const card = cards.find((entry) => entry.number === lesson.number);
     if (!card) {
       problems.push(`Lesson ${lesson.number} has no card on the hub, so its checklist items cannot be compared`);
-      continue;
-    }
-    if (card.items === undefined || card.items.trim() === "") {
+    } else if (card.items === undefined || card.items.trim() === "") {
       problems.push(`Lesson ${lesson.number}'s hub card has no checklist items (data-checklist-items)`);
-      continue;
+    } else if (!sameIds(card.items.trim().split(/\s+/), wanted)) {
+      problems.push(`Lesson ${lesson.number}'s hub card lists the items "${card.items}" but the manifest has "${wanted.join(" ")}"`);
     }
+
     const page = (lessonPages[lesson.number] || "").replace(/<!--[\s\S]*?-->/g, "");
     // "data-checklist" itself, not data-checklist-items
     const checklist = /<(ul|ol)\b[^>]*\sdata-checklist(?=[\s=>])[^>]*>([\s\S]*?)<\/\1>/i.exec(page);
     const onPage = checklist
-      ? [...checklist[2].matchAll(/<input\b[^>]*\sdata-item\s*=\s*"([^"]*)"/gi)].map(([, id]) => id)
+      ? [...checklist[2].matchAll(/<input\b[^>]*\sdata-item\s*=\s*"([^"]*)"[^>]*>/gi)].map(([box, id]) => ({
+          id,
+          required: attributeValue(box, "data-required"),
+        }))
       : [];
-    const onCard = card.items.trim().split(/\s+/);
-    const same = onCard.every((id) => onPage.includes(id)) && onPage.every((id) => onCard.includes(id));
-    if (!same) {
-      problems.push(`Lesson ${lesson.number}'s hub card lists the items "${card.items}" but its page has "${onPage.join(" ")}"`);
+    const pageIds = onPage.map((item) => item.id);
+    if (!sameIds(pageIds, wanted)) {
+      problems.push(`Lesson ${lesson.number}'s page has the items "${pageIds.join(" ")}" but the manifest has "${wanted.join(" ")}"`);
+      continue;
     }
+    for (const item of onPage) {
+      const agreed = current.find((entry) => entry.id === item.id);
+      if (item.required !== "true" && item.required !== "false") {
+        problems.push(`Lesson ${lesson.number}'s item "${item.id}" has no data-required="true" or "false" on its page`);
+      } else if (item.required !== String(agreed.required)) {
+        problems.push(
+          `Lesson ${lesson.number}'s item "${item.id}" is marked data-required="${item.required}" on its page but the manifest says ${agreed.required}`,
+        );
+      }
+    }
+  }
+  return problems;
+}
+
+// 7. Crash course manifest (spec #56, ticket #57): its own rules. Lessons are numbered 1, 2, 3
+// in order, every flag is true or false, and an item id appears once in the whole Crash course,
+// retired items included, so a retired id is never reused. Limits: this sees one version of the
+// manifest, so an id deleted outright and later added back with a new meaning goes unnoticed
+// (retired items must stay in the list), and it never checks that a summary is accurate.
+function findManifestProblems(manifest) {
+  const problems = [];
+  const isFlag = (value) => value === true || value === false;
+  const blank = (value) => typeof value !== "string" || value.trim() === "";
+  if (blank(manifest.id)) problems.push("the manifest has no id");
+  if (blank(manifest.folder)) problems.push("the manifest has no folder");
+  if (!isFlag(manifest.test)) problems.push("the manifest's test flag must be true or false");
+
+  const numbers = manifest.lessons.map((lesson) => lesson.number);
+  const wanted = numbers.map((_, i) => i + 1);
+  if (numbers.join(",") !== wanted.join(",")) {
+    problems.push(`Lessons are numbered ${numbers.join(", ")} but should be ${wanted.join(", ")}`);
+  }
+
+  const ids = [];
+  for (const lesson of manifest.lessons) {
+    if (blank(lesson.titleKey)) problems.push(`Lesson ${lesson.number} has no title key`);
+    if (blank(lesson.summary)) problems.push(`Lesson ${lesson.number} has no summary`);
+    for (const flag of ["preview", "required", "released"]) {
+      if (!isFlag(lesson[flag])) problems.push(`Lesson ${lesson.number}'s ${flag} flag must be true or false`);
+    }
+    for (const item of lesson.items) {
+      if (blank(item.id)) {
+        problems.push(`Lesson ${lesson.number} has an item with no id`);
+        continue;
+      }
+      ids.push(item.id);
+      if (!isFlag(item.required)) problems.push(`Lesson ${lesson.number}'s item "${item.id}" has a required flag that is not true or false`);
+      if (item.retired !== undefined && item.retired !== true) {
+        problems.push(`Lesson ${lesson.number}'s item "${item.id}" has a retired flag that is not true`);
+      }
+    }
+  }
+  new Set(ids.filter((id, i) => ids.indexOf(id) !== i)).forEach((id) =>
+    problems.push(`the item id "${id}" is used more than once (a retired id is never reused)`),
+  );
+  return problems;
+}
+
+// 8. The public part of a manifest (spec #56) holds only the agreed fields: the Crash course's
+// id and Lessons; for a released Lesson its number, title key, summary, three flags and current
+// items (id and required flag); for a coming-soon Lesson its number and title key. A test Crash
+// course has none. `part` is what courses/manifest.js publicPart() gives for `manifest`.
+const PUBLIC_FIELDS = {
+  course: ["id", "lessons"],
+  released: ["number", "titleKey", "summary", "preview", "required", "released", "items"],
+  soon: ["number", "titleKey"],
+  item: ["id", "required"],
+};
+
+function findPublicPartProblems(part, manifest) {
+  if (manifest.test) {
+    return part === null ? [] : [`the test Crash course ${manifest.id} has a public part; it must have none`];
+  }
+  const problems = [];
+  const extraFields = (object, allowed, where) =>
+    Object.keys(object)
+      .filter((field) => !allowed.includes(field))
+      .forEach((field) => problems.push(`${where} has the field "${field}", which is not public`));
+  extraFields(part, PUBLIC_FIELDS.course, "the public part");
+  for (const lesson of part.lessons || []) {
+    const agreed = manifest.lessons.find((entry) => entry.number === lesson.number);
+    const where = `Lesson ${lesson.number} in the public part`;
+    if (!agreed) {
+      problems.push(`${where} is not in the manifest`);
+      continue;
+    }
+    extraFields(lesson, agreed.released ? PUBLIC_FIELDS.released : PUBLIC_FIELDS.soon, where);
+    if (!agreed.released) continue;
+    for (const item of lesson.items || []) {
+      const itemWhere = `Lesson ${lesson.number}'s item "${item.id}" in the public part`;
+      extraFields(item, PUBLIC_FIELDS.item, itemWhere);
+      const source = agreed.items.find((entry) => entry.id === item.id);
+      if (!source) problems.push(`${itemWhere} is not one of its items in the manifest`);
+      else if (source.retired) problems.push(`${itemWhere} is retired`);
+    }
+  }
+  return problems;
+}
+
+// 9. The production deploy file list (deploy-files.txt) holds no test Crash course material:
+// no entry is, holds or sits inside a test Crash course's folder or its manifest file.
+// `manifests` is courses/manifest.js MANIFESTS. Limits: this reads the list, not what was
+// actually uploaded, so the assembled files are still inspected before each upload (spec #56).
+function findDeployListProblems(paths, manifests) {
+  if (!paths.length) return ["the deploy file list is empty"];
+  const clean = (entry) => path.posix.normalize(entry).replace(/\/+$/, "").replace(/^\.$/, "");
+  const material = manifests
+    .filter(({ manifest }) => manifest.test)
+    .flatMap(({ file, manifest }) => [clean(manifest.folder), clean(file)]);
+  const problems = [];
+  for (const entry of paths) {
+    const listed = clean(entry);
+    const hit = material.find(
+      (target) => listed === "" || listed === target || target.startsWith(listed + "/") || listed.startsWith(target + "/"),
+    );
+    if (hit) problems.push(`the deploy file list has "${entry}", which holds test Crash course material (${hit})`);
   }
   return problems;
 }
@@ -729,6 +853,9 @@ module.exports = {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
-  findHubChecklistProblems,
+  findManifestChecklistProblems,
   findCourseLessonProblems,
+  findManifestProblems,
+  findPublicPartProblems,
+  findDeployListProblems,
 };
