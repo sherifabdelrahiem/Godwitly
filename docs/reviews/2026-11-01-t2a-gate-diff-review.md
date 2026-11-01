@@ -77,9 +77,21 @@ only an exact `"open"` answer serves protected content and that the new 401 hand
 Not run by Codex: SQL checks and hosted checks (run by me, see Evidence). One Codex-side test failure
 was its read-only sandbox refusing a temp folder, not a code defect.
 
+## Final deploy and re-run of the matrix (2026-11-01)
+
+- The PO deployed commit `50830f2` (code identical to the reviewed `5b2250e`; the later commit only adds this report) to the Pages `preview` branch: `https://e0a1c22d.godwitly.pages.dev`, alias `https://preview.godwitly.pages.dev`.
+- The same 19 spellings were requested on the alias, on `e0a1c22d` and on the earlier deployment `c37c0c72`
+  (commit `29ddd62`): every protected spelling gave 403 (the Lesson, no trailing slash, `index.html`, a Resource,
+  double slash, `%6c` encoding, three capital-letter spellings, `..`), `lesson-2.html`, `/account/locked/` and unreleased
+  Lessons gave 404, and the hub, Preview Lesson, home page and `crash-course/` gave 200. No response held a test sentinel.
+- A junk cookie and a well-formed token with a bad signature both gave 403 (locked), not 503: the live accounts project
+  answered the bad token with a refused-token code, so the new 401 handling works against the real service.
+- Deployments: only two Functions deployments exist on the preview branch, both after the case-bypass fix (`a95d324`), so
+  no deployment holding that bypass was ever uploaded. Nothing to delete for this fix.
+
 ## Open before merge
 
-- The preview was deployed at `29ddd62`; the gate changes of `5b2250e` (401 handling) are not deployed yet.
-  Redeploy needs PO approval, then re-run the bypass matrix on the final commit.
-- Commit `5b2250e` and this report are local until the PO approves another push.
-- PO acceptances pending: S3, S4, P1, P2, P3, P4, P5 and the Round-2 P2 above; Pages "fail closed" screenshot.
+- Pages "fail closed" setting and its screenshot (PO).
+- The locked page at 320px in English and Arabic (PO check on a phone or DevTools; my browser window could not be narrowed).
+- "An Enrolled account opens the Lesson" and "two tabs switching accounts": need T2b's cookie exchange.
+- PO acceptances pending: S3, S4, P1, P2, P3, P4, P5 and the Round-2 P2 above. None is recorded as accepted yet.
