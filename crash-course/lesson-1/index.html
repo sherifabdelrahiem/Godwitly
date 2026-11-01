@@ -85,12 +85,15 @@
 
     <!-- Godwitly account bar (spec #56): hidden until js/course.js shows it, so a visitor
          without JavaScript never sees a button that does nothing. -->
+    <!-- One persistent polite live region for account messages, outside the bar so hiding the bar never hides it. -->
+    <p class="visually-hidden" role="status" aria-live="polite" data-account-live></p>
+
     <section class="account-bar" data-account hidden data-i18n-aria-label="account.label" aria-label="Godwitly account">
       <div class="container account-bar__inner">
         <div class="account-bar__row" data-account-out hidden>
           <button type="button" class="pill pill--primary account-bar__button" data-account-action="sign-in" data-i18n="account.signIn">Sign in with Google</button>
           <p class="account-bar__notice">
-            <span data-i18n="account.notice">Signing in creates a Godwitly account. Nothing else happens: you are not enrolled in anything.</span>
+            <span data-i18n="account.notice">Signing in creates a Godwitly account. It does not enrol you in anything.</span>
             <a href="../privacy/index.html" data-course-link data-i18n="account.noticeLink">What we keep</a>
           </p>
         </div>
@@ -102,7 +105,6 @@
           <button type="button" class="pill pill--outline account-bar__button" data-account-action="sign-out" data-i18n="account.signOut">Sign out</button>
         </div>
         <p class="account-bar__note" data-account-note hidden></p>
-        <p class="visually-hidden" role="status" aria-live="polite" data-account-live></p>
       </div>
     </section>
 

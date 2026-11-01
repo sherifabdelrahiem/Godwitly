@@ -1247,3 +1247,7 @@ html[dir="rtl"] .celebration__bird {
 .privacy h2 {
   margin-top: 32px;
 }
+
+.privacy p {
+  margin-block: 0 12px;
+}

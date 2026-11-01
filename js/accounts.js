@@ -13,6 +13,37 @@
 */
 const ACCOUNTS_STORAGE_KEY = "godwitly-accounts-auth";
 
+// OAuth details Google/Supabase may leave in the address after the round trip.
+const ACCOUNTS_OAUTH_PARAMS = ["code", "error", "error_code", "error_description", "state"];
+
+// The OAuth error in the query or #hash of an address ("" if none), read before cleaning.
+function readOAuthError(search, hash) {
+  const query = new URLSearchParams(search);
+  const fragment = new URLSearchParams(String(hash).replace(/^#/, ""));
+  return query.get("error") || fragment.get("error") || "";
+}
+
+// The same address without the OAuth details (the rest, such as ?lang=ar, stays), as a
+// path + query + hash. Returns null when there was nothing to remove.
+function cleanOAuthAddress(href) {
+  const url = new URL(href);
+  let changed = false;
+  ACCOUNTS_OAUTH_PARAMS.forEach((name) => {
+    if (url.searchParams.has(name)) {
+      url.searchParams.delete(name);
+      changed = true;
+    }
+  });
+  const fragment = new URLSearchParams(url.hash.replace(/^#/, ""));
+  if (ACCOUNTS_OAUTH_PARAMS.some((name) => fragment.has(name))) {
+    ACCOUNTS_OAUTH_PARAMS.forEach((name) => fragment.delete(name));
+    const rest = fragment.toString();
+    url.hash = rest;
+    changed = true;
+  }
+  return changed ? url.pathname + url.search + url.hash : null;
+}
+
 /*
   status:
     "unavailable-file"   the page was opened from a file: Auth never starts
@@ -150,4 +181,4 @@ function createAccountSession({
 }
 
 // Node (the tests) reads the exports; the browser ignores this line.
-if (typeof module !== "undefined") module.exports = { ACCOUNTS_STORAGE_KEY, createAccountSession };
+if (typeof module !== "undefined") module.exports = { ACCOUNTS_STORAGE_KEY, createAccountSession, readOAuthError, cleanOAuthAddress };

@@ -1,7 +1,7 @@
 // Godwitly account sign-in (spec #56, ticket #58), tested with a fake Supabase library and storage.
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { ACCOUNTS_STORAGE_KEY, createAccountSession } = require("../js/accounts.js");
+const { ACCOUNTS_STORAGE_KEY, createAccountSession, readOAuthError, cleanOAuthAddress } = require("../js/accounts.js");
 
 function fakeStorage(initial = {}) {
   const values = new Map(Object.entries(initial));
@@ -256,4 +256,18 @@ test("listeners hear every change and can stop listening", () => {
   stop();
   library.emit("SIGNED_IN", signedInAs({ full_name: "Mona" }));
   assert.deepEqual(heard, ["signed-out"]);
+});
+
+test("an OAuth error is read from the query or the #hash, and a clean address gives none", () => {
+  assert.equal(readOAuthError("?lang=en&error=access_denied", ""), "access_denied");
+  assert.equal(readOAuthError("", "#error=server_error&error_code=x"), "server_error");
+  assert.equal(readOAuthError("?lang=ar", ""), "");
+});
+
+test("OAuth details are removed from the address and the rest stays", () => {
+  assert.equal(cleanOAuthAddress("http://x.test/crash-course/?lang=ar&code=abc&state=s1"), "/crash-course/?lang=ar");
+  assert.equal(cleanOAuthAddress("http://x.test/a/?lang=en&error=access_denied&error_description=secret+detail"), "/a/?lang=en");
+  assert.equal(cleanOAuthAddress("http://x.test/a/?lang=en#error=denied&error_code=x"), "/a/?lang=en");
+  assert.equal(cleanOAuthAddress("http://x.test/a/?lang=en#lesson-1"), null);
+  assert.equal(cleanOAuthAddress("http://x.test/a/?lang=en"), null);
 });
