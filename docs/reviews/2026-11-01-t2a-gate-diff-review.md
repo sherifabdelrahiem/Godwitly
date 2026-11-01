@@ -89,9 +89,27 @@ was its read-only sandbox refusing a temp folder, not a code defect.
 - Deployments: only two Functions deployments exist on the preview branch, both after the case-bypass fix (`a95d324`), so
   no deployment holding that bypass was ever uploaded. Nothing to delete for this fix.
 
+## PO decisions (2026-11-01, in the session)
+
+The PO accepted all seven items put to them:
+
+1. the route list is `include /*` with named public excludes (P5);
+2. no Lesson title on the locked page for now, titles come with T10 (P1);
+3. the signed-out button stays "Sign in with Google", sign-in-then-enrol comes with T3 (P2);
+4. `last_used_at` moves at most once a day (P3);
+5. no SELECT policy on Enrolments yet, it comes with My progress in T4 (P4);
+6. a missing `.html` Resource under a protected Lesson returns the home page with 200 to an Enrolled account (Round-2 P2);
+7. the gate's plain-text error bodies stay in code (S3).
+
+Accepted on 2026-11-01. Not put to the PO and so still open: S4 and S5 (duplicated markup and repeated
+values, smells), left as they are as judgement calls.
+
+The PO also said the Pages **"fail closed"** setting is set (2026-11-01). The ticket asks for a screenshot:
+**not provided yet**, so the criterion "the setting is recorded with a screenshot" is still open.
+
 ## Open before merge
 
-- Pages "fail closed" setting and its screenshot (PO).
-- The locked page at 320px in English and Arabic (PO check on a phone or DevTools; my browser window could not be narrowed).
+- The "fail closed" screenshot (PO), to be saved with this review.
+- The locked page at 320px in English and Arabic (PO check on a phone or DevTools; my browser window could not be narrowed). Not reported yet.
 - "An Enrolled account opens the Lesson" and "two tabs switching accounts": need T2b's cookie exchange.
-- PO acceptances pending: S3, S4, P1, P2, P3, P4, P5 and the Round-2 P2 above. None is recorded as accepted yet.
+- The final evidence commit's ID is given in the completion report (a commit cannot contain its own ID).
