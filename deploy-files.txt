@@ -3,6 +3,7 @@ dashboard.html
 _headers
 css
 assets
+js/accounts-hosts.js
 js/config.js
 js/course-language.js
 js/course-progress.js

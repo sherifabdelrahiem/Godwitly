@@ -151,3 +151,36 @@ test("the preview deploy list is the production list plus all the accounts mater
   assert.deepEqual(preview.filter((entry) => !production.includes(entry)).sort(), [...ACCOUNT_MATERIAL].sort());
   assert.deepEqual(findDeployListProblems(preview, MANIFESTS), []);
 });
+
+test("the accounts migrations load every Lesson and checklist item of the real manifest, field for field", () => {
+  const dir = path.join(ROOT, "supabase/accounts/migrations");
+  const sql = fs.readdirSync(dir).filter((name) => name.endsWith(".sql")).map((name) => fs.readFileSync(path.join(dir, name), "utf8")).join("\n");
+  const lessonRows = [...sql.matchAll(/\('([^']*)', (\d+), '([^']*)', '((?:[^']|'')*)', (true|false), (true|false), (true|false)\)/g)].map((m) => ({
+    course: m[1], number: Number(m[2]), titleKey: m[3], summary: m[4].replace(/''/g, "'"), preview: m[5] === "true", required: m[6] === "true", released: m[7] === "true",
+  }));
+  const itemRows = [...sql.matchAll(/\('([^']*)', (\d+), '([^']*)', (true|false), (true|false)\)/g)].map((m) => ({
+    course: m[1], lesson: Number(m[2]), id: m[3], required: m[4] === "true", retired: m[5] === "true",
+  }));
+  assert.ok(lessonRows.length > 0 && itemRows.length > 0, "no inserts found in the accounts migrations");
+  const real = MANIFESTS.filter(({ manifest }) => !manifest.test);
+  for (const { manifest } of real) {
+    for (const lesson of manifest.lessons) {
+      const row = lessonRows.find((r) => r.course === manifest.id && r.number === lesson.number);
+      assert.ok(row, `${manifest.id} Lesson ${lesson.number} is not in the accounts migrations`);
+      assert.deepEqual(
+        [row.titleKey, row.summary, row.preview, row.required, row.released],
+        [lesson.titleKey, lesson.summary, lesson.preview, lesson.required, lesson.released],
+        `${manifest.id} Lesson ${lesson.number} differs from the manifest`,
+      );
+      for (const item of lesson.items) {
+        const itemRow = itemRows.find((r) => r.course === manifest.id && r.lesson === lesson.number && r.id === item.id);
+        assert.ok(itemRow, `${manifest.id} Lesson ${lesson.number} item ${item.id} is not in the accounts migrations`);
+        assert.deepEqual([itemRow.required, itemRow.retired], [item.required, Boolean(item.retired)], `item ${item.id} differs`);
+      }
+    }
+  }
+  // Nothing test-only is loaded into the accounts project by these migrations.
+  for (const { manifest } of MANIFESTS.filter(({ manifest }) => manifest.test)) {
+    assert.equal(lessonRows.some((r) => r.course === manifest.id), false, `test course ${manifest.id} is in a migration`);
+  }
+});

@@ -227,8 +227,11 @@ proposed work that enters this Workflow at step 1 or 3.
 - `deploy-files.preview.txt`: the same list plus the accounts material (`js/accounts*.js`,
   `js/account-bar.js`, `crash-course/privacy`), for the Pages preview branch only.
 - `js/accounts-boot.js`, `js/accounts.js`, `js/accounts-config.js`, `js/account-bar.js`: Godwitly
-  accounts sign-in on the Crash course pages (spec #56, ADR-0009). The pages name only the
-  boot script, which loads the pinned supabase-js (SRI) and the rest where they are deployed.
+  accounts sign-in on the Crash course pages (spec #56, ADR-0009). `js/course.js` loads the boot
+  script only where `js/accounts-hosts.js` allows it (localhost and `*.godwitly.pages.dev` preview
+  addresses, never `godwitly.pages.dev`); the boot script loads the pinned supabase-js (SRI) and
+  the rest. A missing file on Pages returns the home page with status 200, so production pages
+  must not name files that are not deployed.
 - `supabase/accounts/`: migrations and SQL checks for the `godwitly-accounts` project only.
   Never apply them to `godwitly` (whose migrations are in `supabase/migrations/`).
 - `tests/samples/components.html`: development-only page showing the Lesson building blocks

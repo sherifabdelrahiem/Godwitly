@@ -18,10 +18,8 @@
 # the godwitly-accounts project only, never to the dashboard's project.
 /crash-course
   Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://otjvjshvwwljsdwyqoxk.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'
-  Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
 
 /crash-course/*
   Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://otjvjshvwwljsdwyqoxk.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'
-  Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff

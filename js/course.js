@@ -413,3 +413,13 @@ if (!document.querySelector("[data-checklist]")) {
 
 document.getElementById("year").textContent = new Date().getFullYear();
 applyLanguage(courseLanguage.current());
+
+/* ---------- 10. Godwitly accounts (preview and local only until T10) ---------- */
+
+// The sign-in code is in files that are not deployed to production. Where accounts are
+// allowed (js/accounts-hosts.js) this loads js/accounts-boot.js, which loads the rest.
+if (typeof accountsAllowedOn === "function" && accountsAllowedOn(window.location.hostname)) {
+  const boot = document.createElement("script");
+  boot.src = document.currentScript.src.replace(/course\.js(\?.*)?$/, "accounts-boot.js");
+  document.head.append(boot);
+}
