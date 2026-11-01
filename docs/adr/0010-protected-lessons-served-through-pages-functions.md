@@ -61,6 +61,6 @@ becomes a measurable burden.
   website files, `_routes.json` and `_headers` in a sub-folder; Wrangler runs from the staging
   folder and deploys that sub-folder, so it compiles the Functions. The first deploy with
   Functions goes to a preview branch, where the compiled gate is proven before any production
-  deploy. `AGENTS.md` records the exact commands.
+  deploy. `AGENTS.md` will record the exact commands (spec #56).
 - **Online only:** protected Lessons and the Course report do not work from `file://`, further
   exceptions to ADR-0001 alongside the Sign-up dashboard (ADR-0005).

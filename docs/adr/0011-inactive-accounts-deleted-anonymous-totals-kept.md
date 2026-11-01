@@ -46,7 +46,8 @@ is an incident for the PO.
 - **Not complete erasure:** Supabase's Auth audit logs and Cloudflare's request logs stay for
   those vendors' own periods (the free plan takes no automatic backups); the privacy text says
   so, and that deleted accounts still count anonymously in the totals.
-- **Release blockers (spec #56):** Supabase Cron must run on the free plan; if it doesn't,
-  accounts don't launch until the PO approves another way to run the clean-up. The vendors' log
-  periods and how the hosted Auth service treats the sign-in and refresh times are also release
-  blockers, each needing recorded evidence before accounts go public.
+- **Release blockers (spec #56), each needing recorded evidence before accounts go public:**
+  Supabase Cron must run on the free plan (if it doesn't, accounts don't launch until the PO
+  approves another way to run the clean-up); the vendors' log periods; how the hosted Auth
+  service treats the sign-in and refresh times; asymmetric signing keys on the accounts
+  project; and the Google app's publishing and branding status.

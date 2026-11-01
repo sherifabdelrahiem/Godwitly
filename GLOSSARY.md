@@ -203,13 +203,13 @@ _Avoid_: Domain, module, day, unit
 **Crash course manifest**:
 The single record of one Crash course's Lessons and their "You're done when" checklist items:
 which Lessons are Preview, Required and released, and which items are Required. A retired
-Lesson or checklist item stays listed, and its id is never used again with a new meaning. Used
-in docs and specs only.
+checklist item stays listed, and no retired Lesson or item id is used again with a new
+meaning. Used in docs and specs only.
 _Avoid_: syllabus, curriculum, course config, course definition
 
 **Test Crash course**:
-A Crash course of dummy text, used only to test the Lesson lock, that only the Project owner's
-test accounts can use. It never reaches production, is kept out of discovery and never counts
+A Crash course of dummy text, used only to test access to Lessons that need Enrolment, that
+only the Project owner's test accounts can use. It never reaches production, is kept out of discovery and never counts
 in the Course report. Used in docs and specs only.
 _Avoid_: demo course, sample course (the Sample business is something else), staging course
 
@@ -267,10 +267,10 @@ Arabic: حساب Godwitly
 _Avoid_: user, profile, member, Learner; Arabic: مستخدم، عضوية
 
 **Enrolment**:
-A Godwitly account's own, free choice to take one Crash course. It gives access to that
-Crash course only. Signing in alone enrols in nothing. "Enrolled" describes a Godwitly account
-that has an Enrolment in that Crash course; a Course taker is Enrolled through their account.
-It is a state, not a separate kind of person.
+A Godwitly account's own, free choice to take one Crash course, which gives access to that
+Crash course only; signing in alone enrols in nothing. "Enrolled" is the state of an account
+with an Enrolment, not a separate kind of person; a Course taker is Enrolled through their
+account.
 Arabic: الالتحاق (التحق بالدورة)
 _Avoid_: registration, sign-up, subscription; Arabic: التسجيل، الاشتراك
 
@@ -323,9 +323,9 @@ Arabic: نسبة الإتمام
 _Avoid_: pass rate, success rate
 
 **Course report**:
-The private page where the Project owner sees each Crash course's figures: Enrolments, Caught
-up, Completed Crash courses and Completion rate. It shows figures only, never one person's
-records, and is separate from the Sign-up dashboard.
+The private page where the Project owner, and any other account on its owner list, sees each
+Crash course's figures: Enrolments, Caught up, Completed Crash courses and Completion rate. It
+shows figures only, never one person's records, and is separate from the Sign-up dashboard.
 Arabic: تقرير الدورات
 _Avoid_: dashboard, analytics, admin panel
 

@@ -4,11 +4,11 @@ Spec: #56 · Spec version: v4 · sha256 14f2d54f966f056175ab86f8fe659a90a5025cc7
 
 > Reviewer: Codex (`gpt-6.1-sol`, medium effort, read-only; it made no edits or git writes) ·
 > Orchestrator: Claude, who validated every finding against the files and the spec · Base:
-> `docs/accounts-enrolment-design` · Reviewed commit: f94ce7e · Spec: issue #56 v4, saved
-> verbatim (hash re-checked by Codex and by Claude: matched) · Lane: Critical · 2026-11-01 ·
+> `docs/accounts-enrolment-design` at `f0ddf80` · Reviewed commit: f94ce7e · Spec: issue #56
+> v4, saved verbatim (hash re-checked by Codex and by Claude: matched) · Lane: Critical · 2026-11-01 ·
 > Not an approval
 
-Scope: `git diff docs/accounts-enrolment-design..HEAD`, touching `GLOSSARY.md`, ADR-0010,
+Scope: `git diff f0ddf80..f94ce7e`, touching `GLOSSARY.md`, ADR-0010,
 ADR-0011 and `docs/reviews/2026-10-31-accounts-enrolment-stack-panel.md`. It closes the
 Deferred findings DS-1 to DS-6 and DP-1 to DP-7 in
 `docs/reviews/2026-11-01-accounts-enrolment-design-diff-review.md`. Codex was asked to check
