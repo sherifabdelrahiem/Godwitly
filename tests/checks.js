@@ -777,6 +777,12 @@ function findManifestProblems(manifest) {
       problems.push(`Lesson ${lesson.number} has no item list`);
       continue;
     }
+    // Spec #56 v5: a released Required Lesson must be completable, and never complete with nothing ticked.
+    // Skipped while an item's own flag is broken: that is already reported below, once.
+    const flagsFine = lesson.items.every((item) => item && isFlag(item.required));
+    if (flagsFine && lesson.released === true && lesson.required === true && !lesson.items.some((item) => item.required && item.retired !== true)) {
+      problems.push(`Lesson ${lesson.number} is released and Required but has no current Required checklist item`);
+    }
     for (const item of lesson.items) {
       if (!item || typeof item !== "object" || blank(item.id)) {
         problems.push(`Lesson ${lesson.number} has an item with no id`);
