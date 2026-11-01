@@ -10,10 +10,13 @@ const {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
-  findHubChecklistProblems,
+  findManifestChecklistProblems,
   findCourseLessonProblems,
+  findManifestProblems,
+  findPublicPartProblems,
+  findDeployListProblems,
 } = require("./checks.js");
-const { LESSONS } = require("./course-lessons.js");
+const { MANIFESTS, publicPart } = require("../courses/manifest.js");
 const { TRANSLATIONS } = require("../js/translations.js");
 
 const ROOT = path.join(__dirname, "..");
@@ -24,8 +27,18 @@ test("English and Arabic translations match", () => {
   assert.deepEqual(findParityProblems(TRANSLATIONS), []);
 });
 
+// The Claude Crash Course for Beginners, from its manifest (spec #56, ticket #57). Each Lesson's
+// page is lesson-N/index.html in the Crash course folder.
+const COURSE = MANIFESTS.find(({ manifest }) => manifest.id === "claude-beginners").manifest;
+const LESSONS = COURSE.lessons.map(({ number, titleKey, released }) => ({
+  number,
+  titleKey,
+  released,
+  page: `lesson-${number}/index.html`,
+}));
+
 // The hub and every Lesson that is released (its page exists).
-const RELEASED_PAGES = LESSONS.filter((lesson) => lesson.released).map((lesson) => `crash-course/${lesson.page}`);
+const RELEASED_PAGES = LESSONS.filter((lesson) => lesson.released).map((lesson) => `${COURSE.folder}/${lesson.page}`);
 
 for (const page of ["index.html", "dashboard.html", "crash-course/index.html", ...RELEASED_PAGES]) {
   test(`every translation key named in ${page} exists in both languages`, () => {
@@ -54,10 +67,10 @@ test("every exception in the script exceptions list has a reason and still match
   assert.deepEqual(findExceptionListProblems(scripts), []);
 });
 
-// Every project JavaScript file: all .js files in js/ and tests/. Vendored
+// Every project JavaScript file: all .js files in js/, courses/ and tests/. Vendored
 // skills and the Deno Edge Function are outside these folders.
 test("every project JavaScript file parses", () => {
-  const files = [...listScripts("js"), ...listScripts("tests")];
+  const files = [...listScripts("js"), ...listScripts("courses"), ...listScripts("tests")];
   assert.ok(files.includes(path.join("js", "form.js")) && files.includes(path.join("tests", "checks.js")));
   assert.deepEqual(findSyntaxProblems(files.map((file) => path.join(ROOT, file))), []);
 });
@@ -66,11 +79,11 @@ test("the real hub shows the agreed Lessons, in order, with the agreed availabil
   assert.deepEqual(findCourseHubProblems(read("crash-course/index.html"), LESSONS), []);
 });
 
-test("the real hub card of each released Lesson lists the items of its Lesson page", () => {
+test("the real hub cards and Lesson pages list the manifest's checklist items and required flags", () => {
   const pages = Object.fromEntries(
-    LESSONS.filter((lesson) => lesson.released).map((lesson) => [lesson.number, read(`crash-course/${lesson.page}`)]),
+    LESSONS.filter((lesson) => lesson.released).map((lesson) => [lesson.number, read(`${COURSE.folder}/${lesson.page}`)]),
   );
-  assert.deepEqual(findHubChecklistProblems(read("crash-course/index.html"), LESSONS, pages), []);
+  assert.deepEqual(findManifestChecklistProblems(COURSE, read(`${COURSE.folder}/index.html`), pages), []);
 });
 
 test("every agreed Lesson has a title in both languages", () => {
@@ -91,3 +104,36 @@ for (const { number, page } of LESSONS.filter((lesson) => lesson.released)) {
     );
   });
 }
+
+for (const { file, manifest } of MANIFESTS) {
+  test(`the manifest ${file} follows the manifest rules`, () => {
+    assert.deepEqual(findManifestProblems(manifest), []);
+  });
+
+  test(`the public part of ${file} holds only the agreed fields`, () => {
+    assert.deepEqual(findPublicPartProblems(publicPart(manifest), manifest), []);
+  });
+}
+
+test("there is one test Crash course: one released Preview Lesson, one released Lesson that needs Enrolment, no public part", () => {
+  const testCourses = MANIFESTS.filter(({ manifest }) => manifest.test);
+  assert.equal(testCourses.length, 1);
+  const { lessons } = testCourses[0].manifest;
+  assert.deepEqual(
+    lessons.map(({ preview, released }) => ({ preview, released })),
+    [{ preview: true, released: true }, { preview: false, released: true }],
+  );
+  assert.equal(publicPart(testCourses[0].manifest), null);
+});
+
+test("each Lesson's summary is its Arabic hub outcome, word for word (the PO, 2026-11-01)", () => {
+  for (const { number, summary } of COURSE.lessons) {
+    assert.equal(summary, TRANSLATIONS.ar[`course.lesson${number}.outcome`], `Lesson ${number}'s summary`);
+  }
+});
+
+test("the production deploy file list holds no test Crash course material and no manifest, and only plain paths", () => {
+  const paths = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
+  assert.ok(paths.includes("crash-course") && paths.includes("index.html"), "deploy-files.txt not read");
+  assert.deepEqual(findDeployListProblems(paths, MANIFESTS), []);
+});

@@ -11,9 +11,13 @@ const {
   findExceptionListProblems,
   findSyntaxProblems,
   findCourseHubProblems,
-  findHubChecklistProblems,
+  findManifestChecklistProblems,
+  findManifestProblems,
+  findPublicPartProblems,
+  findDeployListProblems,
   findCourseLessonProblems,
 } = require("./checks.js");
+const { publicPart } = require("../courses/manifest.js");
 
 test("parity: reports a key that only one language has", () => {
   const problems = findParityProblems({
@@ -268,52 +272,262 @@ test("pages: reads attribute names in any case, with digits, but not text inside
   ]);
 });
 
-// ---- Course check, hub card items match the Lesson page (spec #36, ticket #41) ----
+// ---- Course check, the manifest's checklist items match the hub and the Lesson page (spec #56, ticket #57) ----
 
 const itemsCard = (n, items) =>
   `<li class="lesson-card" data-lesson="${n}"${items === undefined ? "" : ` data-checklist-items="${items}"`}><a href="x" data-course-link></a></li>`;
 const itemsHub = (...cards) => `<main><ol class="lesson-list">${cards.join("")}</ol></main>`;
-const itemsLesson = (...ids) =>
-  `<ul data-checklist="lesson-1">${ids.map((id) => `<li><input type="checkbox" data-item="${id}"></li>`).join("")}</ul>`;
-const RELEASED = [{ number: 1, released: true }, { number: 2, released: false }];
+// Each item is "id" (required) or "id:false" (not required); "id:" leaves the flag out.
+const itemsLesson = (...items) =>
+  `<ul data-checklist="lesson-1">${items
+    .map((item) => {
+      const [id, flag = "true"] = item.split(":");
+      return `<li><input type="checkbox" data-item="${id}"${flag ? ` data-required="${flag}"` : ""}></li>`;
+    })
+    .join("")}</ul>`;
+const itemsManifest = (items, { released = true } = {}) => ({
+  id: "example",
+  lessons: [
+    { number: 1, released, items },
+    { number: 2, released: false, items: [] },
+  ],
+});
+const AB = itemsManifest([{ id: "a", required: true }, { id: "b", required: true }]);
 
-test("hub items: a card listing the same items as its Lesson page passes, in any order", () => {
-  const pages = { 1: itemsLesson("a", "b", "c") };
-  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "a b c")), RELEASED, pages), []);
-  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "c a b")), RELEASED, pages), []);
+test("manifest items: a card and a page with the manifest's items and flags pass, in any order", () => {
+  const manifest = itemsManifest([{ id: "a", required: true }, { id: "b", required: false }, { id: "old", required: true, retired: true }]);
+  const pages = { 1: itemsLesson("b:false", "a") };
+  assert.deepEqual(findManifestChecklistProblems(manifest, itemsHub(itemsCard(1, "a b")), pages), []);
+  assert.deepEqual(findManifestChecklistProblems(manifest, itemsHub(itemsCard(1, "b a")), pages), []);
 });
 
-test("hub items: a card that lacks or differs from its Lesson page's items is reported", () => {
+test("manifest items: a card that lacks or differs from the manifest's items is reported", () => {
   const pages = { 1: itemsLesson("a", "b") };
-  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1)), RELEASED, pages), [
+  assert.deepEqual(findManifestChecklistProblems(AB, itemsHub(itemsCard(1)), pages), [
     "Lesson 1's hub card has no checklist items (data-checklist-items)",
   ]);
-  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "a")), RELEASED, pages), [
-    'Lesson 1\'s hub card lists the items "a" but its page has "a b"',
+  assert.deepEqual(findManifestChecklistProblems(AB, itemsHub(itemsCard(1, "a")), pages), [
+    'Lesson 1\'s hub card lists the items "a" but the manifest has "a b"',
   ]);
-  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "a b new")), RELEASED, pages), [
-    'Lesson 1\'s hub card lists the items "a b new" but its page has "a b"',
-  ]);
-});
-
-test("hub items: a repeated identifier on the card does not hide a missing one", () => {
-  const pages = { 1: itemsLesson("a", "b", "c") };
-  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(1, "a a b")), RELEASED, pages), [
-    'Lesson 1\'s hub card lists the items "a a b" but its page has "a b c"',
+  assert.deepEqual(findManifestChecklistProblems(AB, itemsHub(itemsCard(1, "a b new")), pages), [
+    'Lesson 1\'s hub card lists the items "a b new" but the manifest has "a b"',
   ]);
 });
 
-test("hub items: only the Lesson list's cards count, and data-checklist-items is not read as the checklist", () => {
+test("manifest items: a page that lacks or differs from the manifest's items is reported", () => {
+  const hub = itemsHub(itemsCard(1, "a b"));
+  assert.deepEqual(findManifestChecklistProblems(AB, hub, { 1: itemsLesson("a") }), [
+    'Lesson 1\'s page has the items "a" but the manifest has "a b"',
+  ]);
+  assert.deepEqual(findManifestChecklistProblems(AB, hub, { 1: itemsLesson("a", "b", "c") }), [
+    'Lesson 1\'s page has the items "a b c" but the manifest has "a b"',
+  ]);
+});
+
+test("manifest items: a retired item on the card or the page is reported", () => {
+  const manifest = itemsManifest([{ id: "a", required: true }, { id: "old", required: true, retired: true }]);
+  assert.deepEqual(findManifestChecklistProblems(manifest, itemsHub(itemsCard(1, "a old")), { 1: itemsLesson("a", "old") }), [
+    'Lesson 1\'s hub card lists the items "a old" but the manifest has "a"',
+    'Lesson 1\'s page has the items "a old" but the manifest has "a"',
+  ]);
+});
+
+test("manifest items: a page item whose required flag is missing or differs from the manifest is reported", () => {
+  const manifest = itemsManifest([{ id: "a", required: true }, { id: "b", required: false }]);
+  const hub = itemsHub(itemsCard(1, "a b"));
+  assert.deepEqual(findManifestChecklistProblems(manifest, hub, { 1: itemsLesson("a:false", "b:true") }), [
+    'Lesson 1\'s item "a" is marked data-required="false" on its page but the manifest says true',
+    'Lesson 1\'s item "b" is marked data-required="true" on its page but the manifest says false',
+  ]);
+  assert.deepEqual(findManifestChecklistProblems(manifest, hub, { 1: itemsLesson("a:", "b:yes") }), [
+    'Lesson 1\'s item "a" has no data-required="true" or "false" on its page',
+    'Lesson 1\'s item "b" has no data-required="true" or "false" on its page',
+  ]);
+});
+
+test("manifest items: a repeated identifier on the card does not hide a missing one", () => {
+  const manifest = itemsManifest(["a", "b", "c"].map((id) => ({ id, required: true })));
+  assert.deepEqual(findManifestChecklistProblems(manifest, itemsHub(itemsCard(1, "a a b")), { 1: itemsLesson("a", "b", "c") }), [
+    'Lesson 1\'s hub card lists the items "a a b" but the manifest has "a b c"',
+  ]);
+});
+
+test("manifest items: only the Lesson list's cards count, and data-checklist-items is not read as the checklist", () => {
   const pages = { 1: `<li data-checklist-items="x">${itemsLesson("a", "b")}` };
   const sidebarFirst = `<ul><li data-lesson="1">sidebar</li></ul>${itemsHub(itemsCard(1, "a b"))}`;
-  assert.deepEqual(findHubChecklistProblems(sidebarFirst, RELEASED, pages), []);
+  assert.deepEqual(findManifestChecklistProblems(AB, sidebarFirst, pages), []);
 });
 
-test("hub items: a released Lesson without a card is reported; unreleased Lessons need no items", () => {
-  const pages = { 1: itemsLesson("a") };
-  assert.deepEqual(findHubChecklistProblems(itemsHub(itemsCard(2)), RELEASED, pages), [
+test("manifest items: a released Lesson without a card is reported; unreleased Lessons need no items", () => {
+  assert.deepEqual(findManifestChecklistProblems(AB, itemsHub(itemsCard(2)), { 1: itemsLesson("a", "b") }), [
     "Lesson 1 has no card on the hub, so its checklist items cannot be compared",
   ]);
+  const unreleased = itemsManifest([{ id: "a", required: true }], { released: false });
+  assert.deepEqual(findManifestChecklistProblems(unreleased, itemsHub(itemsCard(1), itemsCard(2)), {}), []);
+});
+
+// ---- Course check, the manifest itself, its public part and the deploy list (spec #56, ticket #57) ----
+
+const lessonOf = (number, extra = {}) => ({
+  number,
+  titleKey: `course.lesson${number}.title`,
+  summary: "ملخص",
+  preview: false,
+  required: true,
+  released: false,
+  items: [],
+  ...extra,
+});
+const goodManifest = () => ({
+  id: "example",
+  folder: "example-course",
+  test: false,
+  lessons: [
+    lessonOf(1, { preview: true, released: true, items: [{ id: "a", required: true }, { id: "old", required: true, retired: true }] }),
+    lessonOf(2, { items: [{ id: "secret", required: true }] }),
+  ],
+});
+
+test("manifest: a well-formed manifest passes", () => {
+  assert.deepEqual(findManifestProblems(goodManifest()), []);
+});
+
+test("manifest: reports Lessons that are not numbered 1, 2, 3 in order", () => {
+  const manifest = goodManifest();
+  manifest.lessons = [manifest.lessons[1], manifest.lessons[0]];
+  assert.deepEqual(findManifestProblems(manifest), ["Lessons are numbered 2, 1 but should be 1, 2"]);
+});
+
+test("manifest: reports a missing id or folder, and flags that are not true or false", () => {
+  const manifest = { ...goodManifest(), id: "", folder: undefined, test: "no" };
+  manifest.lessons[0] = { ...manifest.lessons[0], preview: "yes" };
+  manifest.lessons[0].items = [{ id: "a", required: 1 }];
+  assert.deepEqual(findManifestProblems(manifest), [
+    "the manifest has no id",
+    "the manifest has no folder",
+    "the manifest's test flag must be true or false",
+    "Lesson 1's preview flag must be true or false",
+    'Lesson 1\'s item "a" has a required flag that is not true or false',
+  ]);
+});
+
+test("manifest: reports a Lesson with no title key or summary", () => {
+  const manifest = goodManifest();
+  manifest.lessons[1] = { ...manifest.lessons[1], titleKey: "", summary: " " };
+  assert.deepEqual(findManifestProblems(manifest), ["Lesson 2 has no title key", "Lesson 2 has no summary"]);
+});
+
+test("manifest: reports an item id used twice in a Crash course, including a retired one used again", () => {
+  const manifest = goodManifest();
+  manifest.lessons[1].items.push({ id: "old", required: true });
+  manifest.lessons[0].items.push({ id: "", required: true });
+  assert.deepEqual(findManifestProblems(manifest), [
+    "Lesson 1 has an item with no id",
+    'the item id "old" is used more than once (a retired id is never reused)',
+  ]);
+});
+
+test("manifest: reports a missing Lesson list or item list, and a Lesson number that is not a whole number, without failing", () => {
+  assert.deepEqual(findManifestProblems({ id: "x", folder: "x", test: false }), ["the manifest has no Lesson list"]);
+  const manifest = goodManifest();
+  manifest.lessons[0] = { ...manifest.lessons[0], number: "1" };
+  delete manifest.lessons[1].items;
+  assert.deepEqual(findManifestProblems(manifest), [
+    'Lessons are numbered "1", 2 but should be 1, 2',
+    "Lesson 2 has no item list",
+  ]);
+  const odd = goodManifest();
+  odd.lessons[0].items.push(null);
+  assert.deepEqual(findManifestProblems(odd), ["Lesson 1 has an item with no id"]);
+  assert.deepEqual(findManifestProblems({ ...goodManifest(), lessons: [[]] }), [
+    "the manifest's Lesson list has an entry that is not a Lesson",
+  ]);
+});
+
+test("public part: reports a missing public part for a Crash course that is not a test", () => {
+  assert.deepEqual(findPublicPartProblems(null, goodManifest()), ["the Crash course example has no public part"]);
+});
+
+test("public part: what publicPart gives for a real manifest passes", () => {
+  assert.deepEqual(findPublicPartProblems(publicPart(goodManifest()), goodManifest()), []);
+});
+
+test("public part: reports any field beyond the agreed ones", () => {
+  const part = publicPart(goodManifest());
+  part.folder = "example-course";
+  part.lessons[0].page = "lesson-1/index.html";
+  part.lessons[0].items[0].retired = false;
+  part.lessons[1].summary = "ملخص";
+  assert.deepEqual(findPublicPartProblems(part, goodManifest()), [
+    'the public part has the field "folder", which is not public',
+    'Lesson 1 in the public part has the field "page", which is not public',
+    'Lesson 1\'s item "a" in the public part has the field "retired", which is not public',
+    'Lesson 2 in the public part has the field "summary", which is not public',
+  ]);
+});
+
+test("public part: reports retired items and the items of unreleased Lessons", () => {
+  const part = publicPart(goodManifest());
+  part.lessons[0].items.push({ id: "old", required: true });
+  part.lessons[1].items = [{ id: "secret", required: true }];
+  assert.deepEqual(findPublicPartProblems(part, goodManifest()), [
+    'Lesson 1\'s item "old" in the public part is retired',
+    'Lesson 2 in the public part has the field "items", which is not public',
+  ]);
+});
+
+test("public part: reports a public part for a test Crash course", () => {
+  const manifest = { ...goodManifest(), test: true };
+  assert.deepEqual(findPublicPartProblems({ id: "example", lessons: [] }, manifest), [
+    "the test Crash course example has a public part; it must have none",
+  ]);
+  assert.deepEqual(findPublicPartProblems(null, manifest), []);
+});
+
+const TEST_COURSE = { file: "courses/test-course.js", manifest: { ...goodManifest(), id: "test-course", folder: "test-course", test: true } };
+const REAL_COURSE = { file: "courses/example.js", manifest: goodManifest() };
+
+test("deploy list: a list without test Crash course material passes", () => {
+  assert.deepEqual(findDeployListProblems(["index.html", "css", "js", "crash-course"], [REAL_COURSE, TEST_COURSE]), []);
+});
+
+test("deploy list: reports the test Crash course's folder or manifest, or a folder holding either", () => {
+  assert.deepEqual(findDeployListProblems(["js", "test-course"], [TEST_COURSE]), [
+    'the deploy file list has "test-course", which holds test Crash course material (test-course)',
+  ]);
+  assert.deepEqual(findDeployListProblems(["test-course/lesson-1/", "courses"], [TEST_COURSE]), [
+    'the deploy file list has "test-course/lesson-1/", which holds test Crash course material (test-course)',
+    'the deploy file list has "courses", which holds test Crash course material (courses/test-course.js)',
+  ]);
+  assert.deepEqual(findDeployListProblems(["a/../test-course", "test-course/."], [TEST_COURSE]), [
+    'the deploy file list has "a/../test-course"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+    'the deploy file list has "test-course/."; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+  ]);
+});
+
+test("deploy list: reports any manifest file, or a folder holding one, since a manifest holds more than is public", () => {
+  assert.deepEqual(findDeployListProblems(["courses/example.js", "js"], [REAL_COURSE, TEST_COURSE]), [
+    'the deploy file list has "courses/example.js", which holds a Crash course manifest (courses/example.js)',
+  ]);
+});
+
+test("deploy list: reports an entry the deploy command would read differently: spaces, pattern characters or a pathspec", () => {
+  assert.deepEqual(findDeployListProblems(["index.html test-course", " js", "test-*", ":(glob)**", "css"], [TEST_COURSE]), [
+    'the deploy file list has "index.html test-course"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+    'the deploy file list has " js"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+    'the deploy file list has "test-*"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+    'the deploy file list has ":(glob)**"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")',
+  ]);
+});
+
+test("deploy list: reports an entry git would read as an option, or one that leaves or restarts the path", () => {
+  const plain = (entry) => `the deploy file list has "${entry}"; an entry is one plain path (no spaces, patterns or pathspec magic; no leading "-" or "/"; no "." or "..")`;
+  const entries = ["-o", "x.tar", "--prefix", "./", ".", "..", "../x", "/test-course", ".hidden"];
+  assert.deepEqual(findDeployListProblems(entries, [TEST_COURSE]), ["-o", "--prefix", "./", ".", "..", "../x", "/test-course", ".hidden"].map(plain));
+});
+
+test("deploy list: reports an empty list", () => {
+  assert.deepEqual(findDeployListProblems([], [TEST_COURSE]), ["the deploy file list is empty"]);
 });
 
 // ---- Course check, hub rules (spec #36, Seam 1) ----

@@ -24,12 +24,14 @@ address, not by double-click. See "Sign-up dashboard" below.
 | `css/course.css` | Styling for the Crash course pages only. It reuses `css/styles.css` and its `:root` variables. |
 | `js/course.js` | Language switcher, mobile menu, the phone Lesson list, the checklist ticks with the ✓ marks and celebration, and footer year for the Crash course pages. They never load `js/script.js`. |
 | `js/course-language.js` | Which language a Crash course page opens in, what it remembers (under its own name, never the landing page's) and how links carry it. |
-| `js/course-progress.js` | The "You're done when" ticks: remembered per Lesson in the visitor's own browser, never sent anywhere. It stores and judges the ticks; `js/course.js` shows the ✓ marks and the celebration. Each hub card lists its Lesson's checklist items, kept equal to the Lesson page by the project checks. |
+| `js/course-progress.js` | The "You're done when" ticks: remembered per Lesson in the visitor's own browser, never sent anywhere. It stores and judges the ticks; `js/course.js` shows the ✓ marks and the celebration. Each hub card lists its Lesson's checklist items, kept equal to the manifest (`courses/`) by the project checks. |
 | `assets/images/` | Logo, background landscapes, birds, device and product pictures, and the seven web-sized course mascots (`mascot-*.webp`; the original PNGs stay out of Git). |
 | `dashboard.html` | The private Sign-up dashboard page (not linked from the landing page). |
 | `css/dashboard.css` | Styling for the Sign-up dashboard only. It reuses the `:root` variables. |
 | `js/dashboard.js` | Google sign-in, the Launch sign-ups list, search, figures and Access. |
 | `_headers` | Cloudflare Pages security headers for `/dashboard` and `/dashboard.html` only. |
+| `courses/` | The Crash course manifests: each Crash course's Lessons (number, title key, summary line, Preview, Required, released) and checklist items (id, Required, retired). The single source the project checks compare the hub and Lesson pages with. `courses/test-course.js` is a dummy test Crash course. Not part of the site. |
+| `deploy-files.txt` | The files and folders the production deploy uploads, one per line (see the deploy command in `AGENTS.md`). The project checks make sure it holds no test Crash course material. |
 | `tests/` | Automated tests and project checks for the development workflow: `node --test` (Node 24 or later, no packages). Not part of the site. |
 | `.github/workflows/` | Runs `node --test` on Node 24 and 26 for every pull request into `main`, and reports pass or fail. Not part of the site. |
 | `.agents/skills/` | Agent skills used by the development workflow (MIT; see its `README.md`). Not part of the site. |
@@ -214,8 +216,8 @@ viewer address, in this repository, chat, a terminal command, a brief or a revie
    - Redirect URLs: `https://godwitly.pages.dev/dashboard`,
      `https://godwitly.pages.dev/dashboard.html` and, for local testing only,
      `http://localhost:8000/dashboard.html`.
-7. **Site deploy.** Use the deploy command in `AGENTS.md`, which includes `dashboard.html`
-   and `_headers`.
+7. **Site deploy.** Use the deploy command in `AGENTS.md`; its file list, `deploy-files.txt`,
+   includes `dashboard.html` and `_headers`.
 8. **Clean-up.** Remove the localhost redirect URL. Check that the Security Advisor shows
    nothing new apart from lint 0027 (`pg_graphql` table exposed to authenticated) on
    `launch_signups`, which is accepted only if `pg_graphql` is installed.

@@ -211,12 +211,21 @@ proposed work that enters this Workflow at step 1 or 3.
   and issues.
 - `tests/`: `node --test` tests (development only, ADR-0006). `tests/checks.js` holds the
   project checks: translation parity, translation keys named in the pages and scripts,
-  JavaScript syntax, the Crash course hub's cards, the Lesson pages' rules and that each hub card
-  lists the same checklist items as its Lesson page.
-  `tests/course-lessons.js` is the agreed list of the nine Lessons those pages must match.
+  JavaScript syntax, the Crash course hub's cards, the Lesson pages' rules, that each hub card
+  and Lesson page lists its manifest's checklist items and required flags, the manifests' own
+  rules, their public part, and that the deploy file list holds no test Crash course material.
+- `courses/`: the Crash course manifests (spec #56), the single source of each Crash course's
+  Lessons and checklist items; the project checks compare the pages with them.
+  `courses/manifest.js` lists them, describes the format and defines the public part;
+  `courses/claude-beginners.js` is the Claude Crash Course for Beginners and
+  `courses/test-course.js` the test Crash course (dummy text, never deployed to production).
+  Development only for now: never in the deploy file list, because a manifest holds more than
+  is public.
+- `deploy-files.txt`: the production deploy file list, one path per line, read by the deploy
+  command and the project checks.
 - `tests/samples/components.html`: development-only page showing the Lesson building blocks
   that no released Lesson uses yet (code boxes, tabs, the printable برشامة). Not in the deploy
-  command's file list, so never deployed.
+  file list (`deploy-files.txt`), so never deployed.
 - `.github/workflows/checks.yml`: the PR checks (see Development commands, Test). A change
   to it needs a security review and a new gate assessment (spec #31).
 - `.agents/skills/`: the vendored Matt Pocock skills (MIT; see its `README.md`).
@@ -238,8 +247,8 @@ Use the commands verified for this repository:
 - Build: none. Never push to `main` directly.
 - Deploy: manual. The Cloudflare Pages project `godwitly` is not connected to GitHub, so
   merging to `main` does **not** deploy. Ask the PO first, then copy only the site files
-  from `main` into an empty folder and upload them:
-  `git archive main index.html dashboard.html _headers css js assets crash-course | tar -x -C <empty-folder>`, then
+  from `main` (the paths in `deploy-files.txt`) into an empty folder and upload them:
+  `git archive main $(git show main:deploy-files.txt) | tar -x -C <empty-folder>`, then
   `npx wrangler@4.153.0 pages deploy <empty-folder> --project-name godwitly --branch main
   --commit-hash "$(git rev-parse main)"`. Check https://godwitly.pages.dev afterwards.
 
