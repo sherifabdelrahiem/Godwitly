@@ -56,6 +56,11 @@ becomes a measurable burden.
 - **Accounts do not go public before the legal check:** public release waits until counsel has
   named the mandatory requirements (legal basis, any Egyptian data-protection licence or
   registration, transfers, minimum age, consent evidence) and each is resolved.
-- **Deploy:** the `functions` folder joins the deploy's file list; Wrangler bundles it.
-- **Online only:** protected Lessons do not work from `file://`, a further exception to
-  ADR-0001 alongside the Sign-up dashboard (ADR-0005).
+- **Deploy:** the `functions` folder joins the deploy's file list; Wrangler bundles it. The
+  deploy is assembled in an empty staging folder, with the Functions folder at its root and the
+  website files, `_routes.json` and `_headers` in a sub-folder; Wrangler runs from the staging
+  folder and deploys that sub-folder, so it compiles the Functions. The first deploy with
+  Functions goes to a preview branch, where the compiled gate is proven before any production
+  deploy. `AGENTS.md` will record the exact commands (spec #56).
+- **Online only:** protected Lessons and the Course report do not work from `file://`, further
+  exceptions to ADR-0001 alongside the Sign-up dashboard (ADR-0005).

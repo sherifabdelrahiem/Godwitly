@@ -37,7 +37,8 @@ _Avoid_: resilience or resilient as everyday words; use Preparedness
 **Organisation**:
 The customer that uses Godwitly. It holds the maturity score and works towards Preparedness.
 Arabic: المؤسسة
-_Avoid_: client, company, tenant, account
+_Avoid_: client, company, tenant, account (a Godwitly account is one person's, never an
+Organisation's)
 
 **Training manager**:
 The person who acts for an Organisation: sets up programmes, sessions and exercises, and
@@ -199,6 +200,19 @@ numbered from 1 within their Crash course and are not tied to days.
 Arabic: درس
 _Avoid_: Domain, module, day, unit
 
+**Crash course manifest**:
+The single record of one Crash course's Lessons and their "You're done when" checklist items:
+which Lessons are Preview, Required and released, and which items are Required. A retired
+checklist item stays listed, and no retired Lesson or item id is used again with a new
+meaning. Used in docs and specs only.
+_Avoid_: syllabus, curriculum, course config, course definition
+
+**Test Crash course**:
+A Crash course of dummy text, used only to test access to Lessons that need Enrolment, that
+only the Project owner's test accounts can use. It never reaches production, is kept out of discovery and never counts
+in the Course report. Used in docs and specs only.
+_Avoid_: demo course, sample course (the Sample business is something else), staging course
+
 **Section**:
 One headed part inside a Lesson, such as "Chat vs Code". Lessons are not grouped above the
 Lesson level.
@@ -247,14 +261,16 @@ _Avoid_: summary, reference card; Arabic: ملخّص، ورقة مختصرة
 **Godwitly account**:
 One person's identity on Godwitly, opened by signing in with Google. The intention is one per
 person, but a person can sign in with several Google accounts, so figures count accounts, not
-people. It never gives access to Launch sign-ups.
+people. It never gives access to Launch sign-ups, the Sign-up dashboard or the Course report,
+except that an account on the Course report's owner list may see that report.
 Arabic: حساب Godwitly
 _Avoid_: user, profile, member, Learner; Arabic: مستخدم، عضوية
 
 **Enrolment**:
-A Godwitly account's own, free choice to take one Crash course. It gives access to that
-Crash course only. Signing in alone enrols in nothing. "Enrolled" describes a Course taker's
-state, not a separate kind of person.
+A Godwitly account's own, free choice to take one Crash course, which gives access to that
+Crash course only; signing in alone enrols in nothing. "Enrolled" is the state of an account
+with an Enrolment, not a separate kind of person; a Course taker is Enrolled through their
+account.
 Arabic: الالتحاق (التحق بالدورة)
 _Avoid_: registration, sign-up, subscription; Arabic: التسجيل، الاشتراك
 
@@ -267,15 +283,16 @@ _Avoid_: free Lesson, sample Lesson, trial; Arabic: درس مجاني، درس �
 **Required Lesson**:
 A Lesson that counts towards Course progress. Each Crash course names its own set.
 Arabic: درس أساسي
+_Avoid_: mandatory, core Lesson; Arabic: إجباري، إلزامي
 
 **Required checklist item**:
 An item on a Lesson's "You're done when" checklist that counts towards completing that Lesson.
 Arabic: بند أساسي
+_Avoid_: mandatory item, task, step; Arabic: بند إجباري
 
 **Completed Lesson**:
 A Required Lesson in which an Enrolled account has ticked every current Required checklist
-item. A Lesson with no Required checklist items is never complete. Self-reported, not
-assessed.
+item. Self-reported, not assessed.
 Arabic: درس مكتمل
 _Avoid_: passed, mastered; Arabic: ناجح
 
@@ -306,16 +323,17 @@ Arabic: نسبة الإتمام
 _Avoid_: pass rate, success rate
 
 **Course report**:
-The private page where the Project owner sees each Crash course's figures: Enrolments, Caught
-up, Completed Crash courses and Completion rate. It shows figures only, never one person's
-records, and is separate from the Sign-up dashboard.
+The private page where the Project owner, and any other account on its owner list, sees each
+Crash course's figures: Enrolments, Caught up, Completed Crash courses and Completion rate. It
+shows figures only, never one person's records, and is separate from the Sign-up dashboard.
 Arabic: تقرير الدورات
 _Avoid_: dashboard, analytics, admin panel
 
 ### Access to sign-ups
 
 **Project owner**:
-The one person who runs the landing page and decides who may see Launch sign-ups.
+The one person who runs the landing page and decides who may see Launch sign-ups and the
+Course report. They are the first on the Course report's owner list.
 Arabic: صاحب المشروع
 _Avoid_: admin, superuser
 
