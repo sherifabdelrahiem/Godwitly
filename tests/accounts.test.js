@@ -18,11 +18,15 @@ function fakeStorage(initial = {}) {
 
 // A stand-in for supabase.createClient. `emit` plays an Auth event to the page.
 function fakeLibrary({ signInError = null, signOutThrows = false, signOutError = null, initializeError = null } = {}) {
-  const calls = { created: [], signIn: [], signOut: [] };
+  const calls = { created: [], signIn: [], signOut: [], rpc: [] };
   let listener;
   const createClient = (url, key, options) => {
     calls.created.push({ url, key, options });
     return {
+      rpc: async (name) => {
+        calls.rpc.push(name);
+        return { data: "recorded", error: null };
+      },
       auth: {
         onAuthStateChange: (callback) => {
           listener = callback;
@@ -180,6 +184,44 @@ test("a sign-out the server accepted shows no warning", async () => {
   library.emit("INITIAL_SESSION", signedInAs({ full_name: "Mona" }));
   await session.signOut();
   assert.equal(session.getState().message, "");
+});
+
+test("a completed sign-in is reported to the server once per page load, never inside the callback", async () => {
+  const { session, library } = build();
+  session.start();
+  library.emit("SIGNED_IN", signedInAs({ full_name: "Mona" }));
+  assert.deepEqual(library.calls.rpc, []);
+  await new Promise((resolve) => setTimeout(resolve, 5));
+  library.emit("SIGNED_IN", signedInAs({ full_name: "Mona" }));
+  await new Promise((resolve) => setTimeout(resolve, 5));
+  assert.deepEqual(library.calls.rpc, ["record_sign_in"]);
+});
+
+test("a saved session, a refresh and a sign-out report nothing", async () => {
+  const { session, library } = build();
+  session.start();
+  library.emit("INITIAL_SESSION", signedInAs({ full_name: "Mona" }));
+  library.emit("TOKEN_REFRESHED", signedInAs({ full_name: "Mona" }));
+  library.emit("SIGNED_OUT", null);
+  await new Promise((resolve) => setTimeout(resolve, 5));
+  assert.deepEqual(library.calls.rpc, []);
+});
+
+test("a failing report never breaks the page", async () => {
+  const library = fakeLibrary();
+  const original = library.createClient;
+  library.createClient = (...args) => {
+    const client = original(...args);
+    client.rpc = async () => {
+      throw new Error("offline");
+    };
+    return client;
+  };
+  const { session } = build({ library });
+  session.start();
+  library.emit("SIGNED_IN", signedInAs({ full_name: "Mona" }));
+  await new Promise((resolve) => setTimeout(resolve, 5));
+  assert.equal(session.getState().status, "signed-in");
 });
 
 test("from a file, Auth never starts", () => {

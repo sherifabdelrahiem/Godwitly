@@ -41,6 +41,7 @@ function createAccountSession({
   let state = { status: "loading", name: "", message: "" };
   let client = null;
   const listeners = new Set();
+  let recordedThisPage = false;
 
   function setState(next) {
     state = { ...state, ...next };
@@ -92,6 +93,15 @@ function createAccountSession({
       // The page waits for the saved session (INITIAL_SESSION) before deciding the person
       // is signed out. Nothing is awaited inside the callback, as the library advises.
       client.auth.onAuthStateChange((event, session) => {
+        // A completed Google sign-in is reported to the server once per page load (Record
+        // sign-in). The server decides whether it counts: a refresh, an old session or a
+        // non-Google method changes nothing there. Never awaited inside the callback.
+        if (event === "SIGNED_IN" && session && !recordedThisPage) {
+          recordedThisPage = true;
+          setTimeout(() => {
+            Promise.resolve(client.rpc("record_sign_in")).catch(() => {});
+          }, 0);
+        }
         if (session) setState({ status: "signed-in", name: nameOf(session), message: "" });
         else setState({ status: "signed-out", name: "" });
       });
