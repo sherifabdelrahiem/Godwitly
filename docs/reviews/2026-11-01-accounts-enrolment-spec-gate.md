@@ -208,6 +208,60 @@ The gate passes spec #56 v4 at the hash above. It is not the PO's approval and d
 the implementation; the spec's release blockers and its security, SQL and browser checks stay
 mandatory.
 
+## Round 5 (v5 draft)
+
+Spec: #56 · Spec version: v5 · sha256 dcbd405259fc925ebfdcf8b449a0ee87298843ccde86e3e2ca39b5e3f581de47
+(hash re-checked by Codex: matched)
+
+v5 is an **unpublished local draft**; Issue #56 still holds v4. The v4 to v5 change is one
+Crash course manifest rule the PO decided in the glossary follow-up (DP-6 in
+`docs/reviews/2026-11-01-accounts-enrolment-design-diff-review.md` and
+`docs/reviews/2026-11-01-glossary-adr-followup-diff-review.md`): "Every released Required Lesson
+has at least one current Required checklist item (not retired)", enforced by the project checks
+(a new Seam 3 bullet). The introduction also records the v4 approval and the v5 status, and v5
+gets a Changes line. Codex was told the rule itself is the PO's decision and may only test its
+wording, completeness, consequences and consistency.
+
+Verdict: **PASS**: 0 P0, 0 P1, 1 P2, 0 P3.
+
+13. **[P2] The stated consequence is too broad.** "a Completed Crash course is always reachable"
+    is not what the rule gives: while any Lesson is coming soon (Lessons 2 to 9 today), completion
+    stays unavailable under story 43 and GLOSSARY "Completed Crash course". **Fix:** limit the
+    consequence to empty checklists and keep the coming-soon restriction.
+    - **Claude's verdict: valid.** The draft line contradicted story 43 ("only when every
+      Required Lesson of the whole planned Crash course is complete") and GLOSSARY ("It cannot
+      happen while any Lesson is coming soon").
+    - **Action: fixed** in the draft (wording only, no change in scope). The sentence now reads:
+      "so a released Required Lesson can never count as complete with nothing ticked, and an
+      empty checklist can never block a Completed Crash course for good. A Completed Crash course
+      still waits until no Lesson is coming soon (story 43)." The v5 Changes line still describes
+      the change correctly, so it was left as is.
+
+Codex also found that the rule can be enforced by extending manifest check 8 in `tests/checks.js`,
+for the test Crash course too, and that both manifests in `courses/` already satisfy it (Lesson 1
+has four Required items, the test Crash course's two released Lessons have one each, and Lessons
+2 to 9 are unreleased). It found the rule consistent with the public part of the manifest, the
+reviewed migration load, story 45, Course progress, Caught up, Completed Crash course,
+GLOSSARY.md and ADR-0009 to ADR-0011, and the introduction and Changes text accurate. Claude
+checked these statements against the files.
+
+## Round 6 (v5 draft, confirmation)
+
+Spec: #56 · Spec version: v5 · sha256 d09148e749951f45657e85ad8c26e05577ccb9fa2a6cfb2e3574140e96f5595b
+(hash re-checked by Codex: matched)
+
+Verdict: **PASS**: 0 P0, 0 P1, 0 P2, 0 P3.
+
+- Finding 13: RESOLVED. The consequence is now limited to empty checklists, and the coming-soon
+  restriction is stated.
+- Nothing new in the whole v4 to v5 diff.
+
+The gate passes the v5 draft at the hash above. It is not the PO's approval. **v5 is not
+published yet:** the PO publishes it to Issue #56, and the hash must then be recomputed from the
+live Issue body (`gh issue view 56 --json body --jq .body | shasum -a 256`). It may differ from
+the draft's hash, for example by trailing whitespace. The approval record uses the live hash; if
+the text differs in more than whitespace, it needs a new gate round.
+
 ## Summary
 
 | Round | Spec | Verdict | Findings |
@@ -216,5 +270,7 @@ mandatory.
 | 2 | v2 | FAIL | 1 P1, 1 P2: fixed in v3 (PO-approved fixes) |
 | 3 | v3 | FAIL | 1 P2: fixed in v4 (agent's decision under the PO's loop authorisation) |
 | 4 | v4 | PASS | none |
+| 5 | v5 draft | PASS | 1 P2: fixed in the v5 draft (agent's decision under the PO's loop authorisation) |
+| 6 | v5 draft | PASS | none (confirmation on the final draft hash) |
 
 No finding was skipped.
