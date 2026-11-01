@@ -17,6 +17,7 @@ const {
   findDeployListProblems,
   findAccountsDeployProblems,
   ACCOUNT_MATERIAL,
+  findGateProblems,
 } = require("./checks.js");
 const { MANIFESTS, publicPart } = require("../courses/manifest.js");
 const { TRANSLATIONS } = require("../js/translations.js");
@@ -149,7 +150,8 @@ test("the preview deploy list is the production list plus all the accounts mater
   const production = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
   const preview = read("deploy-files.preview.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
   assert.deepEqual(preview.filter((entry) => !production.includes(entry)).sort(), [...ACCOUNT_MATERIAL].sort());
-  assert.deepEqual(findDeployListProblems(preview, MANIFESTS), []);
+  assert.deepEqual(findDeployListProblems(preview, MANIFESTS, { allowTestFolders: true }), []);
+  assert.ok(findDeployListProblems(preview, MANIFESTS).some((p) => p.includes("test-course")), "the production rule still refuses the test folder");
 });
 
 test("the accounts foundation migration's seed matches the real manifest as it stood then, field for field", () => {
@@ -187,4 +189,51 @@ test("the accounts foundation migration's seed matches the real manifest as it s
   for (const { manifest } of MANIFESTS.filter(({ manifest }) => manifest.test)) {
     assert.equal(lessonRows.some((r) => r.course === manifest.id), false, `test course ${manifest.id} is in a migration`);
   }
+});
+
+// The gate's configuration (ticket #59): the real files agree, and each rule catches a broken copy.
+async function gateInputs() {
+  const { COURSES } = await import("../functions/_lib/routes.mjs");
+  const { CSP } = await import("../functions/_lib/csp.mjs");
+  return {
+    courses: JSON.parse(JSON.stringify(COURSES)),
+    manifests: MANIFESTS,
+    routesJson: JSON.parse(read("_routes.json")),
+    headersText: read("_headers"),
+    csp: CSP,
+  };
+}
+
+test("the gate table, the route list and the headers agree with the manifests", async () => {
+  assert.deepEqual(findGateProblems(await gateInputs()), []);
+});
+
+test("the gate check catches a table, route list or policy that has drifted", async () => {
+  const bad = async (change) => {
+    const input = await gateInputs();
+    change(input);
+    return findGateProblems(input);
+  };
+  assert.match((await bad((i) => { i.courses[1].lessons[1].preview = true; }))[0], /flags differ/);
+  assert.match((await bad((i) => { i.courses[1].lessons[1].summary = "x"; }))[0], /summary differs/);
+  assert.match((await bad((i) => { i.courses[1].lessons.pop(); }))[0], /differ from the manifest/);
+  assert.match((await bad((i) => { i.courses.pop(); }))[0], /no entry/);
+  assert.match((await bad((i) => { i.routesJson.include = i.routesJson.include.filter((r) => r !== "/test-course/*"); }))[0], /does not include "\/test-course\/\*"/);
+  assert.match((await bad((i) => { i.routesJson.include = i.routesJson.include.filter((r) => r !== "/crash-course/lesson-3/*"); }))[0], /lesson-3/);
+  assert.match((await bad((i) => { i.routesJson.include = i.routesJson.include.filter((r) => r !== "/account/*"); }))[0], /account/);
+  assert.match((await bad((i) => { i.routesJson.exclude = ["/test-course/lesson-2"]; }))[0], /nothing may be excluded/);
+  assert.match((await bad((i) => { i.routesJson.include.push("/other/*"); }))[0], /does not need/);
+  assert.match((await bad((i) => { i.csp += " x"; }))[0], /differs from the gate's/);
+});
+
+test("the Enrol and Can-open migration loads the test Crash course exactly as courses/test-course.js has it", () => {
+  const sql = read("supabase/accounts/migrations/20261101180000_enrol_and_can_open.sql").replace(/^\s*--.*$/gm, "");
+  const test = MANIFESTS.find(({ manifest }) => manifest.id === "test-course").manifest;
+  assert.match(sql, /insert into private\.crash_courses \(id, test\) values \('test-course', true\);/);
+  const lessons = [...sql.matchAll(/\('test-course', (\d+), '([^']*)', '([^']*)', (true|false), (true|false), (true|false)\)/g)].map((m) => ({
+    number: Number(m[1]), titleKey: m[2], summary: m[3], preview: m[4] === "true", required: m[5] === "true", released: m[6] === "true",
+  }));
+  assert.deepEqual(lessons, test.lessons.map(({ number, titleKey, summary, preview, required, released }) => ({ number, titleKey, summary, preview, required, released })));
+  const items = [...sql.matchAll(/\('test-course', (\d+), '([^']*)', (true|false), (true|false)\)/g)].map((m) => ({ lesson: Number(m[1]), id: m[2], required: m[3] === "true", retired: m[4] === "true" }));
+  assert.deepEqual(items, test.lessons.flatMap((l) => l.items.map((i) => ({ lesson: l.number, id: i.id, required: i.required, retired: Boolean(i.retired) }))));
 });

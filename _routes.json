@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "include": [
+    "/test-course",
+    "/test-course/*",
+    "/account",
+    "/account/*",
+    "/crash-course/lesson-2",
+    "/crash-course/lesson-2/*",
+    "/crash-course/lesson-3",
+    "/crash-course/lesson-3/*",
+    "/crash-course/lesson-4",
+    "/crash-course/lesson-4/*",
+    "/crash-course/lesson-5",
+    "/crash-course/lesson-5/*",
+    "/crash-course/lesson-6",
+    "/crash-course/lesson-6/*",
+    "/crash-course/lesson-7",
+    "/crash-course/lesson-7/*",
+    "/crash-course/lesson-8",
+    "/crash-course/lesson-8/*",
+    "/crash-course/lesson-9",
+    "/crash-course/lesson-9/*"
+  ],
+  "exclude": []
+}
