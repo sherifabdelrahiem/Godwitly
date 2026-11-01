@@ -17,7 +17,7 @@ function fakeStorage(initial = {}) {
 }
 
 // A stand-in for supabase.createClient. `emit` plays an Auth event to the page.
-function fakeLibrary({ signInError = null, signOutThrows = false, initializeError = null } = {}) {
+function fakeLibrary({ signInError = null, signOutThrows = false, signOutError = null, initializeError = null } = {}) {
   const calls = { created: [], signIn: [], signOut: [] };
   let listener;
   const createClient = (url, key, options) => {
@@ -35,7 +35,7 @@ function fakeLibrary({ signInError = null, signOutThrows = false, initializeErro
         signOut: async (args) => {
           calls.signOut.push(args);
           if (signOutThrows) throw new Error("offline");
-          return { error: null };
+          return { error: signOutError };
         },
       },
     };
@@ -161,6 +161,25 @@ test("sign-out still clears the page and the keys when the server can't be reach
   await session.signOut();
   assert.equal(session.getState().status, "signed-out");
   assert.deepEqual(storage.names(), []);
+});
+
+test("a sign-out the server refused clears this device but says it may not have reached the server", async () => {
+  const storage = fakeStorage({ [ACCOUNTS_STORAGE_KEY]: "{}" });
+  const { session, library } = build({ storage, library: fakeLibrary({ signOutError: new Error("500") }) });
+  session.start();
+  library.emit("INITIAL_SESSION", signedInAs({ full_name: "Mona" }));
+  await session.signOut();
+  assert.deepEqual([session.getState().status, session.getState().name], ["signed-out", ""]);
+  assert.equal(session.getState().message, "account.signOutIncomplete");
+  assert.deepEqual(storage.names(), []);
+});
+
+test("a sign-out the server accepted shows no warning", async () => {
+  const { session, library } = build();
+  session.start();
+  library.emit("INITIAL_SESSION", signedInAs({ full_name: "Mona" }));
+  await session.signOut();
+  assert.equal(session.getState().message, "");
 });
 
 test("from a file, Auth never starts", () => {

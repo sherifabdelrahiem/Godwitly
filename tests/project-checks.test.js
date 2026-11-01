@@ -15,6 +15,8 @@ const {
   findManifestProblems,
   findPublicPartProblems,
   findDeployListProblems,
+  findAccountsDeployProblems,
+  ACCOUNT_MATERIAL,
 } = require("./checks.js");
 const { MANIFESTS, publicPart } = require("../courses/manifest.js");
 const { TRANSLATIONS } = require("../js/translations.js");
@@ -134,6 +136,18 @@ test("each Lesson's summary is its Arabic hub outcome, word for word (the PO, 20
 
 test("the production deploy file list holds no test Crash course material and no manifest, and only plain paths", () => {
   const paths = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
-  assert.ok(paths.includes("crash-course") && paths.includes("index.html"), "deploy-files.txt not read");
+  assert.ok(paths.includes("crash-course/index.html") && paths.includes("index.html"), "deploy-files.txt not read");
   assert.deepEqual(findDeployListProblems(paths, MANIFESTS), []);
+});
+
+test("the production deploy list holds no Godwitly accounts material (preview-only until T10)", () => {
+  const paths = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
+  assert.deepEqual(findAccountsDeployProblems(paths), []);
+});
+
+test("the preview deploy list is the production list plus all the accounts material, and no test or manifest material", () => {
+  const production = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
+  const preview = read("deploy-files.preview.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
+  assert.deepEqual(preview.filter((entry) => !production.includes(entry)).sort(), [...ACCOUNT_MATERIAL].sort());
+  assert.deepEqual(findDeployListProblems(preview, MANIFESTS), []);
 });

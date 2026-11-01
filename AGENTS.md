@@ -222,7 +222,15 @@ proposed work that enters this Workflow at step 1 or 3.
   Development only for now: never in the deploy file list, because a manifest holds more than
   is public.
 - `deploy-files.txt`: the production deploy file list, one path per line, read by the deploy
-  command and the project checks.
+  command and the project checks. It names files, not whole `js/` or `crash-course/`, so
+  Godwitly accounts material stays out of production until T10 (a project check enforces it).
+- `deploy-files.preview.txt`: the same list plus the accounts material (`js/accounts*.js`,
+  `js/account-bar.js`, `crash-course/privacy`), for the Pages preview branch only.
+- `js/accounts-boot.js`, `js/accounts.js`, `js/accounts-config.js`, `js/account-bar.js`: Godwitly
+  accounts sign-in on the Crash course pages (spec #56, ADR-0009). The pages name only the
+  boot script, which loads the pinned supabase-js (SRI) and the rest where they are deployed.
+- `supabase/accounts/`: migrations and SQL checks for the `godwitly-accounts` project only.
+  Never apply them to `godwitly` (whose migrations are in `supabase/migrations/`).
 - `tests/samples/components.html`: development-only page showing the Lesson building blocks
   that no released Lesson uses yet (code boxes, tabs, the printable برشامة). Not in the deploy
   file list (`deploy-files.txt`), so never deployed.

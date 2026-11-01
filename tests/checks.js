@@ -284,6 +284,7 @@ function builtKeyProblem(piece) {
 */
 const SCRIPT_EXCEPTIONS = [
   // { text: "config.js", file: "js/example.js", reason: "a file name, not a key" },
+  { text: "accounts.js", file: "js/accounts-boot.js", reason: "a script file name, not a key" },
 ];
 
 function findScriptReferenceProblems(source, translations, { file, exceptions = SCRIPT_EXCEPTIONS }) {
@@ -878,7 +879,22 @@ function findDeployListProblems(paths, manifests) {
   return problems;
 }
 
+// Godwitly accounts sign-in is preview-only until ticket T10 (spec #56, ticket #58): these files must
+// not be in the production deploy list, and a directory that holds them must not be listed whole.
+const ACCOUNT_MATERIAL = ["js/accounts.js", "js/accounts-config.js", "js/accounts-boot.js", "js/account-bar.js", "crash-course/privacy"];
+
+function findAccountsDeployProblems(paths) {
+  const clean = (entry) => path.posix.normalize(entry).replace(/\/+$/, "");
+  return paths.flatMap((entry) => {
+    const listed = clean(entry);
+    const hit = ACCOUNT_MATERIAL.find((target) => listed === target || target.startsWith(listed + "/") || listed.startsWith(target + "/"));
+    return hit ? [`the production deploy file list has "${entry}", which holds Godwitly accounts material (${hit}), preview-only until T10`] : [];
+  });
+}
+
 module.exports = {
+  ACCOUNT_MATERIAL,
+  findAccountsDeployProblems,
   findParityProblems,
   findHtmlReferenceProblems,
   findScriptReferenceProblems,

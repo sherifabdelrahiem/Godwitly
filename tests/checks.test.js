@@ -15,6 +15,7 @@ const {
   findManifestProblems,
   findPublicPartProblems,
   findDeployListProblems,
+  findAccountsDeployProblems,
   findCourseLessonProblems,
 } = require("./checks.js");
 const { publicPart } = require("../courses/manifest.js");
@@ -1044,4 +1045,12 @@ test("manifest: the Required-item rule skips coming-soon Lessons and Lessons tha
   manifest.lessons[1].items = [];
   manifest.lessons.push(lessonOf(3, { released: true, required: false, items: [] }));
   assert.deepEqual(findManifestProblems(manifest), []);
+});
+
+test("the accounts deploy check flags the files, their folders' parents and nothing else", () => {
+  assert.deepEqual(findAccountsDeployProblems(["index.html", "js/config.js", "crash-course/index.html"]), []);
+  assert.equal(findAccountsDeployProblems(["js"]).length, 1);
+  assert.equal(findAccountsDeployProblems(["crash-course"]).length, 1);
+  assert.equal(findAccountsDeployProblems(["js/accounts.js"]).length, 1);
+  assert.equal(findAccountsDeployProblems(["crash-course/privacy/index.html"]).length, 1);
 });

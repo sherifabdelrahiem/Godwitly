@@ -125,13 +125,16 @@ function createAccountSession({
 
     async signOut() {
       if (!client) return;
+      // Signed out on this device either way. If the server could not be told, the page says so,
+      // because the session may still be valid elsewhere until it expires.
+      let revoked = true;
       try {
-        await client.auth.signOut({ scope: "local" });
+        revoked = !(await client.auth.signOut({ scope: "local" })).error;
       } catch (error) {
-        /* the local keys are removed below either way */
+        revoked = false;
       }
       removeAccountKeys();
-      setState({ status: "signed-out", name: "", message: "" });
+      setState({ status: "signed-out", name: "", message: revoked ? "" : "account.signOutIncomplete" });
     },
   };
 }
