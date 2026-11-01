@@ -218,11 +218,12 @@ test("the gate check catches a table, route list or policy that has drifted", as
   assert.match((await bad((i) => { i.courses[1].lessons[1].summary = "x"; }))[0], /summary differs/);
   assert.match((await bad((i) => { i.courses[1].lessons.pop(); }))[0], /differ from the manifest/);
   assert.match((await bad((i) => { i.courses.pop(); }))[0], /no entry/);
-  assert.match((await bad((i) => { i.routesJson.include = i.routesJson.include.filter((r) => r !== "/test-course/*"); }))[0], /does not include "\/test-course\/\*"/);
-  assert.match((await bad((i) => { i.routesJson.include = i.routesJson.include.filter((r) => r !== "/crash-course/lesson-3/*"); }))[0], /lesson-3/);
-  assert.match((await bad((i) => { i.routesJson.include = i.routesJson.include.filter((r) => r !== "/account/*"); }))[0], /account/);
-  assert.match((await bad((i) => { i.routesJson.exclude = ["/test-course/lesson-2"]; }))[0], /nothing may be excluded/);
-  assert.match((await bad((i) => { i.routesJson.include.push("/other/*"); }))[0], /does not need/);
+  assert.match((await bad((i) => { i.routesJson.include = ["/test-course/*"]; }))[0], /does not send/);
+  assert.match((await bad((i) => { i.routesJson.exclude.push("/test-course/*"); }))[0], /does not send "\/test-course\/"/);
+  assert.match((await bad((i) => { i.routesJson.exclude.push("/crash-course/lesson-3/*"); }))[0], /lesson-3/);
+  assert.match((await bad((i) => { i.routesJson.exclude.push("/account"); }))[0], /"\/account"/);
+  assert.match((await bad((i) => { i.routesJson.exclude.push("/crash-course/*"); }))[0], /crash-course\/lesson-2/);
+  assert.match((await bad((i) => { i.routesJson.exclude.push("/test-course"); }))[0], /does not send "\/test-course"/);
   assert.match((await bad((i) => { i.csp += " x"; }))[0], /differs from the gate's/);
 });
 

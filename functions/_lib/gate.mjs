@@ -50,7 +50,7 @@ function safeSegments(pathname) {
   return out;
 }
 
-// What a request path means: { kind: "refused" } | { kind: "account", rest } |
+// What a request path means: { kind: "other" } (not protected) | { kind: "refused" } | { kind: "account", rest } |
 // { kind: "hub", course } | { kind: "lesson", course, lesson, rest }.
 export function resolvePath(pathname) {
   const segments = safeSegments(pathname);
@@ -58,14 +58,17 @@ export function resolvePath(pathname) {
   const first = (segments[0] || "").toLowerCase();
   if (first === "account") return { kind: "account", rest: segments.slice(1) };
   const course = COURSES.find((c) => c.folder === first);
-  if (!course) return { kind: "refused" };
+  // Not a Crash course folder: nothing here is protected. (_routes.json sends every request that is
+  // not a named public path to the gate, because Pages matches routes case-sensitively and may serve
+  // files case-insensitively; such a request is passed on untouched.)
+  if (!course) return { kind: "other" };
 
   const second = (segments[1] || "").toLowerCase();
   if (course.gateFolder && (segments.length === 1 || (segments.length === 2 && second === "index.html"))) {
     return { kind: "hub", course };
   }
   const match = /^lesson-([1-9][0-9]*)$/.exec(second);
-  if (!match) return { kind: "refused" };
+  if (!match) return course.gateFolder ? { kind: "refused" } : { kind: "other" };
   const lesson = course.lessons.find((l) => l.number === Number(match[1]));
   if (!lesson) return { kind: "refused" };
   let rest = segments.slice(2);
@@ -175,6 +178,7 @@ export async function handleGate(request, env, { fetch: doFetch = fetch, now = (
   }
   const url = new URL(request.url);
   const target = resolvePath(url.pathname);
+  if (target.kind === "other") return env.ASSETS.fetch(request);
   if (target.kind === "refused" || target.kind === "account") return plain(404, "Not found");
 
   if (target.kind === "hub") {

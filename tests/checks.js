@@ -943,20 +943,25 @@ function findGateProblems({ courses, manifests, routesJson, headersText, csp }) 
   }
 
   const include = Array.isArray(routesJson.include) ? routesJson.include : [];
+  const exclude = Array.isArray(routesJson.exclude) ? routesJson.exclude : [];
   if (routesJson.version !== 1) problems.push("_routes.json: version must be 1");
-  if (!Array.isArray(routesJson.exclude) || routesJson.exclude.length) problems.push("_routes.json: nothing may be excluded");
-  const need = ["/account", "/account/*"];
+  // Pages matches routes case-sensitively but may serve files case-insensitively, so a protected
+  // path must reach the gate in every spelling. Everything is routed to the gate except named public
+  // paths, and no excluded pattern may match a protected path, in any letter case.
+  const matches = (pattern, requestPath) => (pattern.endsWith("*") ? requestPath.startsWith(pattern.slice(0, -1)) : requestPath === pattern);
+  const protectedPaths = ["/account", "/account/x"];
   for (const entry of courses) {
-    if (entry.gateFolder) need.push(`/${entry.folder}`, `/${entry.folder}/*`);
-    else {
-      for (const lesson of entry.lessons.filter((l) => !l.preview)) {
-        need.push(`/${entry.folder}/lesson-${lesson.number}`, `/${entry.folder}/lesson-${lesson.number}/*`);
-      }
+    const roots = entry.gateFolder ? [`/${entry.folder}`] : entry.lessons.filter((l) => !l.preview).map((l) => `/${entry.folder}/lesson-${l.number}`);
+    for (const root of roots) protectedPaths.push(root, `${root}/`, `${root}/index.html`, `${root}/resources/a.pdf`);
+  }
+  for (const protectedPath of protectedPaths) {
+    for (const spelling of new Set([protectedPath, protectedPath.toUpperCase(), protectedPath.replace(/\/(.)/g, (_, c) => "/" + c.toUpperCase())])) {
+      const routed = include.some((pattern) => matches(pattern, spelling)) && !exclude.some((pattern) => matches(pattern, spelling));
+      if (!routed) problems.push(`_routes.json does not send "${spelling}" to the gate`);
     }
   }
-  for (const route of need) if (!include.includes(route)) problems.push(`_routes.json does not include "${route}"`);
-  for (const route of include) {
-    if (!need.includes(route)) problems.push(`_routes.json includes "${route}", which the gate table does not need (a route the gate does not know is refused)`);
+  for (const pattern of exclude) {
+    if (pattern.includes("*") && !pattern.endsWith("*")) problems.push(`_routes.json exclude "${pattern}": a pattern may end in "*" only`);
   }
 
   const lines = headersText.split(/\r?\n/);

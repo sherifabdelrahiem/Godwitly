@@ -260,3 +260,22 @@ test("when the locked-page file is missing the answer is still locked, in plain 
   assert.doesNotMatch(body, SECRET);
   assertGateHeaders(response);
 });
+
+test("a path that is not a protected folder is passed on untouched, with no call to the accounts project", async () => {
+  const env = makeEnv({ ...FILES, "/css/styles.css": "body{}" });
+  const fetch = makeFetch(() => assert.fail("must not call"));
+  for (const path of ["/css/styles.css", "/CSS/styles.css", "/crash-course/privacy/", "/crash-course/lesson-1/", "/crash-course/not-a-lesson/"]) {
+    const response = await gate.handleGate(req(path), env, { fetch });
+    assert.equal(response.status, 200, path);
+  }
+  assert.deepEqual(env.served, ["/css/styles.css", "/CSS/styles.css", "/crash-course/privacy/", "/crash-course/lesson-1/", "/crash-course/not-a-lesson/"]);
+});
+
+test("the capital-letter spellings of a protected folder are gated, never passed on", async () => {
+  for (const path of ["/TEST-COURSE/LESSON-2/", "/Crash-Course/Lesson-2/", "/ACCOUNT/locked/"]) {
+    const { response, body, env } = await ask(path, {}, makeFetch(() => assert.fail("must not call")));
+    assert.ok([403, 404].includes(response.status), `${path} gave ${response.status}`);
+    assert.doesNotMatch(body, SECRET);
+    assert.ok(!env.served.includes(path));
+  }
+});
