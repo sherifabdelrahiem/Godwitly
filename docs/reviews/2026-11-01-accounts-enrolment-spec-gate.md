@@ -274,3 +274,11 @@ the text differs in more than whitespace, it needs a new gate round.
 | 6 | v5 draft | PASS | none (confirmation on the final draft hash) |
 
 No finding was skipped.
+
+## v5 published
+
+The PO approved publishing on 2026-11-01, and the agent published the v5 draft to #56. Live
+hash (`gh issue view 56 --json body --jq .body | shasum -a 256`):
+`cf3693461f6199577ac855b16d1994a49cd872888b9cac74ddaf4c9dc0945878`. The live text is the round 6
+draft (`d09148e7…5595b`) word for word; only the trailing blank line `gh` adds differs, so no new
+gate round is needed. The approval record must use the live hash.
