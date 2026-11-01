@@ -122,7 +122,8 @@
           <div class="course-hero__actions">
             <!-- Godwitly account (spec #56): hidden until js/course.js shows it, so a visitor without
                  JavaScript never sees a button that does nothing. Shown to English and Arabic visitors. -->
-            <div class="account-bar account-bar--hero" role="group" data-account hidden data-i18n-aria-label="account.label" aria-label="Godwitly account">
+            <!-- No role/aria-label here: this wrapper is display: contents, which can drop a group role. Its button and notice carry their own text. -->
+            <div class="account-bar account-bar--hero" data-account hidden>
               <div class="account-bar__row" data-account-out hidden>
                 <button type="button" class="pill pill--primary account-bar__button" data-account-action="sign-in" data-i18n="account.signIn">Sign in with Google</button>
                 <p class="account-bar__notice">
