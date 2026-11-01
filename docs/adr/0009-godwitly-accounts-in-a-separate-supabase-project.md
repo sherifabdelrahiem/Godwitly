@@ -31,3 +31,12 @@ construction rather than by policy.
   Supabase Pro (about $35 a month for both projects, checked 2026-10-31) is preparing the
   first paid Crash course, not traffic.
 - **No free project left:** a third Supabase project needs a paid plan.
+
+## Addendum, 2026-11-01: which organization holds the project
+
+The `godwitly` Supabase organization already holds two free projects (`godwitly` and
+`tawsila-dev`), so the accounts project, `godwitly-accounts` (Frankfurt, free plan), was
+created in a separate Supabase account and organization. Nothing in this decision depends on
+the organization: the project is still separate from `godwitly`. The PO plans to move the
+Sign-up dashboard's project into the same account later; that is a separate decision and,
+where it changes the setup, its own ADR.

@@ -15,6 +15,8 @@ const {
   findManifestProblems,
   findPublicPartProblems,
   findDeployListProblems,
+  findAccountsDeployProblems,
+  ACCOUNT_MATERIAL,
 } = require("./checks.js");
 const { MANIFESTS, publicPart } = require("../courses/manifest.js");
 const { TRANSLATIONS } = require("../js/translations.js");
@@ -134,6 +136,55 @@ test("each Lesson's summary is its Arabic hub outcome, word for word (the PO, 20
 
 test("the production deploy file list holds no test Crash course material and no manifest, and only plain paths", () => {
   const paths = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
-  assert.ok(paths.includes("crash-course") && paths.includes("index.html"), "deploy-files.txt not read");
+  assert.ok(paths.includes("crash-course/index.html") && paths.includes("index.html"), "deploy-files.txt not read");
   assert.deepEqual(findDeployListProblems(paths, MANIFESTS), []);
+});
+
+test("the production deploy list holds no Godwitly accounts material (preview-only until T10)", () => {
+  const paths = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
+  assert.deepEqual(findAccountsDeployProblems(paths), []);
+});
+
+test("the preview deploy list is the production list plus all the accounts material, and no test or manifest material", () => {
+  const production = read("deploy-files.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
+  const preview = read("deploy-files.preview.txt").split(/\r?\n/).filter((line) => line.trim() !== "");
+  assert.deepEqual(preview.filter((entry) => !production.includes(entry)).sort(), [...ACCOUNT_MATERIAL].sort());
+  assert.deepEqual(findDeployListProblems(preview, MANIFESTS), []);
+});
+
+test("the accounts foundation migration's seed matches the real manifest as it stood then, field for field", () => {
+  // Scope: only the foundation migration's INSERT seed. A later manifest change gets its own
+  // migration and its own check (spec #56: "each change to the manifest needs its own
+  // migration"), so this one is not widened to "the final state after all migrations".
+  const file = path.join(ROOT, "supabase/accounts/migrations/20261101130000_accounts_foundation.sql");
+  // Comments are dropped first, so a commented-out row can never satisfy the check.
+  const sql = fs.readFileSync(file, "utf8").replace(/^\s*--.*$/gm, "");
+  const lessonRows = [...sql.matchAll(/\('([^']*)', (\d+), '([^']*)', '((?:[^']|'')*)', (true|false), (true|false), (true|false)\)/g)].map((m) => ({
+    course: m[1], number: Number(m[2]), titleKey: m[3], summary: m[4].replace(/''/g, "'"), preview: m[5] === "true", required: m[6] === "true", released: m[7] === "true",
+  }));
+  const itemRows = [...sql.matchAll(/\('([^']*)', (\d+), '([^']*)', (true|false), (true|false)\)/g)].map((m) => ({
+    course: m[1], lesson: Number(m[2]), id: m[3], required: m[4] === "true", retired: m[5] === "true",
+  }));
+  assert.ok(lessonRows.length > 0 && itemRows.length > 0, "no inserts found in the foundation migration");
+  const real = MANIFESTS.filter(({ manifest }) => !manifest.test);
+  for (const { manifest } of real) {
+    for (const lesson of manifest.lessons) {
+      const row = lessonRows.find((r) => r.course === manifest.id && r.number === lesson.number);
+      assert.ok(row, `${manifest.id} Lesson ${lesson.number} is not in the foundation migration`);
+      assert.deepEqual(
+        [row.titleKey, row.summary, row.preview, row.required, row.released],
+        [lesson.titleKey, lesson.summary, lesson.preview, lesson.required, lesson.released],
+        `${manifest.id} Lesson ${lesson.number} differs from the manifest`,
+      );
+      for (const item of lesson.items) {
+        const itemRow = itemRows.find((r) => r.course === manifest.id && r.lesson === lesson.number && r.id === item.id);
+        assert.ok(itemRow, `${manifest.id} Lesson ${lesson.number} item ${item.id} is not in the foundation migration`);
+        assert.deepEqual([itemRow.required, itemRow.retired], [item.required, Boolean(item.retired)], `item ${item.id} differs`);
+      }
+    }
+  }
+  // Nothing test-only is loaded into the accounts project by these migrations.
+  for (const { manifest } of MANIFESTS.filter(({ manifest }) => manifest.test)) {
+    assert.equal(lessonRows.some((r) => r.course === manifest.id), false, `test course ${manifest.id} is in a migration`);
+  }
 });

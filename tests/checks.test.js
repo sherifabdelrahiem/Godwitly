@@ -15,6 +15,7 @@ const {
   findManifestProblems,
   findPublicPartProblems,
   findDeployListProblems,
+  findAccountsDeployProblems,
   findCourseLessonProblems,
 } = require("./checks.js");
 const { publicPart } = require("../courses/manifest.js");
@@ -1021,4 +1022,35 @@ test("code boxes: each holds exactly one non-empty <code>, so its Copy button co
   ]);
   assert.deepEqual(lessonProblems(withLinks(codeBox("<code> \n </code>"))), ["code box 1 is empty"]);
   assert.deepEqual(lessonProblems(withLinks(codeBox("<code>a</code>") + codeBox("<code></code>"))), ["code box 2 is empty"]);
+});
+
+test("manifest: a released Required Lesson needs at least one current Required item (spec #56 v5)", () => {
+  const none = goodManifest();
+  none.lessons[0].items = [];
+  assert.deepEqual(findManifestProblems(none), [
+    "Lesson 1 is released and Required but has no current Required checklist item",
+  ]);
+  const onlyRetiredOrOptional = goodManifest();
+  onlyRetiredOrOptional.lessons[0].items = [
+    { id: "old", required: true, retired: true },
+    { id: "extra", required: false },
+  ];
+  assert.deepEqual(findManifestProblems(onlyRetiredOrOptional), [
+    "Lesson 1 is released and Required but has no current Required checklist item",
+  ]);
+});
+
+test("manifest: the Required-item rule skips coming-soon Lessons and Lessons that are not Required", () => {
+  const manifest = goodManifest();
+  manifest.lessons[1].items = [];
+  manifest.lessons.push(lessonOf(3, { released: true, required: false, items: [] }));
+  assert.deepEqual(findManifestProblems(manifest), []);
+});
+
+test("the accounts deploy check flags the files, their folders' parents and nothing else", () => {
+  assert.deepEqual(findAccountsDeployProblems(["index.html", "js/config.js", "crash-course/index.html"]), []);
+  assert.equal(findAccountsDeployProblems(["js"]).length, 1);
+  assert.equal(findAccountsDeployProblems(["crash-course"]).length, 1);
+  assert.equal(findAccountsDeployProblems(["js/accounts.js"]).length, 1);
+  assert.equal(findAccountsDeployProblems(["crash-course/privacy/index.html"]).length, 1);
 });

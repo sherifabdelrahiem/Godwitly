@@ -1,5 +1,5 @@
 # Cloudflare Pages response headers (docs/plans/2026-10-28-signup-dashboard.md).
-# Only the Sign-up dashboard gets these. The landing page gets no new headers.
+# The Sign-up dashboard and the Crash course pages get these. The landing page gets no new headers.
 # Each header must stay on one line.
 
 /dashboard
@@ -12,4 +12,14 @@
   Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://ijpvbxglhxktnkabjdif.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'none'
   X-Robots-Tag: noindex, nofollow
   Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+
+# Crash course pages load Godwitly accounts sign-in (spec #56, ticket #58, ADR-0009). They connect to
+# the godwitly-accounts project only, never to the dashboard's project.
+/crash-course
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://otjvjshvwwljsdwyqoxk.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'
+  X-Content-Type-Options: nosniff
+
+/crash-course/*
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://otjvjshvwwljsdwyqoxk.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'
   X-Content-Type-Options: nosniff

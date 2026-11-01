@@ -89,6 +89,31 @@
       </div>
     </header>
 
+    <!-- Godwitly account bar (spec #56): hidden until js/course.js shows it, so a visitor
+         without JavaScript never sees a button that does nothing. -->
+    <!-- One persistent polite live region for account messages, outside the bar so hiding the bar never hides it. -->
+    <p class="visually-hidden" role="status" aria-live="polite" data-account-live></p>
+
+    <section class="account-bar" data-account hidden data-i18n-aria-label="account.label" aria-label="Godwitly account">
+      <div class="container account-bar__inner">
+        <div class="account-bar__row" data-account-out hidden>
+          <button type="button" class="pill pill--primary account-bar__button" data-account-action="sign-in" data-i18n="account.signIn">Sign in with Google</button>
+          <p class="account-bar__notice">
+            <span data-i18n="account.notice">Signing in creates a Godwitly account. It does not enrol you in anything.</span>
+            <a href="privacy/index.html" data-course-link data-i18n="account.noticeLink">What we keep</a>
+          </p>
+        </div>
+        <div class="account-bar__row" data-account-in hidden>
+          <p class="account-bar__who">
+            <span data-i18n="account.signedInAs">Signed in as</span>
+            <bdi class="account-bar__name" data-account-name></bdi>
+          </p>
+          <button type="button" class="pill pill--outline account-bar__button" data-account-action="sign-out" data-i18n="account.signOut">Sign out</button>
+        </div>
+        <p class="account-bar__note" data-account-note hidden></p>
+      </div>
+    </section>
+
     <main id="main" tabindex="-1">
       <!-- ===================== HERO ===================== -->
       <section class="course-hero" aria-labelledby="course-title">
@@ -269,6 +294,7 @@
     <script src="../js/translations.js"></script>
     <script src="../js/course-language.js"></script>
     <script src="../js/course-progress.js"></script>
+    <script src="../js/accounts-hosts.js"></script>
     <script src="../js/course.js"></script>
   </body>
 </html>
