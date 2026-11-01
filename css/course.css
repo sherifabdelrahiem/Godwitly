@@ -27,7 +27,7 @@ html[lang="ar"] .course-hero .hero__intro {
   max-width: 40rem;
 }
 
-/* "Available in Arabic": a small pill, like the product tags */
+/* Small status pill, like the product tags ("Coming soon" on the Lesson cards) */
 .course-badge {
   display: inline-flex;
   align-items: center;
@@ -39,7 +39,33 @@ html[lang="ar"] .course-hero .hero__intro {
   font-weight: 600;
 }
 
-/* Only English visitors see the "Available in Arabic" row */
+/* The hero's two actions: the account stack (sign-in button with its notice under it) and,
+   for English visitors, the soft "Open the guide in Arabic" pill */
+.course-hero__actions {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: start;
+  align-items: start;
+  gap: 12px 16px;
+  margin-top: 28px;
+}
+
+/* The Arabic pill hugs its text instead of stretching across a narrow column */
+.course-hero__actions .pill--soft {
+  justify-self: start;
+}
+
+/* A soft pill in the colours the old "Available in Arabic" badge had */
+.pill--soft {
+  background: var(--color-learn-bg);
+  color: var(--color-accent);
+}
+
+.pill--soft:hover {
+  background: #d9e8e5;
+}
+
+/* Only English visitors see the "Open the guide in Arabic" pill */
 html[lang="ar"] .course-en-only {
   display: none;
 }
@@ -1250,4 +1276,128 @@ html[dir="rtl"] .celebration__bird {
 
 .privacy p {
   margin-block: 0 12px;
+}
+
+/* The account stack inside the hub's hero. The stack and its row dissolve (display: contents)
+   so the sign-in button and the Arabic pill sit side by side on the first row, and the notice
+   goes under the button on the second row. */
+.account-bar--hero {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+.account-bar--hero:not([hidden]),
+.account-bar--hero .account-bar__row:not([hidden]) {
+  display: contents;
+}
+
+.account-bar--hero [data-account-action="sign-in"] {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+}
+
+.account-bar--hero .account-bar__notice {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  max-width: 28rem;
+}
+
+.account-bar--hero .account-bar__note {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  max-width: 22rem;
+}
+
+/* Narrow screens: one column, the Arabic pill after the notice */
+@media (max-width: 479px) {
+  .course-hero__actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .account-bar--hero .account-bar__notice,
+  .account-bar--hero .account-bar__note {
+    grid-column: 1;
+  }
+}
+
+/* Over the landscape, messages keep a soft white backing so they stay readable */
+.account-bar--hero .account-bar__who,
+.account-bar--hero .account-bar__note {
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+/* The notice is bold text with no box. A faint white halo keeps it readable on the landscape. */
+.account-bar__notice {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.account-bar--hero .account-bar__notice {
+  padding: 0;
+  background: none;
+  font-size: 0.875rem;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 6px #fff,
+    0 0 10px rgba(255, 255, 255, 0.9),
+    0 0 16px rgba(255, 255, 255, 0.8);
+}
+
+/* The link to what is kept is red, like the page's other highlights */
+.account-bar__notice a {
+  color: var(--color-brand-hover);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+/* ---------- Signed-in account in the header (spec #56) ---------- */
+
+.pill--small {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Wide screens: the name and Sign out sit in the header, before the language switch */
+.header-account {
+  display: none;
+}
+
+.header-account__name {
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+@media (min-width: 640px) {
+  .header-account:not([hidden]) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-inline-end: 4px;
+  }
+}
+
+/* Narrow screens: the same controls sit at the bottom of the mobile menu */
+.mobile-menu__account:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+@media (min-width: 640px) {
+  .mobile-menu__account:not([hidden]) {
+    display: none;
+  }
 }

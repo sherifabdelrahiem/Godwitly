@@ -1,0 +1,45 @@
+# Diff review: T1 follow-up, sign-in placement on the hub (#58)
+
+> History: the sections below were written for the first version (`1e39c71`, a bar under the hero). The design then changed twice at the PO's request; the final design and its review are in "Final design" at the end.
+
+- **Base:** `d215205` (main, after PR #70).
+- **Reviewed commit:** `1e39c71` (one file: `crash-course/index.html`, +22/−22).
+- **Spec:** #56 v5, sha256 `cf3693461f6199577ac855b16d1994a49cd872888b9cac74ddaf4c9dc0945878`. The spec asks for a "Sign in with Google" button on every Crash course page and does not fix its position, so this is a placement change inside the approved scope (PO request, 2026-11-01: "add the sign in with google under the hero section"). Lesson pages have no hero and are unchanged.
+- **TDD:** not applicable (layout only; project checks and browser checks instead).
+
+## Evidence
+
+- `node --test` 195/195 locally.
+- Browser (Chrome, localhost:8000): hub in English and Arabic, full width and 320px. The bar is a child of `<main>`, directly after `.course-hero` (gap 0), shown, no horizontal overflow, sign-in behaviour unchanged. A first Arabic check looked wrong because the frame served a stale cached copy of the old page; a fresh load confirmed the new position.
+- Codex (read-only), `VERDICT: PASS`: selectors in `js/account-bar.js` and `js/course.js` do not depend on DOM order or on the bar being a child of `body`; the bar is a named region inside the main landmark; tab order follows the visual order; the skip link still targets `#main`; logical CSS properties are used (RTL safe). Codex's `node --test` showed 194 passed and one sandbox EPERM on a temp directory (not a code failure). Browser and screen-reader behaviour were judged from the source only.
+
+## Standards
+
+No findings.
+
+## Spec
+
+No findings. The live region stays outside the bar (spec "Status messages go to one persistent polite live region").
+
+## Outcomes
+
+No findings to fix or accept. PR, merge and deploy still need the PO's approval (AGENTS.md, External actions).
+
+## Final design (PO requests, 2026-11-01)
+
+- **Reviewed commits:** `de328be` (sign-in in the hero), and the commit that follows it (name and Sign out in the header).
+- **Design:** the hero's primary button is "Sign in with Google" with its notice text under it, for English and Arabic visitors; "Open the guide in Arabic" (English visitors) is a soft pill in the old badge's colours; the "Available in Arabic" badge and its unused key `course.availableArabic` are removed. Signed in, the name and Sign out are in the site header (wide screens, 640px and up) like Google or Facebook, and at the bottom of the mobile menu on narrow screens; the hero stack and the Lesson page bar then hide. Lesson pages keep their sign-in bar under the header.
+- **Codex on `de328be`:** `VERDICT: PASS`, no P0/P1. Two P2 (stale comments about the removed badge in `js/translations.js` and `css/course.css`; this report outdated): comments fixed, this section added. Contrast computed: soft pill 4.98:1 (4.56:1 on hover), notice text over the hero 7.84:1, error text 4.76:1, all AA.
+- **Browser (Chrome, localhost:8000):** English and Arabic, full width, 640/700px and 320px; the signed-in state was emulated by toggling the markup (the real round trip was verified earlier at `20b02d9`); no horizontal overflow; menu shows the name and Sign out at 320px.
+- **Not verified:** the real signed-in header after a live Google sign-in with the final markup (to do with the PO), screen reader, CSP on the preview.
+- **Later PO requests (same day):** the sign-in button and the Arabic pill share the first row of the hero (grid; one column below 480px); the notice is shorter ("Signing in creates a Godwitly account." plus the "What we keep" link, English and Arabic) and smaller; a Privacy link is added to the footer of the hub and Lesson pages. The notice stays next to the sign-in button because spec #56 story 3 asks for it ("next to every sign-in button ... with a link to what is kept"); the footer link is an addition, hidden until `js/account-bar.js` reveals it, so on production (where the privacy page is not deployed and a missing page returns the home page) it never shows. "It does not enrol you in anything" was dropped from the notice: story 3 does not require it and signing in enrols in nothing by behaviour (story 2, SQL check C2).
+- **PO request (notice style):** the notice is bold, has no background box, and its "What we keep" link is red (`--color-brand-hover`, underlined). Over the hero image the text has a white halo (`text-shadow`) instead of a box, so its contrast depends on the image behind it and is not a guaranteed WCAG AA figure; the weakest spot is the red link over the dark grass at 320px in Arabic. The Lesson page bar keeps its white background (bold and red link too). The messages (errors) in the hero keep their white backing.
+- **Codex on `bb37675` (header sign-out):** `VERDICT: PASS`, no P0/P1. One P2: after Sign out the focused button hides and keyboard focus falls to the page body. Fixed: before hiding the signed-in controls, `js/account-bar.js` notes whether focus was in them and, once signed out, moves focus to the Sign in button. This focus move is not yet verified in a real browser session (needs a live sign-in and sign-out with the PO).
+- **Codex final round (`bb37675..2488e7d`):** `VERDICT: PASS`, no P0/P1. Two P2: (1) `display: contents` on the hero account wrapper can drop its `role="group"` and name in some browser and assistive-technology combinations: fixed, the wrapper no longer carries a role or label (its button and notice have their own text); (2) the notice's contrast over the hero image depends on the image behind it (red link `#a63d30` is 6.30:1 on white): open, PO question (keep the halo, or add a soft white gradient behind that part of the hero). Not verified by Codex: browser layout, screen reader, a live sign-out, the spec (GitHub unreachable from its sandbox).
+
+## Live check with the PO (2026-11-01, localhost:8000, real Google sign-in as the test user)
+
+- Signed in: the header shows the name and Sign out; the hero shows only the Arabic pill; the footer Privacy link is shown; Lesson 1 shows the same header; the 320px mobile menu shows "Signed in as <name>" and Sign out in English and Arabic; no horizontal overflow. The database showed 1 user, 1 `account_state` row, 2 recorded sign-ins (one per sign-in) and 1 live session.
+- Sign-out by keyboard (focus on the header Sign out, Enter): keyboard focus moved to "Sign in with Google" (the P2 fix works); the live region said "You are signed out."; the server then held 0 sessions and 0 live refresh tokens; all `godwitly-accounts*` keys were removed and the language and tick keys were kept.
+- PO decision: keep the text halo (no gradient) behind the notice.
+- Open items for release, not for this merge: the privacy wording approval; the CSP on the Pages preview; production behaviour on the first production deploy.

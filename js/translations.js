@@ -30,7 +30,7 @@ const TRANSLATIONS = {
     // Godwitly account bar on the Crash course pages (spec #56)
     "account.label": "Godwitly account",
     "account.signIn": "Sign in with Google",
-    "account.notice": "Signing in creates a Godwitly account. It does not enrol you in anything.",
+    "account.notice": "Signing in creates a Godwitly account.",
     "account.noticeLink": "What we keep",
     "account.signedInAs": "Signed in as",
     "account.signOut": "Sign out",
@@ -182,7 +182,7 @@ const TRANSLATIONS = {
 
     // Crash course hub (crash-course/index.html). The Lessons themselves are Arabic-only
     // at first (ADR-0008); the hub shows English visitors a title, a summary and
-    // "Available in Arabic".
+    // an "Open the guide in Arabic" link.
     "course.metaTitle": "Claude Crash Course for Beginners — Godwitly",
     "course.metaDescription":
       "A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step. The Lessons are in Arabic.",
@@ -190,7 +190,6 @@ const TRANSLATIONS = {
     "course.title": "Claude Crash Course for Beginners",
     "course.summary":
       "A free, self-paced guide that teaches complete beginners to use Claude and Claude Code, step by step.",
-    "course.availableArabic": "Available in Arabic",
     "course.openArabic": "Open the guide in Arabic",
 
     // Crash course hub content. The Lesson times and outcomes are provisional until
@@ -274,6 +273,7 @@ const TRANSLATIONS = {
 
     // Footer
     "footer.text": "Godwitly by BCM Hub — learning, engagement and organisational preparedness.",
+    "footer.privacy": "Privacy",
 
     // Sign-up dashboard (dashboard.html, js/dashboard.js)
     "dash.metaTitle": "Sign-up dashboard — Godwitly",
@@ -361,7 +361,7 @@ const TRANSLATIONS = {
 
     "account.label": "حساب Godwitly",
     "account.signIn": "سجّل الدخول باستخدام Google",
-    "account.notice": "تسجيل الدخول يُنشئ حساب Godwitly، ولا يُلحقك بأي دورة.",
+    "account.notice": "تسجيل الدخول يُنشئ حساب Godwitly.",
     "account.noticeLink": "ما الذي نحتفظ به",
     "account.signedInAs": "تم تسجيل الدخول باسم",
     "account.signOut": "تسجيل الخروج",
@@ -509,7 +509,6 @@ const TRANSLATIONS = {
     "course.title": "دليل كلود للمبتدئين",
     "course.summary":
       "تعلّم استخدام Claude وClaude Code من الصفر، خطوة بخطوة وبالسرعة التي تناسبك.",
-    "course.availableArabic": "متاح بالعربية",
     "course.openArabic": "افتح الدليل بالعربية",
 
     // محتوى صفحة الدليل. أوقات الدروس ونتائجها مؤقتة لحد ما كل درس تتوافق مسودته
@@ -590,6 +589,7 @@ const TRANSLATIONS = {
     "course.print": "اطبع البرشامة",
 
     "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والاستعداد المؤسسي.",
+    "footer.privacy": "الخصوصية",
 
     "dash.metaTitle": "لوحة طلبات الإشعار — Godwitly",
     "dash.title": "لوحة طلبات الإشعار",
