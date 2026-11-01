@@ -126,7 +126,7 @@
               <div class="account-bar__row" data-account-out hidden>
                 <button type="button" class="pill pill--primary account-bar__button" data-account-action="sign-in" data-i18n="account.signIn">Sign in with Google</button>
                 <p class="account-bar__notice">
-                  <span data-i18n="account.notice">Signing in creates a Godwitly account. It does not enrol you in anything.</span>
+                  <span data-i18n="account.notice">Signing in creates a Godwitly account.</span>
                   <a href="privacy/index.html" data-course-link data-i18n="account.noticeLink">What we keep</a>
                 </p>
               </div>
@@ -289,6 +289,8 @@
         <span data-i18n="footer.text">Godwitly by BCM Hub — learning, engagement and organisational preparedness.</span>
         <span dir="ltr">© <span id="year">2026</span></span>
         <a href="index.html" data-course-link aria-current="page" class="site-footer__link" data-i18n="nav.crashCourses">Crash Courses</a>
+        <!-- Shown only where accounts are enabled (js/account-bar.js): the privacy page is not deployed to production yet. -->
+        <a href="privacy/index.html" data-course-link data-account-only hidden class="site-footer__link" data-i18n="footer.privacy">Privacy</a>
       </p>
     </footer>
 

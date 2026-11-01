@@ -99,6 +99,10 @@
       else account.signOut();
     });
   });
+  // Links that only make sense where accounts are enabled (the footer's Privacy link).
+  document.querySelectorAll("[data-account-only]").forEach((element) => {
+    element.hidden = false;
+  });
   account.subscribe(show);
   // A language switch re-translates the bar's own text.
   document.querySelectorAll(".lang-switch__btn").forEach((button) => button.addEventListener("click", () => show(account.getState())));

@@ -30,7 +30,7 @@ const TRANSLATIONS = {
     // Godwitly account bar on the Crash course pages (spec #56)
     "account.label": "Godwitly account",
     "account.signIn": "Sign in with Google",
-    "account.notice": "Signing in creates a Godwitly account. It does not enrol you in anything.",
+    "account.notice": "Signing in creates a Godwitly account.",
     "account.noticeLink": "What we keep",
     "account.signedInAs": "Signed in as",
     "account.signOut": "Sign out",
@@ -273,6 +273,7 @@ const TRANSLATIONS = {
 
     // Footer
     "footer.text": "Godwitly by BCM Hub — learning, engagement and organisational preparedness.",
+    "footer.privacy": "Privacy",
 
     // Sign-up dashboard (dashboard.html, js/dashboard.js)
     "dash.metaTitle": "Sign-up dashboard — Godwitly",
@@ -360,7 +361,7 @@ const TRANSLATIONS = {
 
     "account.label": "حساب Godwitly",
     "account.signIn": "سجّل الدخول باستخدام Google",
-    "account.notice": "تسجيل الدخول يُنشئ حساب Godwitly، ولا يُلحقك بأي دورة.",
+    "account.notice": "تسجيل الدخول يُنشئ حساب Godwitly.",
     "account.noticeLink": "ما الذي نحتفظ به",
     "account.signedInAs": "تم تسجيل الدخول باسم",
     "account.signOut": "تسجيل الخروج",
@@ -588,6 +589,7 @@ const TRANSLATIONS = {
     "course.print": "اطبع البرشامة",
 
     "footer.text": "Godwitly من BCM Hub — التعلّم والتفاعل والاستعداد المؤسسي.",
+    "footer.privacy": "الخصوصية",
 
     "dash.metaTitle": "لوحة طلبات الإشعار — Godwitly",
     "dash.title": "لوحة طلبات الإشعار",

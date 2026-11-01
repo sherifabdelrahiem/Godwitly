@@ -1326,9 +1326,14 @@ html[dir="rtl"] .celebration__bird {
 .account-bar--hero .account-bar__notice,
 .account-bar--hero .account-bar__who,
 .account-bar--hero .account-bar__note {
-  padding: 8px 12px;
-  border-radius: 12px;
+  padding: 6px 10px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.88);
+}
+
+/* The notice is a quiet line, smaller than the page text */
+.account-bar--hero .account-bar__notice {
+  font-size: 0.8125rem;
 }
 
 
